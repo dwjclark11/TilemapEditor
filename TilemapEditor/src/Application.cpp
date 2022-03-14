@@ -1,6 +1,6 @@
 #include "Application.h"
 #include "AssetManager.h"
-
+#include "Logger/Logger.h"
 #include <SDL_ttf.h>
 
 void Application::Init()
@@ -68,6 +68,9 @@ void Application::Init()
 
 	// Initialize asset manager
 	mAssetManager = std::make_unique<AssetManager>();
+
+	// Initialize the Logger
+	Logger::Init();
 }
 
 void Application::Draw()
@@ -114,7 +117,7 @@ void Application::ProcessEvents()
 
 void Application::Update()
 {
-	// TODO: Add logic to update!!
+	LOG_INFO("Updating application!{0}", 117)
 }
 
 Application::Application()
