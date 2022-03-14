@@ -2,6 +2,7 @@
 #include "AssetManager.h"
 #include "Logger/Logger.h"
 #include <SDL_ttf.h>
+#include "Rendering/RenderSystem.h"
 
 void Application::Init()
 {
@@ -24,7 +25,7 @@ void Application::Init()
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 
 	// Create the window
-	mWindow = std::unique_ptr<SDL_Window, SDLWindowDestroyer>(SDL_CreateWindow(
+	mWindow = std::unique_ptr<SDL_Window, Util::SDLDestroyer>(SDL_CreateWindow(
 		"Tilemap Editor",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
@@ -40,7 +41,7 @@ void Application::Init()
 	}
 
 	// Create the renderer
-	mRenderer = std::unique_ptr<SDL_Renderer, SDLRendererDestroyer>(SDL_CreateRenderer(
+	mRenderer = std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>(SDL_CreateRenderer(
 		mWindow.get(),
 		-1,
 		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
@@ -71,6 +72,10 @@ void Application::Init()
 
 	// Initialize the Logger
 	Logger::Init();
+
+	mAssetManager->AddTexture(mRenderer, "hearts", "./assets/hearts_rupees.png");
+
+	Registry::Instance().AddSystem<RenderSystem>();
 }
 
 void Application::Draw()
@@ -79,6 +84,7 @@ void Application::Draw()
 	SDL_RenderClear(mRenderer.get());
 
 	// Render Application stuff
+	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera);
 
 	SDL_RenderPresent(mRenderer.get());
 }
@@ -117,7 +123,7 @@ void Application::ProcessEvents()
 
 void Application::Update()
 {
-	LOG_INFO("Updating application!{0}", 117)
+	Registry::Instance().Update();
 }
 
 Application::Application()

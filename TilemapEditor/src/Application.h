@@ -7,33 +7,20 @@
 #include <sol/sol.hpp>
 #include <glm/glm.hpp>
 #include <memory>
+#include "Utilities.h"
 
 class Application
 {
 
 private:
-	struct SDLWindowDestroyer
-	{
-		void operator()(SDL_Window* window) const
-		{
-			SDL_DestroyWindow(window);
-		}
-	};
 
-	struct SDLRendererDestroyer
-	{
-		void operator()(SDL_Renderer* renderer) const
-		{
-			SDL_DestroyRenderer(renderer);
-		}
-	};
 
 private:
 	const int mWindowWidth = 1920;
 	const int mWindowHeight = 1024;
 	
-	std::unique_ptr<SDL_Window, SDLWindowDestroyer> mWindow;
-	std::unique_ptr<SDL_Renderer, SDLRendererDestroyer> mRenderer;
+	std::unique_ptr<SDL_Window, Util::SDLDestroyer> mWindow;
+	std::unique_ptr<SDL_Renderer, Util::SDLDestroyer> mRenderer;
 	
 	SDL_Rect mCamera;
 	SDL_Rect mMouseBox;
