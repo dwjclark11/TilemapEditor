@@ -62,9 +62,9 @@ void Application::Init()
 	ImGui::CreateContext();
 	ImGuiSDL::Initialize(mRenderer.get(), mWindowWidth, mWindowHeight);
 
-	// Initialize Camera
+	// Initialize Camera --> This Centers the Grid
 	mCamera = {
-		-64, -64, mWindowWidth, mWindowHeight
+		-360, -176, mWindowWidth, mWindowHeight
 	};
 
 	// Initialize the mouse box for the tiles
@@ -136,7 +136,7 @@ void Application::ProcessEvents()
 		case SDL_KEYDOWN:
 			if (mEvent.key.keysym.sym == SDLK_ESCAPE)
 				mIsRunning = false;
-
+			CameraControl(mEvent);
 			break;
 		}
 	}
@@ -149,6 +149,30 @@ void Application::Update()
 	// Check for Exit
 	if (Registry::Instance().GetSystem<RenderGuiSystem>().GetExit())
 		mIsRunning = false;
+}
+
+void Application::CameraControl(SDL_Event& event)
+{
+	if (event.type == SDL_KEYDOWN)
+	{
+		switch (event.key.keysym.sym)
+		{
+		case SDLK_w:
+			mCamera.y -= 8;
+			break;
+		case SDLK_s:
+			mCamera.y += 8;
+			break;
+		case SDLK_a:
+			mCamera.x -= 8;
+			break;
+		case SDLK_d:
+			mCamera.x += 8;
+			break;
+		}
+
+		LOG_INFO("CAM [X:{0}, Y:{1}]", mCamera.x, mCamera.y);
+	}
 }
 
 Application::Application()

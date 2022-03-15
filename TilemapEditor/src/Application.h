@@ -36,7 +36,7 @@ private:
 	void Draw();
 	void ProcessEvents();
 	void Update();
-
+	void CameraControl(SDL_Event& event);
 public:
 	Application();
 	~Application();
