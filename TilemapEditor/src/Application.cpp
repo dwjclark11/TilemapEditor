@@ -11,14 +11,14 @@ void Application::Init()
 	// Init SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		// TODO: Add error and logger
+		LOG_ERROR("APPLICATION__LINE__14: Failed to Initialize SDL: {0}", SDL_GetError());
 		return;
 	}
 
 	// Init SDL TTF
 	if (TTF_Init() != 0)
 	{
-		// TODO: Add error and logger
+		LOG_ERROR("APPLICATION__LINE__21: Failed to Initialize SDL_TTF!");
 		return;
 	}
 
@@ -38,7 +38,7 @@ void Application::Init()
 
 	if (!mWindow)
 	{
-		// TODO: create error and logger
+		LOG_ERROR("APPLICATION__LINE__41: Failed to create window: {0}", SDL_GetError());
 		return;
 	}
 
@@ -51,9 +51,11 @@ void Application::Init()
 
 	if (!mRenderer)
 	{
-		// TODO: Error and LOGGER
+		LOG_ERROR("APPLICATION__LINE__41: Failed to create renderer: {0}", SDL_GetError());
 		return;
 	}
+
+	// Set the renderer to blend mode
 	SDL_SetRenderDrawBlendMode(mRenderer.get(), SDL_BLENDMODE_BLEND);
 
 	// Initialize ImGui context
@@ -62,10 +64,10 @@ void Application::Init()
 
 	// Initialize Camera
 	mCamera = {
-		0, -16, mWindowWidth, mWindowHeight
+		-64, -64, mWindowWidth, mWindowHeight
 	};
 
-	// Initialize 
+	// Initialize the mouse box for the tiles
 	mMouseBox.x = 0;
 	mMouseBox.y = 0;
 	mMouseBox.h = 1;
@@ -77,9 +79,9 @@ void Application::Init()
 	// Initialize the Logger
 	Logger::Init();
 
-	mAssetManager->AddTexture(mRenderer, "hearts", "./assets/hearts_rupees.png");
-
+	// Add all Necessary Systems to registry
 	Registry::Instance().AddSystem<RenderSystem>();
+	Registry::Instance().AddSystem<RenderCollisionSystem>();
 	Registry::Instance().AddSystem<RenderGuiSystem>();
 }
 
@@ -88,15 +90,18 @@ void Application::Draw()
 	SDL_SetRenderDrawColor(mRenderer.get(), 0, 0, 0, 255);
 	SDL_RenderClear(mRenderer.get());
 
-	// Render Application stuff
+	// Render Application Systems
 	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera);
 	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera);
 	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera);
 	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent);
 
-
+	/*
+		This is a little hack to get SDL and ImGui to stop Ghosting!
+		If ImGui is called Last, both will Ghost. The below is a small
+		rectangle with the alpha set to 0 making it invisible.
+	*/
 	SDL_Rect rect = { 0, 0, 10, 10 };
-
 	SDL_SetRenderDrawColor(mRenderer.get(), 255, 0, 0, 0);
 	SDL_RenderFillRect(mRenderer.get(), &rect);
 	SDL_RenderDrawRect(mRenderer.get(), &rect);
@@ -140,6 +145,10 @@ void Application::ProcessEvents()
 void Application::Update()
 {
 	Registry::Instance().Update();
+
+	// Check for Exit
+	if (Registry::Instance().GetSystem<RenderGuiSystem>().GetExit())
+		mIsRunning = false;
 }
 
 Application::Application()
@@ -157,6 +166,7 @@ Application::Application()
 
 Application::~Application()
 {
+
 }
 
 void Application::Run()
@@ -169,4 +179,16 @@ void Application::Run()
 		Update();
 		Draw();
 	}
+}
+
+void Application::ShutDown()
+{
+	// Shutdown ImGui
+	ImGuiSDL::Deinitialize();
+	ImGui::DestroyContext();
+
+	// Shutdown SDL
+	SDL_DestroyRenderer(mRenderer.get());
+	SDL_DestroyWindow(mWindow.get());
+	SDL_Quit();
 }

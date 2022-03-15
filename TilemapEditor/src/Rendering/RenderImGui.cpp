@@ -11,9 +11,11 @@
 
 RenderGuiSystem::RenderGuiSystem()
 	: mCreateTiles(false)
+	, mExit(false)
 	, mCanvasWidth(640)
 	, mCanvasHeight(480)
 	, mTileSize(64)
+
 {
 	mImFuncs = std::make_unique<ImGuiFuncs>();
 	mMouseControl = std::make_unique<MouseControlSystem>();
@@ -36,6 +38,7 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		if (ImGui::BeginMenu("File"))
 		{
 			mImFuncs->ShowFileMenu();
+			
 			ImGui::EndMenu();
 		}
 
@@ -48,9 +51,6 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		{
 			mImFuncs->ShowToolsMenu(renderer, assetManager);
 			ImGui::Checkbox("Create Tiles", &mCreateTiles);
-
-
-
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -76,6 +76,9 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 	else
 		mMouseControl->SetMouseOverImGuiWindow(false);
 
+
+	// Check for Exit
+	SetExit(mImFuncs->GetExit());
 }
 
 void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera)

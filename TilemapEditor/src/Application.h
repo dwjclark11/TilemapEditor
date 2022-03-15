@@ -42,4 +42,5 @@ public:
 	~Application();
 
 	void Run();
+	void ShutDown();
 };

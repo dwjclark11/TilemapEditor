@@ -68,6 +68,7 @@ ImGuiFuncs::ImGuiFuncs()
 	, mMouseRectX(8)
 	, mMouseRectY(8)
 	, mImageLoaded(false)
+	, mExit(false)
 {
 
 }
@@ -188,7 +189,8 @@ void ImGuiFuncs::ShowFileMenu()
 
 	if (ImGui::MenuItem("Exit"))
 	{
-
+		// Exit the application
+		mExit = true;
 	}
 }
 
