@@ -1,6 +1,81 @@
 #include "ImGuiFunc.h"
 #include <imgui/imgui.h>
 #include <SDL.h>
+#include "../Utilities/FileDialogWin.h"
+
+#include "../Logger/Logger.h"
+#include "../MouseControlSystem.h"
+#include "../AssetManager.h"
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+void ImGuiFuncs::TileSetWindow(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, const glm::vec2& mouseRect)
+{
+	// 
+	if (ImGui::Begin("Texture", &mImageLoaded))
+	{
+		int imageWidth = mImageWidth * 2;
+		int imageHeight = mImageHeight * 2;
+
+		ImGui::Image(assetManager->GetTexture(mAssetID).get(), ImVec2(imageWidth, imageHeight));
+
+		int mousePosX = ImGui::GetMousePos().x - ImGui::GetWindowPos().x;
+		int mousePosY = ImGui::GetMousePos().y - ImGui::GetWindowPos().y - TITLE_BAR_SIZE;
+
+		int rows = imageHeight / (mouseRect.y * 2);
+		int cols = imageWidth / (mouseRect.x * 2);
+
+		for (int i = 0; i < cols; i++)
+		{
+			for (int j = 0; j < rows; j++)
+			{
+				auto drawList = ImGui::GetWindowDrawList();
+
+				// Check to see if we are in the area of the desired 2D tile
+				if ((mousePosX >= (imageWidth / cols) * i && mousePosX <= (imageWidth / cols) + ((imageWidth / cols) * i))
+					&& (mousePosY >= (imageHeight / rows) * j && mousePosY <= (imageHeight / rows) + ((imageHeight / rows) * j)))
+				{
+					if (ImGui::IsItemHovered())
+					{
+						
+						if (ImGui::IsMouseClicked(0))
+						{
+							mSrcRectX = i * mouseRect.x;
+							mSrcRectY = j * mouseRect.y;
+						}
+					}
+				}
+			}
+		}
+		ImGui::End();
+	}
+}
+
+ImGuiFuncs::ImGuiFuncs()
+	: mFileName("")
+	, mImageName("")
+	, mAssetID("")
+	, mScaleX(1)
+	, mScaleY(1)
+	, mWidth(16)
+	, mHeight(16)
+	, mLayer(0)
+	, mSrcRectX(0)
+	, mSrcRectY(0)
+	, mImageWidth(0)
+	, mImageHeight(0)
+	, mMouseRectX(8)
+	, mMouseRectY(8)
+	, mImageLoaded(false)
+{
+
+}
+ImGuiFuncs::~ImGuiFuncs()
+{
+
+}
+
 
 void ImGuiFuncs::SetupImgui()
 {
@@ -86,4 +161,99 @@ void ImGuiFuncs::SetupImguiStyle()
 	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 	style.WindowMenuButtonPosition = ImGuiDir_Right;
+}
+
+void ImGuiFuncs::ShowFileMenu()
+{
+	if (ImGui::MenuItem("New", "Ctrl + N"))
+	{
+
+	}
+
+	if (ImGui::MenuItem("Open", "Ctrl + O"))
+	{
+		FileDialog fileDialog;
+		std::string fileName = fileDialog.OpenFile();
+	}
+
+	if (ImGui::MenuItem("Save", "Ctrl + S"))
+	{
+
+	}
+
+	if (ImGui::MenuItem("Save As..", "Ctrl + Shift + S"))
+	{
+
+	}
+
+	if (ImGui::MenuItem("Exit"))
+	{
+
+	}
+}
+
+void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, const std::unique_ptr<AssetManager>& assetManager)
+{
+	if (ImGui::MenuItem("Load Tileset"))
+	{
+		FileDialog fileDialog;
+		mImageName = fileDialog.OpenImageFile();
+
+		if (mImageName == std::string() || mImageName == "")
+			return;
+		fs::path path(mImageName);
+		mAssetID = path.stem().string();
+		assetManager->AddTexture(renderer, mAssetID, mImageName);
+
+		if (SDL_QueryTexture(assetManager->GetTexture(mAssetID).get(), NULL, NULL, &mImageWidth, &mImageHeight) != 0)
+		{
+			const char* errMsg = SDL_GetError();
+			LOG_ERROR("__FUNC: Load Tileset: " + std::string(errMsg));
+			mImageLoaded = false;
+		}
+		else
+		{
+			mImageLoaded = true;
+			LOG_INFO("Filename: {0}", path.stem().string());
+		}
+
+		
+	}
+}
+
+void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControlSystem>& mouseControl)
+{
+	if (ImGui::Begin("Tile Properties"))
+	{
+		ImGui::Text("Transform Component");
+		ImGui::SliderInt("X Scale", &mScaleX, 1, 10);
+		ImGui::SliderInt("Y Scale", &mScaleY, 1, 10);
+		
+		if (ImGui::InputInt("Mouse Rect Y", &mMouseRectY, 8, 8))
+		{
+			mMouseRectY = (mMouseRectY / 8) * 8;
+			// Clamp mouse Rect Y at zero
+			if (mMouseRectY <= 0)
+				mMouseRectY = 0;
+		}
+
+		if (ImGui::InputInt("Mouse Rect X", &mMouseRectX, 8, 8))
+		{
+			mMouseRectX = (mMouseRectX / 8) * 8;
+			// Clamp mouse Rect Y at zero
+			if (mMouseRectX <= 0)
+				mMouseRectX = 0;
+		}
+
+		if (ImGui::Button("Set Tile Properties"))
+		{
+			mWidth = mMouseRectX;
+			mHeight = mMouseRectY;
+			
+			mouseControl->SetTransformScale(mScaleX, mScaleY);
+			mouseControl->SetMouseRect(mMouseRectX, mMouseRectY);
+		}
+		mouseControl->SetSpriteProperties(mAssetID, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY);
+		ImGui::End();
+	}
 }

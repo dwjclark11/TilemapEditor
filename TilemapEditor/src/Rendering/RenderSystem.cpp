@@ -47,10 +47,8 @@ void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetMan
 		if (isEntityOutsideCamera && !renderableEntity.spriteComponent.mIsFixed)
 		{
 			continue;
-			LOG_TRACE("ENTITY IS OUTSIDE");
 		}
 			
-		LOG_TRACE("ENTITY: {0}", entity.GetID());
 		// place the entity inside of the Renderable entities vector
 		renderableEntities.emplace_back(renderableEntity);
 	}
@@ -87,7 +85,5 @@ void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetMan
 			NULL,
 			sprite.mFlip
 		);
-
-		LOG_INFO("RENDERING");
 	}
 }

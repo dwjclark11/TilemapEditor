@@ -31,6 +31,10 @@ void AssetManager::AddTexture(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>&
 		// Add the Textures to the map
 		mTextures.emplace(assetId, std::move(texture));
 	}
+	else
+	{
+		LOG_ERROR("ASSETMANAGER.CPP__LINE__36: Texture [{0}] already exists!");
+	}
 }
 
 const std::unique_ptr<SDL_Texture, Util::SDLDestroyer>& AssetManager::GetTexture(const std::string& assetId)
@@ -40,7 +44,7 @@ const std::unique_ptr<SDL_Texture, Util::SDLDestroyer>& AssetManager::GetTexture
 
 bool AssetManager::HasTexture(const std::string& assetId)
 {
-	return false;
+	return mTextures.find(assetId) != mTextures.end();
 }
 
 void AssetManager::RemoveTexture(const std::string& assetId)

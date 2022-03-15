@@ -6,7 +6,7 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include <memory>
-#include "Utilities.h"
+#include "./Utilities/Utilities.h"
 
 class AssetManager
 {
@@ -17,14 +17,14 @@ private:
 
 
 
-	std::map<std::string, std::unique_ptr<SDL_Texture,  Util::SDLDestroyer>> mTextures;
+	std::map<std::string, std::unique_ptr<SDL_Texture, Util::SDLDestroyer>> mTextures;
 	//std::map<std::string, std::unique_ptr<TTF_Font>> mFonts;
 	//std::map<std::string, std::unique_ptr<Mix_Music>> mMusic;
 	//std::map<std::string, std::unique_ptr<Mix_Chunk>> mSoundFX;
 
 
 public:
-	
+
 	AssetManager();
 	~AssetManager();
 

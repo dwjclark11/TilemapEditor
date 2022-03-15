@@ -7,7 +7,7 @@
 #include <sol/sol.hpp>
 #include <glm/glm.hpp>
 #include <memory>
-#include "Utilities.h"
+#include "./Utilities/Utilities.h"
 
 class Application
 {
@@ -16,12 +16,12 @@ private:
 
 
 private:
-	const int mWindowWidth = 1920;
-	const int mWindowHeight = 1024;
-	
+	const int mWindowWidth = 1366;
+	const int mWindowHeight = 768;
+
 	std::unique_ptr<SDL_Window, Util::SDLDestroyer> mWindow;
 	std::unique_ptr<SDL_Renderer, Util::SDLDestroyer> mRenderer;
-	
+
 	SDL_Rect mCamera;
 	SDL_Rect mMouseBox;
 	SDL_Event mEvent;
@@ -40,6 +40,6 @@ private:
 public:
 	Application();
 	~Application();
-	
+
 	void Run();
 };

@@ -3,6 +3,8 @@
 #include "Logger/Logger.h"
 #include <SDL_ttf.h>
 #include "Rendering/RenderSystem.h"
+#include "Rendering/RenderCollisionSystem.h"
+#include "Rendering/RenderImGui.h"
 
 void Application::Init()
 {
@@ -60,10 +62,12 @@ void Application::Init()
 
 	// Initialize Camera
 	mCamera = {
-		0, 0, mWindowWidth, mWindowHeight
+		0, -16, mWindowWidth, mWindowHeight
 	};
 
-	// Initialize MouseBox
+	// Initialize 
+	mMouseBox.x = 0;
+	mMouseBox.y = 0;
 	mMouseBox.h = 1;
 	mMouseBox.w = 1;
 
@@ -76,6 +80,7 @@ void Application::Init()
 	mAssetManager->AddTexture(mRenderer, "hearts", "./assets/hearts_rupees.png");
 
 	Registry::Instance().AddSystem<RenderSystem>();
+	Registry::Instance().AddSystem<RenderGuiSystem>();
 }
 
 void Application::Draw()
@@ -85,6 +90,17 @@ void Application::Draw()
 
 	// Render Application stuff
 	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera);
+	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera);
+	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera);
+	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent);
+
+
+	SDL_Rect rect = { 0, 0, 10, 10 };
+
+	SDL_SetRenderDrawColor(mRenderer.get(), 255, 0, 0, 0);
+	SDL_RenderFillRect(mRenderer.get(), &rect);
+	SDL_RenderDrawRect(mRenderer.get(), &rect);
+
 
 	SDL_RenderPresent(mRenderer.get());
 }
