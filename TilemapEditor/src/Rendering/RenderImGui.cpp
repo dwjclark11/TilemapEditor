@@ -4,13 +4,14 @@
 #include <imgui/imgui_stdlib.h>
 #include "ImGuiFunc.h"
 #include "../Utilities/Utilities.h"
-#include "../MouseControlSystem.h"
+#include "../MouseControl.h"
 #include "../AssetManager.h"
 #include <SDL.h>
 
 
 RenderGuiSystem::RenderGuiSystem()
 	: mCreateTiles(false)
+	, mGridSnap(false)
 	, mExit(false)
 	, mCanvasWidth(640)
 	, mCanvasHeight(480)
@@ -18,7 +19,7 @@ RenderGuiSystem::RenderGuiSystem()
 
 {
 	mImFuncs = std::make_unique<ImGuiFuncs>();
-	mMouseControl = std::make_unique<MouseControlSystem>();
+	mMouseControl = std::make_unique<MouseControl>();
 
 	mImFuncs->SetupImgui();
 	mImFuncs->SetupImguiStyle();
@@ -44,6 +45,24 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 
 		if (ImGui::BeginMenu("Edit"))
 		{
+			if (ImGui::InputInt("Tile Size", &mTileSize, 8, 8))
+			{
+				if (mTileSize <= 8)
+					mTileSize = 8;
+			}
+
+			if (ImGui::InputInt("Canvas Width", &mCanvasWidth, mTileSize, mTileSize))
+			{
+				if (mCanvasWidth <= 640)
+					mCanvasWidth = 640;
+			}
+
+			if (ImGui::InputInt("Canvas Height", &mCanvasHeight, mTileSize, mTileSize))
+			{
+				if (mCanvasHeight <= 480)
+					mCanvasHeight = 480;
+			}
+
 			ImGui::EndMenu();
 		}
 
@@ -51,6 +70,8 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		{
 			mImFuncs->ShowToolsMenu(renderer, assetManager);
 			ImGui::Checkbox("Create Tiles", &mCreateTiles);
+			ImGui::Checkbox("Grid Snap", &mGridSnap);
+
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -79,6 +100,9 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 
 	// Check for Exit
 	SetExit(mImFuncs->GetExit());
+	
+	// Check for GridSnap
+	mMouseControl->SetGridSnap(mGridSnap);
 }
 
 void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera)

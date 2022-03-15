@@ -1,8 +1,8 @@
-#include "MouseControlSystem.h"
+#include "MouseControl.h"
 #include "AssetManager.h"
 #include <SDL.h>
 
-void MouseControlSystem::MouseBox(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider)
+void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider)
 {
 	// Get the location of the mouse from SDL
 	SDL_GetMouseState(&mMousePosX, &mMousePosY);
@@ -64,7 +64,7 @@ void MouseControlSystem::MouseBox(const std::unique_ptr<AssetManager>& assetMana
 	}
 }
 
-MouseControlSystem::MouseControlSystem()
+MouseControl::MouseControl()
 	: mMouseRect(glm::vec2(16, 16))
 	, mMousePosX(0)
 	, mMousePosY(0)
@@ -78,13 +78,14 @@ MouseControlSystem::MouseControlSystem()
 	, mRightPressed(false)
 	, mSpriteComponent()
 	, mTransformComponent()
+	, mBoxColliderComponent()
 {
 
 }
 
-void MouseControlSystem::CreateTile(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
+void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
 {
-	MouseBox(assetManager, renderer, mouseBox, camera, mIsCollider);
+	MouseBox(assetManager, renderer, mouseBox, camera, false);
 
 	glm::vec2 pos = glm::vec2(
 		mouseBox.x + camera.x / mGridSize,
@@ -99,7 +100,7 @@ void MouseControlSystem::CreateTile(const std::unique_ptr<AssetManager>& assetMa
 	if ((event.type == SDL_MOUSEBUTTONDOWN || mLeftPressed) && !mOverImGuiWindow)
 	{
 		if ((event.button.button == SDL_BUTTON_LEFT || mLeftPressed)
-			&& (pos.x != mPrevMousePos.x) || pos.y != mPrevMousePos.y)
+			&& (pos.x != mPrevMousePos.x || pos.y != mPrevMousePos.y))
 		{
 			Entity tile = Registry::Instance().CreateEntity();
 			tile.Group("tiles");
@@ -120,12 +121,23 @@ void MouseControlSystem::CreateTile(const std::unique_ptr<AssetManager>& assetMa
 				mSpriteComponent.mOffset
 				);
 
+			if (mIsCollider)
+			{
+				tile.AddComponent<BoxColliderComponent>(
+					mBoxColliderComponent.mHeight,
+					mBoxColliderComponent.mWidth,
+					mBoxColliderComponent.mOffset
+					);
+			}
+
 			mLeftPressed = true;
 			mPrevMousePos.x = pos.x;
 			mPrevMousePos.y = pos.y;
 		}
-		else if (event.button.button == SDL_BUTTON_RIGHT && !mOverImGuiWindow)
+		
+		if (event.button.button == SDL_BUTTON_RIGHT && !mOverImGuiWindow)
 		{
+			
 			glm::vec2 subtract = glm::vec2(
 				(mMouseRect.x * mTransformComponent.mScale.x) / 2,
 				(mMouseRect.y * mTransformComponent.mScale.y) / 2
@@ -133,7 +145,9 @@ void MouseControlSystem::CreateTile(const std::unique_ptr<AssetManager>& assetMa
 
 			// Loop through all entities and see if there is one with 
 			// the same transform as the mouse and remove iter_swap
-			for (auto& entity : GetSystemEntities())
+			auto entities = Registry::Instance().GetEntitiesByGroup("tiles");
+
+			for (auto& entity : entities)
 			{
 				auto& transform = entity.GetComponent<TransformComponent>();
 
@@ -158,7 +172,7 @@ void MouseControlSystem::CreateTile(const std::unique_ptr<AssetManager>& assetMa
 	}
 }
 
-void MouseControlSystem::SetSpriteProperties(const std::string& assetID, int width, int height, int layer, int srcRectX, int srcRectY)
+void MouseControl::SetSpriteProperties(const std::string& assetID, const int& width, const int& height, const int& layer, const int& srcRectX, const int& srcRectY)
 {
 	mSpriteComponent.mAssetId = assetID;
 	mSpriteComponent.mWidth = width;
@@ -169,8 +183,15 @@ void MouseControlSystem::SetSpriteProperties(const std::string& assetID, int wid
 	mSpriteComponent.mSrcRect = { srcRectX, srcRectY, width, height };
 }
 
-void MouseControlSystem::SetTransformScale(int scaleX, int scaleY)
+void MouseControl::SetTransformScale(const int& scaleX, const int& scaleY)
 {
 	mTransformComponent.mScale = glm::vec2(scaleX, scaleY);
+}
+
+void MouseControl::SetBoxColliderProperties(const int& width, const int& height, const int& offsetX, const int& offsetY)
+{
+	mBoxColliderComponent.mWidth = width;
+	mBoxColliderComponent.mHeight = height;
+	mBoxColliderComponent.mOffset = glm::vec2(offsetX, offsetY);
 }
 

@@ -63,10 +63,13 @@
     <ClCompile Include="src\Utilities\FileDialogWin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MouseControlSystem.cpp">
+    <ClCompile Include="src\MouseControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\RenderCollisionSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\LuaWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -131,13 +134,16 @@
     <ClInclude Include="src\Utilities\FileDialogWin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\MouseControlSystem.h">
+    <ClInclude Include="src\MouseControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Components\BoxColliderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\RenderCollisionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\LuaWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

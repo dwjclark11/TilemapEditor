@@ -167,12 +167,13 @@
     <ClCompile Include="src\ECS\ECS.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\MouseControlSystem.cpp" />
+    <ClCompile Include="src\MouseControl.cpp" />
     <ClCompile Include="src\Rendering\ImGuiFunc.cpp" />
     <ClCompile Include="src\Rendering\RenderCollisionSystem.cpp" />
     <ClCompile Include="src\Rendering\RenderImGui.cpp" />
     <ClCompile Include="src\Rendering\RenderSystem.cpp" />
     <ClCompile Include="src\Utilities\FileDialogWin.cpp" />
+    <ClCompile Include="src\Utilities\LuaWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\imgui\imconfig.h" />
@@ -191,12 +192,13 @@
     <ClInclude Include="src\Components\TransformComponent.h" />
     <ClInclude Include="src\ECS\ECS.h" />
     <ClInclude Include="src\Logger\Logger.h" />
-    <ClInclude Include="src\MouseControlSystem.h" />
+    <ClInclude Include="src\MouseControl.h" />
     <ClInclude Include="src\Rendering\ImGuiFunc.h" />
     <ClInclude Include="src\Rendering\RenderCollisionSystem.h" />
     <ClInclude Include="src\Rendering\RenderImGui.h" />
     <ClInclude Include="src\Rendering\RenderSystem.h" />
     <ClInclude Include="src\Utilities\FileDialogWin.h" />
+    <ClInclude Include="src\Utilities\LuaWriter.h" />
     <ClInclude Include="src\Utilities\Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

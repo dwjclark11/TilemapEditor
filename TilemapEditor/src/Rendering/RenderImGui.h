@@ -8,14 +8,11 @@ class RenderGuiSystem : public System
 {
 private:
 	std::unique_ptr<class ImGuiFuncs> mImFuncs;
-	std::unique_ptr<class MouseControlSystem> mMouseControl;
+	std::unique_ptr<class MouseControl> mMouseControl;
 
-	bool mCreateTiles;
-	bool mExit;
+	bool mCreateTiles, mGridSnap, mExit;
 
-	int mCanvasWidth;
-	int mCanvasHeight;
-	int mTileSize;
+	int mCanvasWidth, mCanvasHeight, mTileSize;
 
 private:
 	void SetExit(bool exit) { mExit = exit; }

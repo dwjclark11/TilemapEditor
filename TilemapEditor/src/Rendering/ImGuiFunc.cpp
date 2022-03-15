@@ -2,9 +2,8 @@
 #include <imgui/imgui.h>
 #include <SDL.h>
 #include "../Utilities/FileDialogWin.h"
-
 #include "../Logger/Logger.h"
-#include "../MouseControlSystem.h"
+#include "../MouseControl.h"
 #include "../AssetManager.h"
 #include <filesystem>
 
@@ -67,8 +66,13 @@ ImGuiFuncs::ImGuiFuncs()
 	, mImageHeight(0)
 	, mMouseRectX(8)
 	, mMouseRectY(8)
+	, mBoxWidth(0)
+	, mBoxHeight(0)
+	, mBoxOffsetX(0)
+	, mBoxOffsetY(0)
 	, mImageLoaded(false)
 	, mExit(false)
+	, mCollider(false)
 {
 
 }
@@ -223,7 +227,7 @@ void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>
 	}
 }
 
-void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControlSystem>& mouseControl)
+void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl)
 {
 	if (ImGui::Begin("Tile Properties"))
 	{
@@ -247,6 +251,30 @@ void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControlSystem>& mouseCo
 				mMouseRectX = 0;
 		}
 
+		ImGui::Checkbox("Box Collider", &mCollider);
+		
+		if (mCollider)
+		{
+			mouseControl->SetCollider(mCollider);
+
+			if (ImGui::InputInt("Box Width", &mBoxWidth, 8, 8))
+			{
+				// Clamp Box Width at zero
+				if (mBoxWidth <= 0)
+					mBoxWidth = 0;
+			}
+
+			if (ImGui::InputInt("Box Height", &mBoxHeight, 8, 8))
+			{
+				// Clamp Box Height at zero
+				if (mBoxHeight <= 0)
+					mBoxHeight = 0;
+			}
+
+			ImGui::InputInt("Box Offset X", &mBoxOffsetX, 8, 8);
+			ImGui::InputInt("Box Offset Y", &mBoxOffsetY, 8, 8);
+		}
+
 		if (ImGui::Button("Set Tile Properties"))
 		{
 			mWidth = mMouseRectX;
@@ -254,6 +282,9 @@ void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControlSystem>& mouseCo
 			
 			mouseControl->SetTransformScale(mScaleX, mScaleY);
 			mouseControl->SetMouseRect(mMouseRectX, mMouseRectY);
+
+			if (mCollider)
+				mouseControl->SetBoxColliderProperties(mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY);
 		}
 		mouseControl->SetSpriteProperties(mAssetID, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY);
 		ImGui::End();
