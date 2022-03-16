@@ -1,0 +1,7 @@
+tiles Zelda_overworld 16 16 0 0 0 245 169 1 1 0 
+tiles Zelda_overworld 16 16 0 0 0 92 309 1 1 0 
+tiles Zelda_overworld 16 16 0 0 0 204 385 1 1 0 
+tiles Dungeon_Tiles 16 16 0 0 0 253 59 1 1 0 
+tiles Dungeon_Tiles 16 16 0 0 0 144 136 1 1 0 
+tiles Dungeon_Tiles 16 16 64 32 0 238 263 1 1 0 
+tiles Dungeon_Tiles 16 16 64 32 0 81 398 1 1 0 

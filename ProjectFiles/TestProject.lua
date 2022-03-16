@@ -1,17 +1,26 @@
--- Test Project File
---[[
-    I am going to need to save/load the folling:
-        - texture names and file locations
-        - tilemap filename and location
-        - I need a holder for the loaded textures locations
-]]
+----------------------------------------------------------
+-- 
+----------------------------------------------------------
 
-assets = {
-    [1] = {type = "texture", id = "Dungeon_Tiles", file = "./Assets/FileLocation/test.png"},
+project = {
+    assets = {
+        [0] = {
+            asset_id = "Dungeon_Tiles",
+            file_path = "C:\\Development\\ZeldaClone\\ZeldaClone\\Assets\\Tilemaps\\Tiles\\Dungeon_Tiles.png"
+        },
+        [1] = {
+            asset_id = "Zelda_overworld",
+            file_path = "C:\\Development\\ZeldaClone\\ZeldaClone\\Assets\\Tilemaps\\Tiles\\Zelda_overworld.png"
+        }
+    },
+    maps = {
+        [0] = {
+            file_path = "C:\\Development\\TilemapEditor\\ProjectFiles\\TestProject.map"
+        },
+    },
+    canvas = {
+        canvas_width = 704,
+        canvas_height = 512,
+        tile_size = 16
+    }
 }
-
-tilemap = {
-    file = "./Assets/Filelocation/tilemap.map"
-}
-
-

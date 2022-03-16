@@ -93,7 +93,7 @@ void Application::Draw()
 	// Render Application Systems
 	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera);
 	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera);
-	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera);
+	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent);
 
 	/*
@@ -138,6 +138,8 @@ void Application::ProcessEvents()
 				mIsRunning = false;
 			CameraControl(mEvent);
 			break;
+		case SDL_MOUSEWHEEL:
+			Zoom(mEvent);
 		}
 	}
 }
@@ -175,6 +177,23 @@ void Application::CameraControl(SDL_Event& event)
 	}
 }
 
+void Application::Zoom(SDL_Event& event)
+{
+	if (event.wheel.y > 0)
+	{
+		mZoom += 0.1f;
+		LOG_INFO("Zoom: {0}", mZoom);
+	}
+	else if (event.wheel.y < 0)
+	{
+		mZoom -= 0.1f;
+		LOG_INFO("Zoom: {0}", mZoom);
+
+		if (mZoom <= 0)
+			mZoom = 0.1;
+	}
+}
+
 Application::Application()
 	: mWindow(nullptr)
 	, mRenderer(nullptr)
@@ -184,6 +203,7 @@ Application::Application()
 	, mDeltaTime(0.f)
 	, mEvent()
 	, mAssetManager(nullptr)
+	, mZoom(1)
 {
 
 }

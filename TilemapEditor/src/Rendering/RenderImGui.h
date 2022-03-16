@@ -1,7 +1,7 @@
 #pragma once
 #include "../ECS/ECS.h"
 #include "../Utilities/Utilities.h"
-
+#include <sol/sol.hpp>
 #include <memory>
 
 class RenderGuiSystem : public System
@@ -14,6 +14,8 @@ private:
 
 	int mCanvasWidth, mCanvasHeight, mTileSize;
 
+	sol::state mLua;
+
 private:
 	void SetExit(bool exit) { mExit = exit; }
 	void ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera, std::unique_ptr<class MouseControl>& mouseControl);
@@ -24,6 +26,6 @@ public:
 
 	void Update(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
 		SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event);
-	void RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera);
+	void RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera, const float& zoom);
 	const bool GetExit() const { return mExit; }
 };

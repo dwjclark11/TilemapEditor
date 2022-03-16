@@ -4,6 +4,7 @@
 #include "../Utilities/Utilities.h"
 #include <glm/glm.hpp>
 #include <vector>
+#include <sol/sol.hpp>
 
 class ImGuiFuncs
 {
@@ -27,7 +28,8 @@ public:
 	void SetupImgui();
 	void SetupImguiStyle();
 
-	void ShowFileMenu();
+	void ShowFileMenu(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
+		std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
 	void ShowToolsMenu(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const std::unique_ptr<class AssetManager>& assetManager);
 	void ShowTileProperties(std::unique_ptr<class MouseControl>& mouseControl, const std::unique_ptr<class AssetManager>& assetManager);
 

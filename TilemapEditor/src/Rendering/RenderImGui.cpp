@@ -24,6 +24,9 @@ RenderGuiSystem::RenderGuiSystem()
 
 	mImFuncs->SetupImgui();
 	mImFuncs->SetupImguiStyle();
+
+	// Open sol/lua libraries
+	mLua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
 }
 
 RenderGuiSystem::~RenderGuiSystem()
@@ -39,7 +42,7 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			mImFuncs->ShowFileMenu();
+			mImFuncs->ShowFileMenu(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize);
 
 			ImGui::EndMenu();
 		}
@@ -118,10 +121,10 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 	mMouseControl->SetGridSnap(mGridSnap);
 }
 
-void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera)
+void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera, const float& zoom)
 {
-	auto xTiles = mCanvasWidth / mTileSize;
-	auto yTiles = mCanvasHeight / mTileSize;
+	auto xTiles = (mCanvasWidth / mTileSize) * zoom;
+	auto yTiles = (mCanvasHeight / mTileSize) * zoom;
 
 	SDL_SetRenderDrawColor(renderer.get(), 70, 70, 70, 70);
 
@@ -129,7 +132,7 @@ void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLD
 	{
 		for (int j = 0; j < xTiles; j++)
 		{
-			SDL_Rect newRect = { (j * mTileSize) - camera.x, (i * mTileSize) - camera.y, mTileSize, mTileSize };
+			SDL_Rect newRect = { (j * mTileSize) - camera.x, (i * mTileSize) - camera.y, mTileSize * zoom, mTileSize * zoom};
 			SDL_RenderDrawRect(renderer.get(), &newRect);
 		}
 	}

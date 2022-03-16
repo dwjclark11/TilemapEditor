@@ -29,6 +29,8 @@ private:
 	float mDeltaTime;
 	bool mIsRunning;
 
+	float mZoom;
+
 	std::unique_ptr<class AssetManager> mAssetManager;
 
 private:
@@ -37,6 +39,7 @@ private:
 	void ProcessEvents();
 	void Update();
 	void CameraControl(SDL_Event& event);
+	void Zoom(SDL_Event& event);
 public:
 	Application();
 	~Application();

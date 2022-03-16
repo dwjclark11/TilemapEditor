@@ -1,7 +1,10 @@
 #include "ImGuiFunc.h"
 #include <imgui/imgui.h>
 #include <SDL.h>
+
 #include "../Utilities/FileDialogWin.h"
+#include "../Utilities/FileLoader.h"
+
 #include "../Logger/Logger.h"
 #include "../MouseControl.h"
 #include "../AssetManager.h"
@@ -169,7 +172,8 @@ void ImGuiFuncs::SetupImguiStyle()
 	style.WindowMenuButtonPosition = ImGuiDir_Right;
 }
 
-void ImGuiFuncs::ShowFileMenu()
+void ImGuiFuncs::ShowFileMenu(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
+	std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	if (ImGui::MenuItem("New", "Ctrl + N"))
 	{
@@ -179,7 +183,14 @@ void ImGuiFuncs::ShowFileMenu()
 	if (ImGui::MenuItem("Open", "Ctrl + O"))
 	{
 		FileDialog fileDialog;
+		FileLoader fileLoader;
 		mFileName = fileDialog.OpenFile();
+
+		if (mFileName == "")
+			return;
+
+		fileLoader.LoadProject(lua, mFileName, assetManager, renderer, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+
 	}
 
 	if (ImGui::MenuItem("Save", "Ctrl + S"))
@@ -189,7 +200,16 @@ void ImGuiFuncs::ShowFileMenu()
 
 	if (ImGui::MenuItem("Save As..", "Ctrl + Shift + S"))
 	{
+		FileDialog fileDialog;
+		FileLoader fileLoader;
 
+		mFileName = fileDialog.SaveFile();
+
+		if (mFileName == "")
+			return;
+
+		//fileLoader.SaveMap(mFileName);
+		fileLoader.SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
 	}
 
 	if (ImGui::MenuItem("Exit"))
