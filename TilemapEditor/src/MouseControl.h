@@ -33,6 +33,12 @@ private:
 private:
 	void MouseBox(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider = false);
 	bool FastTile(const glm::vec2& pos);
+
+	// Mouse Buttons Down Functions
+	bool LeftButtonDown() { return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1); }
+	bool MiddleButtonDown() { return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(2); }
+	bool RightButtonDown() { return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3); }
+	
 public:
 	MouseControl();
 	~MouseControl() = default;

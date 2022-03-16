@@ -79,7 +79,7 @@ bool MouseControl::FastTile(const glm::vec2& pos)
 {
 	if (mGridSnap)
 	{
-		if ((pos.x != mPrevMousePos.x || pos.y != mPrevMousePos.y) && mLeftPressed)
+		if ((pos.x != mPrevMousePos.x || pos.y != mPrevMousePos.y) && LeftButtonDown())
 			return true;
 		else
 			return false;
@@ -127,8 +127,13 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 		mouseBox.x + camera.x,
 		mouseBox.y + camera.y
 	);
+	
+	if (!LeftButtonDown())
+		mLeftPressed = false;
+	if (!RightButtonDown())
+		mRightPressed = false;
 
-	if ((event.type == SDL_MOUSEBUTTONDOWN || mLeftPressed) && !mOverImGuiWindow)
+	if ((event.type == SDL_MOUSEBUTTONDOWN || LeftButtonDown()) && !mOverImGuiWindow)
 	{
 		// If the left mouse button is pressed, create a tile/collider at that location
 		if ((event.button.button == SDL_BUTTON_LEFT && !mLeftPressed) || FastTile(pos))
@@ -169,9 +174,8 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 		}
 
 		// If the right mouse button is pressed, remove the tile/collider at that location
-		if (event.button.button == SDL_BUTTON_RIGHT && !mOverImGuiWindow)
+		if (event.button.button == SDL_BUTTON_RIGHT && !mOverImGuiWindow && !mRightPressed)
 		{
-
 			glm::vec2 subtract = glm::vec2(
 				(mMouseRect.x * mTransformComponent.mScale.x) / 2,
 				(mMouseRect.y * mTransformComponent.mScale.y) / 2
@@ -197,12 +201,6 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 				}
 			}
 		}
-	}
-
-	if (event.type == SDL_MOUSEBUTTONUP)
-	{
-		mLeftPressed = false;
-		mRightPressed = false;
 	}
 }
 
