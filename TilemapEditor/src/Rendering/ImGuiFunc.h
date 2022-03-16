@@ -3,6 +3,7 @@
 #include <string>
 #include "../Utilities/Utilities.h"
 #include <glm/glm.hpp>
+#include <vector>
 
 class ImGuiFuncs
 {
@@ -16,6 +17,8 @@ private:
 
 	const int TITLE_BAR_SIZE = 26;
 
+	std::vector<std::string> mLoadedTilesets;
+
 public:
 	ImGuiFuncs();
 	~ImGuiFuncs();
@@ -25,7 +28,7 @@ public:
 
 	void ShowFileMenu();
 	void ShowToolsMenu(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const std::unique_ptr<class AssetManager>& assetManager);
-	void ShowTileProperties(std::unique_ptr<class MouseControl>& mouseControl);
+	void ShowTileProperties(std::unique_ptr<class MouseControl>& mouseControl, const std::unique_ptr<class AssetManager>& assetManager);
 
 	void TileSetWindow(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const glm::vec2& mouseRect);
 

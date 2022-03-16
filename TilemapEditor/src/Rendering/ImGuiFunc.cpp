@@ -37,7 +37,7 @@ void ImGuiFuncs::TileSetWindow(const std::unique_ptr<AssetManager>& assetManager
 				{
 					if (ImGui::IsItemHovered())
 					{
-						
+
 						if (ImGui::IsMouseClicked(0))
 						{
 							mSrcRectX = i * mouseRect.x;
@@ -73,6 +73,7 @@ ImGuiFuncs::ImGuiFuncs()
 	, mImageLoaded(false)
 	, mExit(false)
 	, mCollider(false)
+	, mLoadedTilesets()
 {
 
 }
@@ -178,7 +179,7 @@ void ImGuiFuncs::ShowFileMenu()
 	if (ImGui::MenuItem("Open", "Ctrl + O"))
 	{
 		FileDialog fileDialog;
-		std::string fileName = fileDialog.OpenFile();
+		mFileName = fileDialog.OpenFile();
 	}
 
 	if (ImGui::MenuItem("Save", "Ctrl + S"))
@@ -220,21 +221,50 @@ void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>
 		else
 		{
 			mImageLoaded = true;
+			mLoadedTilesets.push_back(mAssetID);
 			LOG_INFO("Filename: {0}", path.stem().string());
 		}
-
-		
 	}
 }
 
-void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl)
+void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl, const std::unique_ptr<AssetManager>& assetManager)
 {
 	if (ImGui::Begin("Tile Properties"))
 	{
+		static std::string currentTileset = "";
+		static std::string prevTileSet = mAssetID;
+
+		if (ImGui::BeginCombo("Change tileset", currentTileset.c_str()))
+		{
+			for (int i = 0; i < mLoadedTilesets.size(); i++)
+			{
+				bool isSelectable = (currentTileset == mLoadedTilesets[i]);
+				if (ImGui::Selectable(mLoadedTilesets[i].c_str(), isSelectable))
+					currentTileset = mLoadedTilesets[i];
+				if (isSelectable)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		if (currentTileset != "")
+		{
+			if (prevTileSet != currentTileset)
+			{
+				mAssetID = currentTileset;
+				SDL_QueryTexture(assetManager->GetTexture(mAssetID).get(), NULL, NULL, &mImageWidth, &mImageHeight);
+				prevTileSet = currentTileset;
+				LOG_INFO("QUERY");
+			}
+			if (currentTileset != mAssetID)
+				currentTileset = mAssetID;
+		}
+
+
 		ImGui::Text("Transform Component");
 		ImGui::SliderInt("X Scale", &mScaleX, 1, 10);
 		ImGui::SliderInt("Y Scale", &mScaleY, 1, 10);
-		
+
 		if (ImGui::InputInt("Mouse Rect Y", &mMouseRectY, 8, 8))
 		{
 			mMouseRectY = (mMouseRectY / 8) * 8;
@@ -252,7 +282,7 @@ void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl)
 		}
 
 		ImGui::Checkbox("Box Collider", &mCollider);
-		
+
 		if (mCollider)
 		{
 			mouseControl->SetCollider(mCollider);
@@ -279,7 +309,7 @@ void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl)
 		{
 			mWidth = mMouseRectX;
 			mHeight = mMouseRectY;
-			
+
 			mouseControl->SetTransformScale(mScaleX, mScaleY);
 			mouseControl->SetMouseRect(mMouseRectX, mMouseRectY);
 

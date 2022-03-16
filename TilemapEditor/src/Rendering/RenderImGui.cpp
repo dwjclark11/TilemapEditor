@@ -11,6 +11,7 @@
 
 RenderGuiSystem::RenderGuiSystem()
 	: mCreateTiles(false)
+	, mCreateColliders(false)
 	, mGridSnap(false)
 	, mExit(false)
 	, mCanvasWidth(640)
@@ -39,7 +40,7 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		if (ImGui::BeginMenu("File"))
 		{
 			mImFuncs->ShowFileMenu();
-			
+
 			ImGui::EndMenu();
 		}
 
@@ -70,25 +71,35 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		{
 			mImFuncs->ShowToolsMenu(renderer, assetManager);
 			ImGui::Checkbox("Create Tiles", &mCreateTiles);
+			ImGui::Checkbox("Create Colliders", &mCreateColliders);
 			ImGui::Checkbox("Grid Snap", &mGridSnap);
 
 			ImGui::EndMenu();
 		}
+
+		// Mouse Location
+		ShowMouseLocationText(mouseBox, camera, mMouseControl);
+
 		ImGui::EndMainMenuBar();
 	}
 
 	if (mCreateTiles)
 	{
 		mImFuncs->TileSetWindow(assetManager, renderer, mMouseControl->GetMouseRect());
-		mImFuncs->ShowTileProperties(mMouseControl);
+		mImFuncs->ShowTileProperties(mMouseControl, assetManager);
+
 		mMouseControl->CreateTile(assetManager, renderer, mouseBox, camera, event);
 	}
 
+	if (mCreateColliders)
+	{
+		// TODO: Add Collider window
+		mMouseControl->CreateCollider(assetManager, renderer, mouseBox, camera, event);
+	}
+
+
 	ImGui::Render();
 	ImGuiSDL::Render(ImGui::GetDrawData());
-
-
-
 
 	// If Mouse is over ImGui Window, disable MouseControlSystem functions
 	ImGuiIO& io = ImGui::GetIO();
@@ -100,7 +111,7 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 
 	// Check for Exit
 	SetExit(mImFuncs->GetExit());
-	
+
 	// Check for GridSnap
 	mMouseControl->SetGridSnap(mGridSnap);
 }
@@ -111,13 +122,28 @@ void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLD
 	auto yTiles = mCanvasHeight / mTileSize;
 
 	SDL_SetRenderDrawColor(renderer.get(), 70, 70, 70, 70);
-	
+
 	for (int i = 0; i < yTiles; i++)
 	{
 		for (int j = 0; j < xTiles; j++)
 		{
-			SDL_Rect newRect = { (j * mTileSize) - camera.x, (i * mTileSize) - camera.y, mTileSize, mTileSize};
+			SDL_Rect newRect = { (j * mTileSize) - camera.x, (i * mTileSize) - camera.y, mTileSize, mTileSize };
 			SDL_RenderDrawRect(renderer.get(), &newRect);
 		}
 	}
+}
+
+void RenderGuiSystem::ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera, std::unique_ptr<MouseControl>& mouseControl)
+{
+	if (!mMouseControl->MouseOutOfBounds() && mCreateTiles)
+	{
+		ImGui::TextColored(ImVec4(0, 255, 0, 1), "Grid [X: %d, Y: %d]", (mouseBox.x + camera.x) / mTileSize, (mouseBox.y + camera.y) / mTileSize);
+		ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
+
+		if (mGridSnap)
+			ImGui::TextColored(ImVec4(0, 255, 0, 1), "Mouse [X: %d, Y: %d]", (mouseBox.x + camera.x), (mouseBox.y + camera.y));
+		else
+			ImGui::TextColored(ImVec4(0, 255, 0, 1), "Mouse [X: %d, Y: %d]", static_cast<int>(mouseControl->GetMousePosScreen().x), static_cast<int>(mouseControl->GetMousePosScreen().y));
+	}
+
 }

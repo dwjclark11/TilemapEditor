@@ -2,6 +2,7 @@
 #include "AssetManager.h"
 #include <SDL.h>
 
+
 void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider)
 {
 	// Get the location of the mouse from SDL
@@ -27,7 +28,16 @@ void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, s
 	{
 		mouseBox.x = mMousePosX - camera.x - (mMouseRect.x * mTransformComponent.mScale.x) / 2;
 		mouseBox.y = mMousePosY - camera.y - (mMouseRect.y * mTransformComponent.mScale.y) / 2;
+
 	}
+
+	// This value is used for Mouse Pos monitoring in the ImGui Main Bar
+	mMousePosScreen.x = mMousePosX;
+	mMousePosScreen.y = mMousePosY;
+
+	// Do not draw the mouse box image outside of the mouse bounds
+	if (MouseOutOfBounds())
+		return;
 
 	SDL_Rect srcRect = {
 		mSpriteComponent.mSrcRect.x,
@@ -43,6 +53,7 @@ void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, s
 		mouseBox.h * mMouseRect.y * mTransformComponent.mScale.y
 	};
 
+	// If not a collider, draw the selected tile image
 	if (!collider)
 	{
 		SDL_RenderCopyEx(
@@ -64,12 +75,27 @@ void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, s
 	}
 }
 
+bool MouseControl::FastTile(const glm::vec2& pos)
+{
+	if (mGridSnap)
+	{
+		if ((pos.x != mPrevMousePos.x || pos.y != mPrevMousePos.y) && mLeftPressed)
+			return true;
+		else
+			return false;
+	}
+	else
+		return false;
+
+}
+
 MouseControl::MouseControl()
 	: mMouseRect(glm::vec2(16, 16))
 	, mMousePosX(0)
 	, mMousePosY(0)
 	, mMousePosGrid(glm::vec2(0))
 	, mPrevMousePos(glm::vec2(mMousePosX, mMousePosY))
+	, mMousePosScreen(glm::vec2(0))
 	, mGridSize(16)
 	, mIsCollider(false)
 	, mGridSnap(true)
@@ -83,9 +109,14 @@ MouseControl::MouseControl()
 
 }
 
-void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
+void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
 {
+	// Draw the Mouse Box Image, this follows the mouse
 	MouseBox(assetManager, renderer, mouseBox, camera, false);
+
+	// Do not create tiles outside of the mouse bounds
+	if (MouseOutOfBounds())
+		return;
 
 	glm::vec2 pos = glm::vec2(
 		mouseBox.x + camera.x / mGridSize,
@@ -99,8 +130,8 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 
 	if ((event.type == SDL_MOUSEBUTTONDOWN || mLeftPressed) && !mOverImGuiWindow)
 	{
-		if ((event.button.button == SDL_BUTTON_LEFT || mLeftPressed)
-			&& (pos.x != mPrevMousePos.x || pos.y != mPrevMousePos.y))
+		// If the left mouse button is pressed, create a tile/collider at that location
+		if ((event.button.button == SDL_BUTTON_LEFT && !mLeftPressed) || FastTile(pos))
 		{
 			Entity tile = Registry::Instance().CreateEntity();
 			tile.Group("tiles");
@@ -121,6 +152,7 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 				mSpriteComponent.mOffset
 				);
 
+			// If the tile is a box collider, Add a BoxColliderComponent
 			if (mIsCollider)
 			{
 				tile.AddComponent<BoxColliderComponent>(
@@ -131,22 +163,24 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 			}
 
 			mLeftPressed = true;
+			// This is used for Creating tiles faster
 			mPrevMousePos.x = pos.x;
 			mPrevMousePos.y = pos.y;
 		}
-		
+
+		// If the right mouse button is pressed, remove the tile/collider at that location
 		if (event.button.button == SDL_BUTTON_RIGHT && !mOverImGuiWindow)
 		{
-			
+
 			glm::vec2 subtract = glm::vec2(
 				(mMouseRect.x * mTransformComponent.mScale.x) / 2,
 				(mMouseRect.y * mTransformComponent.mScale.y) / 2
 			);
 
-			// Loop through all entities and see if there is one with 
-			// the same transform as the mouse and remove iter_swap
+			// Get all the entities from the group "tiles"
 			auto entities = Registry::Instance().GetEntitiesByGroup("tiles");
 
+			// Loop through tiles and remove the one that the mouse is hovering over
 			for (auto& entity : entities)
 			{
 				auto& transform = entity.GetComponent<TransformComponent>();
@@ -160,6 +194,72 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 					entity.Kill();
 					mRightPressed = true;
 					LOG_INFO("Tile with ID: {0} has been removed!", entity.GetID());
+				}
+			}
+		}
+	}
+
+	if (event.type == SDL_MOUSEBUTTONUP)
+	{
+		mLeftPressed = false;
+		mRightPressed = false;
+	}
+}
+
+void MouseControl::CreateCollider(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
+{
+	MouseBox(assetManager, renderer, mouseBox, camera, true);
+
+	// Do not create colliders outside of the mouse bounds
+	if (MouseOutOfBounds())
+		return;
+
+	if (event.type == SDL_MOUSEBUTTONDOWN && !mLeftPressed)
+	{
+		if (event.button.button == SDL_BUTTON_LEFT && !mOverImGuiWindow)
+		{
+			Entity boxCollider = Registry::Instance().CreateEntity();
+			boxCollider.Group("colliders");
+			boxCollider.AddComponent<TransformComponent>(
+				glm::vec2(
+					mouseBox.x + camera.x,
+					mouseBox.y + camera.y),
+				mTransformComponent.mScale,
+				mTransformComponent.mRotation
+				);
+
+			boxCollider.AddComponent<BoxColliderComponent>(
+				mBoxColliderComponent.mHeight,
+				mBoxColliderComponent.mWidth,
+				mBoxColliderComponent.mOffset
+				);
+			mLeftPressed = true;
+		}
+
+		if (event.button.button == SDL_BUTTON_RIGHT && !mOverImGuiWindow)
+		{
+			glm::vec2 subtract = glm::vec2(
+				(mMouseRect.x * mTransformComponent.mScale.x) / 2,
+				(mMouseRect.y * mTransformComponent.mScale.y) / 2
+			);
+
+			// Get all the entities from the group "tiles"
+			auto entities = Registry::Instance().GetEntitiesByGroup("colliders");
+
+			// Loop through tiles and remove the one that the mouse is hovering over
+			for (auto& entity : entities)
+			{
+				auto& transform = entity.GetComponent<TransformComponent>();
+
+				if (transform.mPosition.x <= mMousePosX - subtract.x + 15
+					&& transform.mPosition.x >= mMousePosX - subtract.x - 15
+					&& transform.mPosition.y <= mMousePosY - subtract.y + 15
+					&& transform.mPosition.y >= mMousePosY - subtract.y - 15
+					)
+				{
+					entity.Kill();
+					mRightPressed = true;
+					LOG_INFO("Collider with ID: {0} has been removed!", entity.GetID());
 				}
 			}
 		}
@@ -195,3 +295,10 @@ void MouseControl::SetBoxColliderProperties(const int& width, const int& height,
 	mBoxColliderComponent.mOffset = glm::vec2(offsetX, offsetY);
 }
 
+const bool MouseControl::MouseOutOfBounds() const
+{
+	if (mMousePosScreen.x < 0 || mMousePosScreen.y < 0)
+		return true;
+
+	return false;
+}
