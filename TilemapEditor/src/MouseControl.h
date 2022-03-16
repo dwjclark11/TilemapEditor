@@ -46,7 +46,7 @@ public:
 	void CreateTile(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
 
 	void CreateCollider(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
-
+	void UpdateMousePos(const SDL_Rect& camera);
 	void SetSpriteProperties(const std::string& assetID, const int& width, const int& height, const int& layer, const int& srcRectX, const int& srcRectY);
 	void SetTransformScale(const int& scaleX, const int& scaleY);
 	void SetBoxColliderProperties(const int& width, const int& height, const int& offsetX, const int& offsetY);

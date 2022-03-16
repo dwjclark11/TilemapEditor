@@ -17,6 +17,7 @@ private:
 private:
 	void SetExit(bool exit) { mExit = exit; }
 	void ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera, std::unique_ptr<class MouseControl>& mouseControl);
+	const bool MouseOffCanvas() const;
 public:
 	RenderGuiSystem();
 	~RenderGuiSystem();

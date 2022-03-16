@@ -5,13 +5,6 @@
 
 void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider)
 {
-	// Get the location of the mouse from SDL
-	SDL_GetMouseState(&mMousePosX, &mMousePosY);
-
-	// Add the camera position to the mouse position
-	mMousePosX += camera.x;
-	mMousePosY += camera.y;
-
 	// If Grid Snap is enabled, snap the tile to the next grid location
 	if (mGridSnap)
 	{
@@ -30,10 +23,6 @@ void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, s
 		mouseBox.y = mMousePosY - camera.y - (mMouseRect.y * mTransformComponent.mScale.y) / 2;
 
 	}
-
-	// This value is used for Mouse Pos monitoring in the ImGui Main Bar
-	mMousePosScreen.x = mMousePosX;
-	mMousePosScreen.y = mMousePosY;
 
 	// Do not draw the mouse box image outside of the mouse bounds
 	if (MouseOutOfBounds())
@@ -268,6 +257,20 @@ void MouseControl::CreateCollider(const std::unique_ptr<AssetManager>& assetMana
 		mLeftPressed = false;
 		mRightPressed = false;
 	}
+}
+
+void MouseControl::UpdateMousePos(const SDL_Rect& camera)
+{
+	// Get the location of the mouse from SDL
+	SDL_GetMouseState(&mMousePosX, &mMousePosY);
+
+	// Add the camera position to the mouse position
+	mMousePosX += camera.x;
+	mMousePosY += camera.y;
+
+	// This value is used for Mouse Pos monitoring in the ImGui Main Bar
+	mMousePosScreen.x = mMousePosX;
+	mMousePosScreen.y = mMousePosY;
 }
 
 void MouseControl::SetSpriteProperties(const std::string& assetID, const int& width, const int& height, const int& layer, const int& srcRectX, const int& srcRectY)

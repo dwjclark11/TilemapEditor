@@ -15,7 +15,7 @@ RenderGuiSystem::RenderGuiSystem()
 	, mGridSnap(false)
 	, mExit(false)
 	, mCanvasWidth(640)
-	, mCanvasHeight(480)
+	, mCanvasHeight(448)
 	, mTileSize(64)
 
 {
@@ -88,7 +88,8 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		mImFuncs->TileSetWindow(assetManager, renderer, mMouseControl->GetMouseRect());
 		mImFuncs->ShowTileProperties(mMouseControl, assetManager);
 
-		mMouseControl->CreateTile(assetManager, renderer, mouseBox, camera, event);
+		if (!MouseOffCanvas())
+			mMouseControl->CreateTile(assetManager, renderer, mouseBox, camera, event);
 	}
 
 	if (mCreateColliders)
@@ -97,6 +98,7 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		mMouseControl->CreateCollider(assetManager, renderer, mouseBox, camera, event);
 	}
 
+	mMouseControl->UpdateMousePos(camera);
 
 	ImGui::Render();
 	ImGuiSDL::Render(ImGui::GetDrawData());
@@ -146,4 +148,12 @@ void RenderGuiSystem::ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera
 			ImGui::TextColored(ImVec4(0, 255, 0, 1), "Mouse [X: %d, Y: %d]", static_cast<int>(mouseControl->GetMousePosScreen().x), static_cast<int>(mouseControl->GetMousePosScreen().y));
 	}
 
+}
+
+const bool RenderGuiSystem::MouseOffCanvas() const
+{
+	if (mMouseControl->GetMousePosScreen().x > mCanvasWidth || mMouseControl->GetMousePosScreen().y > mCanvasHeight)
+		return true;
+
+	return false;
 }
