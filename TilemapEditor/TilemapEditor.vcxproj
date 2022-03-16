@@ -198,6 +198,7 @@
     <ClInclude Include="src\Rendering\RenderImGui.h" />
     <ClInclude Include="src\Rendering\RenderSystem.h" />
     <ClInclude Include="src\Utilities\FileDialogWin.h" />
+    <ClInclude Include="src\Utilities\FileLoader.h" />
     <ClInclude Include="src\Utilities\LuaWriter.h" />
     <ClInclude Include="src\Utilities\Utilities.h" />
   </ItemGroup>

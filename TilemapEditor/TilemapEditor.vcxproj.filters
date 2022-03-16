@@ -146,5 +146,8 @@
     <ClInclude Include="src\Utilities\LuaWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utilities\FileLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

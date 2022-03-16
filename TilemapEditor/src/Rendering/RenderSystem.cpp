@@ -9,13 +9,6 @@ RenderSystem::RenderSystem()
 	RequiredComponent<TransformComponent>();
 	RequiredComponent<SpriteComponent>();
 
-	Entity newEntity = Registry::Instance().CreateEntity();
-	newEntity.AddComponent<TransformComponent>(glm::vec2(500, 500), glm::vec2(4, 4));
-	newEntity.AddComponent<SpriteComponent>("hearts", 16, 16, 0, false);
-
-	Entity newEntity2 = Registry::Instance().CreateEntity();
-	newEntity2.AddComponent<TransformComponent>(glm::vec2(500, 500), glm::vec2(4, 4));
-	newEntity2.AddComponent<SpriteComponent>("hearts", 16, 16, 0, false);
 }
 
 void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetManager>& assetManager, SDL_Rect& camera)

@@ -18,6 +18,7 @@ private:
 	const int TITLE_BAR_SIZE = 26;
 
 	std::vector<std::string> mLoadedTilesets;
+	std::vector<std::string> mTilesetLocations;
 
 public:
 	ImGuiFuncs();

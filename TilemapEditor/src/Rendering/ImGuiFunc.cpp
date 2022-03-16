@@ -206,12 +206,18 @@ void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>
 		FileDialog fileDialog;
 		mImageName = fileDialog.OpenImageFile();
 
+		// If the action was cancelled or returned an empty string, exit the function
 		if (mImageName == std::string() || mImageName == "")
 			return;
+
+		// Create a filesystem path so we can get the stem and save that as the AssetID for later usage
 		fs::path path(mImageName);
 		mAssetID = path.stem().string();
+
+		// Add the new texture to the asset manager
 		assetManager->AddTexture(renderer, mAssetID, mImageName);
 
+		// We need to query the texture to get the image width/height. This is used for setting the src_Rect positions
 		if (SDL_QueryTexture(assetManager->GetTexture(mAssetID).get(), NULL, NULL, &mImageWidth, &mImageHeight) != 0)
 		{
 			const char* errMsg = SDL_GetError();
@@ -221,7 +227,11 @@ void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>
 		else
 		{
 			mImageLoaded = true;
-			mLoadedTilesets.push_back(mAssetID);
+			// Both of these will be used for saving the project file and 
+			// for access of the assetID via ImGui combo-box
+			mLoadedTilesets.push_back(mAssetID);		
+			mTilesetLocations.push_back(mImageName);
+
 			LOG_INFO("Filename: {0}", path.stem().string());
 		}
 	}
