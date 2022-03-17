@@ -5,11 +5,11 @@
 
 RenderCollisionSystem::RenderCollisionSystem()
 {
-	RequiredComponent<BoxColliderComponent>(); 
-	RequiredComponent<TransformComponent>(); 
+	RequiredComponent<BoxColliderComponent>();
+	RequiredComponent<TransformComponent>();
 }
 
-void RenderCollisionSystem::Update(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera)
+void RenderCollisionSystem::Update(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera, const float& zoom)
 {
 	for (const auto& entity : GetSystemEntities())
 	{
@@ -17,10 +17,10 @@ void RenderCollisionSystem::Update(std::unique_ptr<SDL_Renderer, Util::SDLDestro
 		const auto& collider = entity.GetComponent<BoxColliderComponent>();
 
 		const SDL_Rect srcRect = {
-			transform.mPosition.x + collider.mOffset.x - camera.x,
-			transform.mPosition.y + collider.mOffset.y - camera.y,
-			collider.mWidth * transform.mScale.x,
-			collider.mHeight * transform.mScale.y
+			transform.mPosition.x * zoom + collider.mOffset.x - camera.x,
+			transform.mPosition.y * zoom + collider.mOffset.y - camera.y,
+			collider.mWidth * transform.mScale.x * zoom,
+			collider.mHeight * transform.mScale.y * zoom
 		};
 
 		SDL_SetRenderDrawColor(renderer.get(), 255, 0, 0, 125);

@@ -11,7 +11,7 @@ RenderSystem::RenderSystem()
 
 }
 
-void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetManager>& assetManager, SDL_Rect& camera)
+void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetManager>& assetManager, SDL_Rect& camera, const float& zoom)
 {
 	// Create a struct for sorting entities
 	struct RenderableEntity
@@ -28,20 +28,20 @@ void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetMan
 		RenderableEntity renderableEntity;
 		renderableEntity.transformComponent = entity.GetComponent<TransformComponent>();
 		renderableEntity.spriteComponent = entity.GetComponent<SpriteComponent>();
-	
+
 		bool isEntityOutsideCamera = (
 			renderableEntity.transformComponent.mPosition.x + (renderableEntity.transformComponent.mScale.x * renderableEntity.spriteComponent.mWidth) < camera.x ||
 			renderableEntity.transformComponent.mPosition.x > camera.x + camera.w ||
 			renderableEntity.transformComponent.mPosition.y + (renderableEntity.transformComponent.mScale.y * renderableEntity.spriteComponent.mHeight) < camera.y ||
 			renderableEntity.transformComponent.mPosition.y > camera.y + camera.h
 			);
-		
+
 		// Bypass entites that are outside of the camera and fixed sprites
 		if (isEntityOutsideCamera && !renderableEntity.spriteComponent.mIsFixed)
 		{
 			continue;
 		}
-			
+
 		// place the entity inside of the Renderable entities vector
 		renderableEntities.emplace_back(renderableEntity);
 	}
@@ -63,10 +63,10 @@ void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetMan
 
 		// Set the Destination rect with the x, y position to be rendered
 		SDL_Rect dstRect = {
-			(transform.mPosition.x - (sprite.mIsFixed ? 0 : camera.x)), // If the sprite is fixed, do not subtract the camera value 
-			(transform.mPosition.y - (sprite.mIsFixed ? 0 : camera.y)), 
-			(sprite.mWidth * transform.mScale.x),
-			(sprite.mHeight * transform.mScale.y)
+			((transform.mPosition.x * zoom) - (sprite.mIsFixed ? 0 : camera.x)), // If the sprite is fixed, do not subtract the camera value 
+			((transform.mPosition.y * zoom) - (sprite.mIsFixed ? 0 : camera.y)),
+			(sprite.mWidth * transform.mScale.x * zoom),
+			(sprite.mHeight * transform.mScale.y * zoom)
 		};
 
 		SDL_RenderCopyEx(

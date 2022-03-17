@@ -25,7 +25,7 @@ public:
 	~RenderGuiSystem();
 
 	void Update(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
-		SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event);
+		SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event, const float& zoom, const float& dt);
 	void RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera, const float& zoom);
 	const bool GetExit() const { return mExit; }
 };

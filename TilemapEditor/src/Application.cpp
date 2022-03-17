@@ -91,10 +91,10 @@ void Application::Draw()
 	SDL_RenderClear(mRenderer.get());
 
 	// Render Application Systems
-	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera);
-	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera);
+	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera, mZoom);
+	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera, mZoom);
-	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent);
+	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent, mZoom, mDeltaTime);
 
 	/*
 		This is a little hack to get SDL and ImGui to stop Ghosting!
@@ -146,11 +146,29 @@ void Application::ProcessEvents()
 
 void Application::Update()
 {
+	UpdateDeltaTime();
 	Registry::Instance().Update();
 
 	// Check for Exit
 	if (Registry::Instance().GetSystem<RenderGuiSystem>().GetExit())
 		mIsRunning = false;
+}
+
+void Application::UpdateDeltaTime()
+{
+	// If we are too fast, waste some time until we reach the desired time per frame.
+	int timeToWait = MILLISECONDS_PER_FRAME - (SDL_GetTicks() - mMsPerFrame);
+
+	if (timeToWait > 0 && timeToWait <= mMsPerFrame)
+	{
+		SDL_Delay(timeToWait);
+	}
+
+	// The difference in ticks since the last frame, converted to seconds
+	mDeltaTime = (SDL_GetTicks() - mMsPrevFrame) / 1000.0f;
+
+	// Store the current time frame
+	mMsPrevFrame = SDL_GetTicks();
 }
 
 void Application::CameraControl(SDL_Event& event)
@@ -181,16 +199,16 @@ void Application::Zoom(SDL_Event& event)
 {
 	if (event.wheel.y > 0)
 	{
-		mZoom += 0.1f;
-		LOG_INFO("Zoom: {0}", mZoom);
+		mZoom += 0.2f;
+		//LOG_INFO("Zoom: {0}", mZoom);
 	}
 	else if (event.wheel.y < 0)
 	{
-		mZoom -= 0.1f;
-		LOG_INFO("Zoom: {0}", mZoom);
+		mZoom -= 0.2f;
+		//LOG_INFO("Zoom: {0}", mZoom);
 
-		if (mZoom <= 0)
-			mZoom = 0.1;
+		if (mZoom <= 0.5)
+			mZoom = 0.5;
 	}
 }
 
@@ -203,6 +221,8 @@ Application::Application()
 	, mDeltaTime(0.f)
 	, mEvent()
 	, mAssetManager(nullptr)
+	, mMsPrevFrame(0)
+	, mMsPerFrame(0)
 	, mZoom(1)
 {
 

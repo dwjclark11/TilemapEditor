@@ -15,8 +15,10 @@ private:
 	glm::vec2 mMousePosGrid;
 	glm::vec2 mPrevMousePos;
 	glm::vec2 mMousePosScreen;
+	float mZoom;
+	int mGridSize, mPanX, mPanY;
 
-	int mGridSize;
+
 
 	bool mIsCollider;
 	bool mGridSnap;
@@ -38,7 +40,7 @@ private:
 	bool LeftButtonDown() { return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1); }
 	bool MiddleButtonDown() { return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(2); }
 	bool RightButtonDown() { return SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3); }
-	
+
 public:
 	MouseControl();
 	~MouseControl() = default;
@@ -52,6 +54,8 @@ public:
 	void SetBoxColliderProperties(const int& width, const int& height, const int& offsetX, const int& offsetY);
 	const bool MouseOutOfBounds() const;
 
+
+	void PanCamera(SDL_Rect& camera, const float& dt);
 	inline void SetMouseOverImGuiWindow(bool over) { mOverImGuiWindow = over; }
 	inline const glm::vec2& GetMouseRect() const { return mMouseRect; }
 	inline void SetMouseRect(int mouseRectX, int mouseRectY) { mMouseRect = glm::vec2(mouseRectX, mouseRectY); }
@@ -60,5 +64,6 @@ public:
 	inline void SetGridSize(int size) { mGridSize = size; }
 	inline void SetCollider(bool collider) { mIsCollider = collider; }
 	inline const glm::vec2& GetMousePosScreen() const { return mMousePosScreen; }
+	inline void UpdateZoom(const float& zoom) { mZoom = zoom; }
 
 };

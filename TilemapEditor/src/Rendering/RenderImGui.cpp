@@ -34,7 +34,8 @@ RenderGuiSystem::~RenderGuiSystem()
 
 }
 
-void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
+void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer,
+	SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event, const float& zoom, const float& dt)
 {
 	ImGui::NewFrame();
 
@@ -101,6 +102,12 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 		mMouseControl->CreateCollider(assetManager, renderer, mouseBox, camera, event);
 	}
 
+
+	// Check for GridSnap
+	mMouseControl->SetGridSnap(mGridSnap);
+	mMouseControl->UpdateZoom(zoom);
+	mMouseControl->PanCamera(camera, dt);
+
 	mMouseControl->UpdateMousePos(camera);
 
 	ImGui::Render();
@@ -117,14 +124,12 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 	// Check for Exit
 	SetExit(mImFuncs->GetExit());
 
-	// Check for GridSnap
-	mMouseControl->SetGridSnap(mGridSnap);
 }
 
 void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera, const float& zoom)
 {
-	auto xTiles = (mCanvasWidth / mTileSize) * zoom;
-	auto yTiles = (mCanvasHeight / mTileSize) * zoom;
+	auto xTiles = (mCanvasWidth / mTileSize);
+	auto yTiles = (mCanvasHeight / mTileSize);
 
 	SDL_SetRenderDrawColor(renderer.get(), 70, 70, 70, 70);
 
@@ -132,7 +137,7 @@ void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLD
 	{
 		for (int j = 0; j < xTiles; j++)
 		{
-			SDL_Rect newRect = { (j * mTileSize) - camera.x, (i * mTileSize) - camera.y, mTileSize * zoom, mTileSize * zoom};
+			SDL_Rect newRect = { (j * mTileSize * zoom) - camera.x, (i * mTileSize * zoom) - camera.y, mTileSize * zoom, mTileSize * zoom };
 			SDL_RenderDrawRect(renderer.get(), &newRect);
 		}
 	}

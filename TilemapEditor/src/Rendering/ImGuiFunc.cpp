@@ -249,7 +249,7 @@ void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>
 			mImageLoaded = true;
 			// Both of these will be used for saving the project file and 
 			// for access of the assetID via ImGui combo-box
-			mLoadedTilesets.push_back(mAssetID);		
+			mLoadedTilesets.push_back(mAssetID);
 			mTilesetLocations.push_back(mImageName);
 
 			LOG_INFO("Filename: {0}", path.stem().string());
