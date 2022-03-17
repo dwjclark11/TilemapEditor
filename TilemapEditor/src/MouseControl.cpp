@@ -13,13 +13,13 @@ void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, s
 		if (mMousePosX >= 0) mMousePosGrid.x = mMousePosX / mGridSize;
 		if (mMousePosY >= 0) mMousePosGrid.y = mMousePosY / mGridSize;
 
-		mouseBox.x = (mMousePosGrid.x * mGridSize * mZoom) - camera.x;
-		mouseBox.y = (mMousePosGrid.y * mGridSize * mZoom) - camera.y;
+		mouseBox.x = (mMousePosGrid.x * mGridSize * mZoom) - camera.x - (mMouseRect.x * mTransformComponent.mScale.x * mZoom) / 2;
+		mouseBox.y = (mMousePosGrid.y * mGridSize * mZoom) - camera.y - (mMouseRect.y * mTransformComponent.mScale.y * mZoom) / 2;
 	}
 	else // Float the center of the tile on the mouse
 	{
-		mouseBox.x = (mMousePosX * mZoom - camera.x - (mMouseRect.x * mTransformComponent.mScale.x) / 2);
-		mouseBox.y = (mMousePosY * mZoom - camera.y - (mMouseRect.y * mTransformComponent.mScale.y) / 2);
+		mouseBox.x = (mMousePosX * mZoom - camera.x - (mMouseRect.x * mTransformComponent.mScale.x * mZoom) / 2);
+		mouseBox.y = (mMousePosY * mZoom - camera.y - (mMouseRect.y * mTransformComponent.mScale.y * mZoom) / 2);
 
 	}
 
@@ -269,8 +269,6 @@ void MouseControl::UpdateMousePos(const SDL_Rect& camera)
 	// Get the location of the mouse from SDL
 	SDL_GetMouseState(&mMousePosX, &mMousePosY);
 
-
-
 	// Add the camera position to the mouse position
 	mMousePosX += camera.x;
 	mMousePosY += camera.y;
@@ -316,26 +314,16 @@ const bool MouseControl::MouseOutOfBounds() const
 
 void MouseControl::PanCamera(SDL_Rect& camera, const float& dt)
 {
-	//LOG_INFO("Pan: [X:{0}, Y:{1}]", mPanX, mPanY);
-	//LOG_INFO("Mouse: [X:{0}, Y:{1}]", mMousePosScreen.x, mMousePosScreen.y);
-	//LOG_INFO("Mouse: [X:{0}, Y:{1}]", camera.x, camera.y);
-
 	if (MiddleButtonDown())
 	{
 		if (mPanX != mMousePosScreen.x)
 		{
-			//glm::vec2 direction = glm::normalize(glm::vec2(mMousePosScreen.x, mMousePosScreen.y) - (glm::vec2(mPanX, mPanY)));
-
 			camera.x -= (mMousePosScreen.x - mPanX) * mZoom * dt * 10;
-			//mPanX = mMousePosScreen.x;
-			LOG_INFO("X_Change: {0}", (mMousePosScreen.x - mPanX) * mZoom * dt);
 		}
 
 		if (mPanY != mMousePosScreen.y)
 		{
 			camera.y -= (mMousePosScreen.y - mPanY) * mZoom * dt * 10;
-			//mPanY = mMousePosScreen.y;
-			LOG_INFO("Y_Change: {0}", (mMousePosScreen.y - mPanY) * mZoom * dt);
 		}
 	}
 	else

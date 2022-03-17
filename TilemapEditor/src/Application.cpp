@@ -210,6 +210,10 @@ void Application::Zoom(SDL_Event& event)
 		if (mZoom <= 0.5)
 			mZoom = 0.5;
 	}
+
+	// Zoom in the camera as well?
+	mCamera.h* mZoom;
+	mCamera.w* mZoom;
 }
 
 Application::Application()
