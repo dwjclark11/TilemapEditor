@@ -23,8 +23,8 @@ FileLoader::~FileLoader()
 {
 }
 
-void FileLoader::LoadProject(sol::state& lua, const std::string& filename, const std::unique_ptr<AssetManager>& assetManager,
-	std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths,
+void FileLoader::LoadProject(sol::state& lua, const std::string& filename, const AssetManager_Ptr& assetManager,
+	Renderer& renderer, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths,
 	int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	/*
@@ -115,7 +115,7 @@ void FileLoader::LoadProject(sol::state& lua, const std::string& filename, const
 	LoadMap(assetManager, mapFile);
 }
 
-void FileLoader::LoadMap(const std::unique_ptr<AssetManager>& assetManager, const std::string& filename)
+void FileLoader::LoadMap(const AssetManager_Ptr& assetManager, const std::string& filename)
 {
 	// Open and read the tilemap
 	std::fstream mapFile;

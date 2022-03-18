@@ -1,5 +1,7 @@
 #include "Application.h"
-#include "AssetManager.h"
+#include <imgui/imgui.h>
+#include <imgui/imgui_sdl.h>
+#include <imgui/imgui_impl_sdl.h>
 #include "Logger/Logger.h"
 #include <SDL_ttf.h>
 #include "Rendering/RenderSystem.h"
@@ -27,7 +29,7 @@ void Application::Init()
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 
 	// Create the window
-	mWindow = std::unique_ptr<SDL_Window, Util::SDLDestroyer>(SDL_CreateWindow(
+	mWindow = Window(SDL_CreateWindow(
 		"Tilemap Editor",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
@@ -43,7 +45,7 @@ void Application::Init()
 	}
 
 	// Create the renderer
-	mRenderer = std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>(SDL_CreateRenderer(
+	mRenderer = Renderer(SDL_CreateRenderer(
 		mWindow.get(),
 		-1,
 		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC

@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 #include "../Utilities/Utilities.h"
+#include "../AssetManager.h"
 #include <glm/glm.hpp>
 #include <vector>
 #include <sol/sol.hpp>
@@ -34,25 +35,23 @@ public:
 	void SetupImgui();
 	void SetupImguiStyle();
 
-	void ShowFileMenu(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
-		std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
-	void ShowToolsMenu(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const std::unique_ptr<class AssetManager>& assetManager);
-	void ShowTileProperties(std::unique_ptr<class MouseControl>& mouseControl, const std::unique_ptr<class AssetManager>& assetManager, bool collider);
-
-	void TileSetWindow(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const glm::vec2& mouseRect);
+	void ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
+	void ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& assetManager);
+	void ShowTileProperties(std::unique_ptr<class MouseControl>& mouseControl, const AssetManager_Ptr& assetManager, bool collider);
+	void TileSetWindow(const AssetManager_Ptr& assetManager, Renderer& renderer, const glm::vec2& mouseRect);
 
 	inline const bool& FilesCleared() const { return mCleared; }
 	inline void SetFilesCleared(bool cleared) { mCleared = cleared; }
 	const bool& GetExit() const { return mExit; }
 	void OpenCheckWindow();
 
-	void UpdateShortCuts(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
-		std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
+	void UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetManager,
+		Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
 
-	void OpenProject(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
-		std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
+	void OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager,
+		Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
 
-	void Save(const std::unique_ptr<class AssetManager>& assetManager,
-		std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize);
+	void Save(const AssetManager_Ptr& assetManager,
+		Renderer& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize);
 
 };

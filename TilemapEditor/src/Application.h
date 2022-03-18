@@ -1,13 +1,11 @@
 #pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include <imgui/imgui.h>
-#include <imgui/imgui_sdl.h>
-#include <imgui/imgui_impl_sdl.h>
 #include <sol/sol.hpp>
 #include <glm/glm.hpp>
 #include <memory>
 #include "./Utilities/Utilities.h"
+#include "AssetManager.h"
 
 class Application
 {
@@ -25,8 +23,8 @@ private:
 
 	const int CAM_SPEED = 10;
 
-	std::unique_ptr<SDL_Window, Util::SDLDestroyer> mWindow;
-	std::unique_ptr<SDL_Renderer, Util::SDLDestroyer> mRenderer;
+	Window mWindow;
+	Renderer mRenderer;
 
 	SDL_Rect mCamera;
 	SDL_Rect mMouseBox;
@@ -39,7 +37,9 @@ private:
 
 	float mZoom;
 
-	std::unique_ptr<class AssetManager> mAssetManager;
+	//std::unique_ptr<class AssetManager> mAssetManager;
+	
+	AssetManager_Ptr mAssetManager;
 
 	// Define constants
 	const int FPS = 60;

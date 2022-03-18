@@ -1,18 +1,15 @@
 #include "ImGuiFunc.h"
 #include <imgui/imgui.h>
 #include <SDL.h>
-
 #include "../Utilities/FileDialogWin.h"
 #include "../Utilities/FileLoader.h"
-
 #include "../Logger/Logger.h"
 #include "../MouseControl.h"
-#include "../AssetManager.h"
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
-void ImGuiFuncs::TileSetWindow(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, const glm::vec2& mouseRect)
+void ImGuiFuncs::TileSetWindow(const AssetManager_Ptr& assetManager, Renderer& renderer, const glm::vec2& mouseRect)
 {
 	// 
 	if (ImGui::Begin("Texture", &mImageLoaded))
@@ -100,8 +97,8 @@ void ImGuiFuncs::OpenCheckWindow()
 	}
 }
 
-void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
-	std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetManager,
+	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	const Uint8* state = SDL_GetKeyboardState(NULL);
 	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_S]) {
@@ -114,7 +111,7 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const std::unique_ptr<class As
 
 }
 
-void ImGuiFuncs::OpenProject(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	mFileDialog;
 	mFileLoader;
@@ -126,7 +123,7 @@ void ImGuiFuncs::OpenProject(sol::state& lua, const std::unique_ptr<class AssetM
 	mFileLoader->LoadProject(lua, mFileName, assetManager, renderer, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
 }
 
-void ImGuiFuncs::Save(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize)
+void ImGuiFuncs::Save(const AssetManager_Ptr& assetManager, Renderer& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize)
 {
 	if (mFileName == "")
 	{
@@ -267,8 +264,8 @@ void ImGuiFuncs::SetupImguiStyle()
 	style.WindowMenuButtonPosition = ImGuiDir_Right;
 }
 
-void ImGuiFuncs::ShowFileMenu(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
-	std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetManager,
+	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	if (ImGui::MenuItem("New", "Ctrl + N"))
 	{
@@ -320,7 +317,7 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const std::unique_ptr<class Asset
 	}
 }
 
-void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, const std::unique_ptr<AssetManager>& assetManager)
+void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& assetManager)
 {
 	if (ImGui::MenuItem("Load Tileset"))
 	{
@@ -358,7 +355,7 @@ void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>
 	}
 }
 
-void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl, const std::unique_ptr<AssetManager>& assetManager, bool collider)
+void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl, const AssetManager_Ptr& assetManager, bool collider)
 {
 	if (ImGui::Begin("Tile Properties"))
 	{

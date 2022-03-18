@@ -17,7 +17,7 @@ private:
 
 
 
-	std::map<std::string, std::unique_ptr<SDL_Texture, Util::SDLDestroyer>> mTextures;
+	std::map<std::string, Texture> mTextures;
 	//std::map<std::string, std::unique_ptr<TTF_Font>> mFonts;
 	//std::map<std::string, std::unique_ptr<Mix_Music>> mMusic;
 	//std::map<std::string, std::unique_ptr<Mix_Chunk>> mSoundFX;
@@ -29,9 +29,11 @@ public:
 	~AssetManager();
 
 	// Add Textures
-	void AddTexture(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, const std::string& assetId, const std::string& filePath);
-	const std::unique_ptr<SDL_Texture, Util::SDLDestroyer>& GetTexture(const std::string& assetId);
+	void AddTexture(Renderer& renderer, const std::string& assetId, const std::string& filePath);
+	const Texture& GetTexture(const std::string& assetId);
 	bool HasTexture(const std::string& assetId);
 	void RemoveTexture(const std::string& assetId);
 
 };
+
+typedef std::unique_ptr<AssetManager> AssetManager_Ptr;

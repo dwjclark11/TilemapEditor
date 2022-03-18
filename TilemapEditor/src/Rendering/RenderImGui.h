@@ -1,6 +1,7 @@
 #pragma once
 #include "../ECS/ECS.h"
 #include "../Utilities/Utilities.h"
+#include "../AssetManager.h"
 #include <sol/sol.hpp>
 #include <memory>
 
@@ -18,14 +19,14 @@ private:
 
 private:
 	void SetExit(bool exit) { mExit = exit; }
-	void ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera, std::unique_ptr<class MouseControl>& mouseControl);
+	void ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera);
 	const bool MouseOffCanvas() const;
 
 public:
 	RenderGuiSystem();
 	~RenderGuiSystem();
 
-	void Update(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
+	void Update(const AssetManager_Ptr& assetManager, Renderer& renderer,
 		SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event, const float& zoom, const float& dt);
 
 	/*
@@ -33,7 +34,7 @@ public:
 		[gridCols] = canvasWidth / tilesize [gridRows] = canvasHeight / tilesize
 		This also works with the zoom and pan functionality.
 	*/
-	void RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera, const float& zoom);
+	void RenderGrid(Renderer& renderer, SDL_Rect& camera, const float& zoom);
 	void CreateNewCanvas();
 
 	const bool GetExit() const { return mExit; }

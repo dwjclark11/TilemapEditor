@@ -2,7 +2,7 @@
 #include "AssetManager.h"
 #include <SDL.h>
 
-void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider)
+void MouseControl::MouseBox(const AssetManager_Ptr& assetManager, Renderer& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider)
 {
 	// If Grid Snap is enabled, snap the tile to the next grid location
 	if (mGridSnap)
@@ -99,7 +99,7 @@ MouseControl::MouseControl()
 
 }
 
-void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
+void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
 {
 	// Draw the Mouse Box Image, this follows the mouse
 	MouseBox(assetManager, renderer, mouseBox, camera, false);
@@ -204,7 +204,7 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 	}
 }
 
-void MouseControl::CreateCollider(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
+void MouseControl::CreateCollider(const AssetManager_Ptr& assetManager, Renderer& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
 {
 	// Draw the collider mouse box
 	MouseBox(assetManager, renderer, mouseBox, camera, true);

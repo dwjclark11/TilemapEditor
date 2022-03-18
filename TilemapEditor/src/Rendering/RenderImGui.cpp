@@ -5,7 +5,6 @@
 #include "ImGuiFunc.h"
 #include "../Utilities/Utilities.h"
 #include "../MouseControl.h"
-#include "../AssetManager.h"
 #include <SDL.h>
 
 
@@ -37,7 +36,7 @@ RenderGuiSystem::~RenderGuiSystem()
 
 }
 
-void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer,
+void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& renderer,
 	SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event, const float& zoom, const float& dt)
 {
 	ImGui::NewFrame();
@@ -96,7 +95,7 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 			ImGui::EndMenu();
 		}
 		// Mouse Location Text inside menu bar
-		ShowMouseLocationText(mouseBox, camera, mMouseControl);
+		ShowMouseLocationText(mouseBox, camera);
 		ImGui::EndMainMenuBar();
 	}
 
@@ -145,7 +144,7 @@ void RenderGuiSystem::Update(const std::unique_ptr<class AssetManager>& assetMan
 	mImFuncs->UpdateShortCuts(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize);
 }
 
-void RenderGuiSystem::RenderGrid(std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& camera, const float& zoom)
+void RenderGuiSystem::RenderGrid(Renderer& renderer, SDL_Rect& camera, const float& zoom)
 {
 	// This grid changes size based on the canvas and tile sizes. 
 	auto xTiles = (mCanvasWidth / mTileSize);
@@ -182,14 +181,14 @@ void RenderGuiSystem::CreateNewCanvas()
 	}
 }
 
-void RenderGuiSystem::ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera, std::unique_ptr<MouseControl>& mouseControl)
+void RenderGuiSystem::ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera)
 {
 	// If the mouse is on the canvas and we are creating tiles/colliders, Display the mouse location
 	if (!mMouseControl->MouseOutOfBounds() && (mCreateTiles || mCreateColliders))
 	{
 		// Update Grid values
-		mGridX = static_cast<int>(mouseControl->GetMousePosScreen().x) / mTileSize;
-		mGridY = static_cast<int>(mouseControl->GetMousePosScreen().y) / mTileSize;
+		mGridX = static_cast<int>(mMouseControl->GetMousePosScreen().x) / mTileSize;
+		mGridY = static_cast<int>(mMouseControl->GetMousePosScreen().y) / mTileSize;
 
 		// Print the Current Grid number that we are in [x: 0, y: 0] 
 		ImGui::TextColored(ImVec4(0, 255, 0, 1), "Grid [X: %d, Y: %d]", mGridX, mGridY);
@@ -201,7 +200,7 @@ void RenderGuiSystem::ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera
 			ImGui::TextColored(ImVec4(0, 255, 0, 1), "Mouse [X: %d, Y: %d]", mGridX * mTileSize, mGridY * mTileSize);
 		else // Print the location of the mouse relative to the canvas
 			ImGui::TextColored(ImVec4(0, 255, 0, 1), "Mouse [X: %d, Y: %d]",
-				static_cast<int>(mouseControl->GetMousePosScreen().x), static_cast<int>(mouseControl->GetMousePosScreen().y));
+				static_cast<int>(mMouseControl->GetMousePosScreen().x), static_cast<int>(mMouseControl->GetMousePosScreen().y));
 	}
 }
 

@@ -2,6 +2,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/BoxColliderComponent.h"
+#include "AssetManager.h"
 #include "Utilities/Utilities.h"
 #include "ECS/ECS.h"
 #include <glm/glm.hpp>
@@ -35,7 +36,7 @@ private:
 
 	// Private functions
 private:
-	void MouseBox(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
+	void MouseBox(const AssetManager_Ptr& assetManager, Renderer& renderer,
 		SDL_Rect& mouseBox, SDL_Rect& camera, bool collider = false);
 
 	/*
@@ -54,9 +55,9 @@ public:
 	MouseControl();
 	~MouseControl() = default;
 
-	void CreateTile(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
+	void CreateTile(const AssetManager_Ptr& assetManager, Renderer& renderer,
 		struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
-	void CreateCollider(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
+	void CreateCollider(const AssetManager_Ptr& assetManager, Renderer& renderer,
 		struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
 
 	void UpdateMousePos(const SDL_Rect& camera);

@@ -10,7 +10,7 @@ AssetManager::~AssetManager()
 {
 }
 
-void AssetManager::AddTexture(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, const std::string& assetId, const std::string& filePath)
+void AssetManager::AddTexture(Renderer& renderer, const std::string& assetId, const std::string& filePath)
 {
 	if (!HasTexture(assetId))
 	{
@@ -18,7 +18,7 @@ void AssetManager::AddTexture(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>&
 		if (!surface)
 			LOG_ERROR("Unable to make Surface!");
 
-		std::unique_ptr<SDL_Texture, Util::SDLDestroyer> texture = std::unique_ptr<SDL_Texture, Util::SDLDestroyer>(SDL_CreateTextureFromSurface(renderer.get(), std::move(surface)));
+		Texture texture = Texture(SDL_CreateTextureFromSurface(renderer.get(), std::move(surface)));
 
 		if (!texture)
 		{
@@ -37,7 +37,7 @@ void AssetManager::AddTexture(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>&
 	}
 }
 
-const std::unique_ptr<SDL_Texture, Util::SDLDestroyer>& AssetManager::GetTexture(const std::string& assetId)
+const Texture& AssetManager::GetTexture(const std::string& assetId)
 {
 	return mTextures[assetId];
 }
