@@ -13,14 +13,13 @@ void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, s
 		if (mMousePosX >= 0) mMousePosGrid.x = mMousePosX / mGridSize;
 		if (mMousePosY >= 0) mMousePosGrid.y = mMousePosY / mGridSize;
 
-		mouseBox.x = (mMousePosGrid.x * mGridSize * mZoom) - camera.x - (mMouseRect.x * mTransformComponent.mScale.x * mZoom) / 2;
-		mouseBox.y = (mMousePosGrid.y * mGridSize * mZoom) - camera.y - (mMouseRect.y * mTransformComponent.mScale.y * mZoom) / 2;
+		mouseBox.x = (mMousePosGrid.x * mGridSize * mZoom) - camera.x;
+		mouseBox.y = (mMousePosGrid.y * mGridSize * mZoom) - camera.y;
 	}
 	else // Float the center of the tile on the mouse
 	{
 		mouseBox.x = (mMousePosX * mZoom - camera.x - (mMouseRect.x * mTransformComponent.mScale.x * mZoom) / 2);
 		mouseBox.y = (mMousePosY * mZoom - camera.y - (mMouseRect.y * mTransformComponent.mScale.y * mZoom) / 2);
-
 	}
 
 	// Do not draw the mouse box image outside of the mouse bounds
@@ -59,12 +58,12 @@ void MouseControl::MouseBox(const std::unique_ptr<AssetManager>& assetManager, s
 		SDL_SetRenderDrawColor(renderer.get(), 255, 0, 0, 100);
 		SDL_RenderFillRect(renderer.get(), &dstRect);
 		SDL_RenderDrawRect(renderer.get(), &dstRect);
-
 	}
 }
 
 bool MouseControl::FastTile(const glm::vec2& pos)
 {
+	// This is only used while in gridsnap maode
 	if (mGridSnap)
 	{
 		if ((pos.x != mPrevMousePos.x || pos.y != mPrevMousePos.y) && LeftButtonDown())
@@ -109,16 +108,19 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 	if (MouseOutOfBounds())
 		return;
 
+	// This is used in the FastTile function for comparisons
 	glm::vec2 pos = glm::vec2(
 		mouseBox.x + camera.x / mGridSize,
 		mouseBox.y + camera.y / mGridSize
 	);
+
 	// Set the transform position to the current mousebox position
 	mTransformComponent.mPosition = glm::vec2(
 		mouseBox.x + camera.x,
 		mouseBox.y + camera.y
 	);
 
+	// Reset the mouse press if not pressed
 	if (!LeftButtonDown())
 		mLeftPressed = false;
 	if (!RightButtonDown())
@@ -129,6 +131,7 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 		// If the left mouse button is pressed, create a tile/collider at that location
 		if ((event.button.button == SDL_BUTTON_LEFT && !mLeftPressed) || FastTile(pos))
 		{
+			// Create a new tile entity and add the necessary components
 			Entity tile = Registry::Instance().CreateEntity();
 			tile.Group("tiles");
 			tile.AddComponent<TransformComponent>(
@@ -159,6 +162,7 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 			}
 
 			mLeftPressed = true;
+
 			// This is used for Creating tiles faster
 			mPrevMousePos.x = pos.x;
 			mPrevMousePos.y = pos.y;
@@ -170,6 +174,8 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 			if (!Registry::Instance().DoesGroupExist("tiles"))
 				return;
 
+			// This value is used as a tolerance area so the mouse does not need to be exactly on 
+			// the tile to remove it
 			glm::vec2 subtract = glm::vec2(
 				(mMouseRect.x * mTransformComponent.mScale.x) / 2,
 				(mMouseRect.y * mTransformComponent.mScale.y) / 2
@@ -183,10 +189,10 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 			{
 				auto& transform = entity.GetComponent<TransformComponent>();
 
-				if (transform.mPosition.x <= mMousePosX - subtract.x + 15
-					&& transform.mPosition.x >= mMousePosX - subtract.x - 15
-					&& transform.mPosition.y <= mMousePosY - subtract.y + 15
-					&& transform.mPosition.y >= mMousePosY - subtract.y - 15
+				if (transform.mPosition.x <= mMousePosX - subtract.x + TOLERANCE
+					&& transform.mPosition.x >= mMousePosX - subtract.x - TOLERANCE
+					&& transform.mPosition.y <= mMousePosY - subtract.y + TOLERANCE
+					&& transform.mPosition.y >= mMousePosY - subtract.y - TOLERANCE
 					)
 				{
 					entity.Kill();
@@ -200,11 +206,24 @@ void MouseControl::CreateTile(const std::unique_ptr<AssetManager>& assetManager,
 
 void MouseControl::CreateCollider(const std::unique_ptr<AssetManager>& assetManager, std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
 {
+	// Draw the collider mouse box
 	MouseBox(assetManager, renderer, mouseBox, camera, true);
 
 	// Do not create colliders outside of the mouse bounds
 	if (MouseOutOfBounds())
 		return;
+
+	// Set the transform position to the current mousebox position
+	mTransformComponent.mPosition = glm::vec2(
+		mouseBox.x + camera.x,
+		mouseBox.y + camera.y
+	);
+
+	// Reset the mouse press if not pressed
+	if (!LeftButtonDown())
+		mLeftPressed = false;
+	if (!RightButtonDown())
+		mRightPressed = false;
 
 	if (event.type == SDL_MOUSEBUTTONDOWN && !mLeftPressed)
 	{
@@ -213,9 +232,7 @@ void MouseControl::CreateCollider(const std::unique_ptr<AssetManager>& assetMana
 			Entity boxCollider = Registry::Instance().CreateEntity();
 			boxCollider.Group("colliders");
 			boxCollider.AddComponent<TransformComponent>(
-				glm::vec2(
-					mouseBox.x + camera.x,
-					mouseBox.y + camera.y),
+				mTransformComponent.mPosition / glm::vec2(mZoom, mZoom),
 				mTransformComponent.mScale,
 				mTransformComponent.mRotation
 				);
@@ -243,10 +260,10 @@ void MouseControl::CreateCollider(const std::unique_ptr<AssetManager>& assetMana
 			{
 				auto& transform = entity.GetComponent<TransformComponent>();
 
-				if (transform.mPosition.x <= mMousePosX - subtract.x + 15
-					&& transform.mPosition.x >= mMousePosX - subtract.x - 15
-					&& transform.mPosition.y <= mMousePosY - subtract.y + 15
-					&& transform.mPosition.y >= mMousePosY - subtract.y - 15
+				if (transform.mPosition.x <= mMousePosX - subtract.x + TOLERANCE
+					&& transform.mPosition.x >= mMousePosX - subtract.x - TOLERANCE
+					&& transform.mPosition.y <= mMousePosY - subtract.y + TOLERANCE
+					&& transform.mPosition.y >= mMousePosY - subtract.y - TOLERANCE
 					)
 				{
 					entity.Kill();
@@ -255,12 +272,6 @@ void MouseControl::CreateCollider(const std::unique_ptr<AssetManager>& assetMana
 				}
 			}
 		}
-	}
-
-	if (event.type == SDL_MOUSEBUTTONUP)
-	{
-		mLeftPressed = false;
-		mRightPressed = false;
 	}
 }
 

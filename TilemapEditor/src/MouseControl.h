@@ -15,10 +15,9 @@ private:
 	glm::vec2 mMousePosGrid;
 	glm::vec2 mPrevMousePos;
 	glm::vec2 mMousePosScreen;
+
 	float mZoom;
 	int mGridSize, mPanX, mPanY;
-
-
 
 	bool mIsCollider;
 	bool mGridSnap;
@@ -26,14 +25,24 @@ private:
 	bool mLeftPressed;
 	bool mRightPressed;
 
+	// Components 
 	SpriteComponent mSpriteComponent;
 	TransformComponent mTransformComponent;
 	BoxColliderComponent mBoxColliderComponent;
 
+	// +/- tolerance for tile removal
+	const int TOLERANCE = 15;
 
 	// Private functions
 private:
-	void MouseBox(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, bool collider = false);
+	void MouseBox(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
+		SDL_Rect& mouseBox, SDL_Rect& camera, bool collider = false);
+
+	/*
+		Fast Tile: This is for quickly placing tiles while using gridsnap mode.
+		If the current mouse position not equal to the previous recorded position,
+		place a new tile.
+	*/
 	bool FastTile(const glm::vec2& pos);
 
 	// Mouse Buttons Down Functions
@@ -45,15 +54,19 @@ public:
 	MouseControl();
 	~MouseControl() = default;
 
-	void CreateTile(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
+	void CreateTile(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
+		struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
+	void CreateCollider(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer,
+		struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
 
-	void CreateCollider(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, struct SDL_Rect& mouseBox, struct SDL_Rect& camera, union SDL_Event& event);
 	void UpdateMousePos(const SDL_Rect& camera);
+
+	// Set the Component Properties
 	void SetSpriteProperties(const std::string& assetID, const int& width, const int& height, const int& layer, const int& srcRectX, const int& srcRectY);
 	void SetTransformScale(const int& scaleX, const int& scaleY);
 	void SetBoxColliderProperties(const int& width, const int& height, const int& offsetX, const int& offsetY);
-	const bool MouseOutOfBounds() const;
 
+	const bool MouseOutOfBounds() const;
 
 	void PanCamera(SDL_Rect& camera, const float& dt);
 	inline void SetMouseOverImGuiWindow(bool over) { mOverImGuiWindow = over; }
@@ -65,5 +78,5 @@ public:
 	inline void SetCollider(bool collider) { mIsCollider = collider; }
 	inline const glm::vec2& GetMousePosScreen() const { return mMousePosScreen; }
 	inline void UpdateZoom(const float& zoom) { mZoom = zoom; }
-
+	inline void UpdateGridSize(const int& grid) { mGridSize = grid; }
 };

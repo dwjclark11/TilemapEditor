@@ -31,8 +31,8 @@ void Application::Init()
 		"Tilemap Editor",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		mWindowWidth,
-		mWindowHeight,
+		WINDOW_WIDTH,
+		WINDOW_HEIGHT,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
 	));
 
@@ -60,11 +60,11 @@ void Application::Init()
 
 	// Initialize ImGui context
 	ImGui::CreateContext();
-	ImGuiSDL::Initialize(mRenderer.get(), mWindowWidth, mWindowHeight);
+	ImGuiSDL::Initialize(mRenderer.get(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	// Initialize Camera --> This Centers the Grid
 	mCamera = {
-		-360, -176, mWindowWidth, mWindowHeight
+		DEFAULT_CAM_X, DEFAULT_CAM_Y, WINDOW_WIDTH, WINDOW_HEIGHT
 	};
 
 	// Initialize the mouse box for the tiles
@@ -188,6 +188,11 @@ void Application::CameraControl(SDL_Event& event)
 			break;
 		case SDLK_d:
 			mCamera.x += 8;
+			break;
+		case SDLK_SPACE: // Space Resets Zoom and pan to orginal values
+			mZoom = DEFAULT_ZOOM;
+			mCamera.x = DEFAULT_CAM_X;
+			mCamera.y = DEFAULT_CAM_Y;
 			break;
 		}
 

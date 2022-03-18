@@ -24,7 +24,7 @@ FileLoader::~FileLoader()
 }
 
 void FileLoader::LoadProject(sol::state& lua, const std::string& filename, const std::unique_ptr<AssetManager>& assetManager,
-	std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths, 
+	std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>& renderer, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths,
 	int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	/*
@@ -85,13 +85,13 @@ void FileLoader::LoadProject(sol::state& lua, const std::string& filename, const
 		assetFilepaths.push_back(file_path);
 
 		assetManager->AddTexture(renderer, std::move(assetId), std::move(file_path));
-		
+
 		assetNum++;
 	}
 
 	while (true)
 	{
-		sol::optional<sol::table> hasMaps= project["maps"][mapNum];
+		sol::optional<sol::table> hasMaps = project["maps"][mapNum];
 		if (hasMaps == sol::nullopt)
 		{
 			LOG_INFO("FILELOADER__LINE_75: Finished loading assets");
@@ -148,7 +148,7 @@ void FileLoader::LoadMap(const std::unique_ptr<AssetManager>& assetManager, cons
 		tile.Group(group);
 		tile.AddComponent<SpriteComponent>(assetID, tileWidth, tileHeight, layer, false, srcRectX, srcRectY);
 		tile.AddComponent<TransformComponent>(transform, scale, 0.0);
-		
+
 		if (collider)
 			tile.AddComponent<BoxColliderComponent>(colWidth, colHeight, offset);
 
@@ -204,7 +204,7 @@ void FileLoader::SaveMap(std::filesystem::path filename)
 		}
 		else
 		{
-			collider = false; 
+			collider = false;
 			mapFile << collider << " " << std::endl;
 		}
 	}
@@ -212,22 +212,23 @@ void FileLoader::SaveMap(std::filesystem::path filename)
 	mapFile.close();
 }
 
-void FileLoader::SaveProject(const std::string& filename, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths, int& canvasWidth, int& canvasHeight, int& tileSize)
+void FileLoader::SaveProject(const std::string& filename, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths,
+	const int& canvasWidth, const int& canvasHeight, const int& tileSize)
 {
-	
+
 	std::fstream projFile;
-	projFile.open(filename);
+	projFile.open(filename, std::ios::out | std::ios::trunc);
 
 	if (!projFile.is_open())
 	{
-		LOG_ERROR("FILELOADER__LINE__147: Unable to open[{0}] for saving", filename);
+		LOG_ERROR("FILELOADER__LINE__223: Unable to open[{0}] for saving", filename);
 		return;
 	}
 
 	LuaWriter luaWriter;
 	// Start the lua project document
 	luaWriter.WriteStartDocument();
-	
+
 	luaWriter.WriteCommentSeparation(projFile);
 	luaWriter.WriteCommentLine("", projFile);
 	luaWriter.WriteCommentSeparation(projFile);
@@ -253,7 +254,7 @@ void FileLoader::SaveProject(const std::string& filename, std::vector<std::strin
 	luaWriter.WriteKeyAndQuotedValue("file_path", filepath.string(), projFile);
 	luaWriter.WriteEndTableWithSeparator(false, projFile);
 	luaWriter.WriteEndTable(false, projFile);
-	
+
 	luaWriter.WriteDeclareTable("canvas", projFile);
 	luaWriter.WriteKeyAndUnquotedValue("canvas_width", canvasWidth, projFile, false, false);
 	luaWriter.WriteKeyAndUnquotedValue("canvas_height", canvasHeight, projFile, false, false);
@@ -261,7 +262,7 @@ void FileLoader::SaveProject(const std::string& filename, std::vector<std::strin
 
 	luaWriter.WriteEndTable(false, projFile);
 	luaWriter.WriteEndTable(false, projFile);
-	
+
 	// Check to see if there are no indents remaining
 	luaWriter.WriteEndDocument(projFile);
 

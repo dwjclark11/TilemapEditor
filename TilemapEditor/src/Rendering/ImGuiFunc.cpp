@@ -54,6 +54,96 @@ void ImGuiFuncs::TileSetWindow(const std::unique_ptr<AssetManager>& assetManager
 	}
 }
 
+void ImGuiFuncs::ClearLoadedFiles()
+{
+	// Reset All data for the current project
+	mAssetID = "";
+	mFileName = "";
+	mImageName = "";
+	mImageLoaded = false;
+
+	mLoadedTilesets.clear();
+	mTilesetLocations.clear();
+	mCleared = true;
+}
+
+void ImGuiFuncs::OpenCheckWindow()
+{
+	if (mCloseWindow)
+		return;
+
+	if (ImGui::Begin("Create New Canvas"))
+	{
+		ImGui::Text("Are you sure?");
+		ImGui::Spacing();
+
+		if (ImGui::Button("yes"))
+		{
+			mCheck = true;
+			mCloseWindow = true;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("cancel"))
+			mCloseWindow = true;
+
+		ImGui::End();
+	}
+
+	if (mCheck)
+	{
+		// Clear all of the data
+		ClearLoadedFiles();
+		mCheck = false;
+		LOG_INFO("CLEARED ALL FILES");
+	}
+}
+
+void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager,
+	std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+{
+	const Uint8* state = SDL_GetKeyboardState(NULL);
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_S]) {
+		Save(assetManager, renderer, canvasWidth, canvasHeight, tileSize);
+	}
+
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_O]) {
+		OpenProject(lua, assetManager, renderer, canvasWidth, canvasHeight, tileSize);
+	}
+
+}
+
+void ImGuiFuncs::OpenProject(sol::state& lua, const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+{
+	mFileDialog;
+	mFileLoader;
+	mFileName = mFileDialog->OpenFile();
+
+	if (mFileName == "")
+		return;
+
+	mFileLoader->LoadProject(lua, mFileName, assetManager, renderer, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+}
+
+void ImGuiFuncs::Save(const std::unique_ptr<class AssetManager>& assetManager, std::unique_ptr<struct SDL_Renderer, Util::SDLDestroyer>& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize)
+{
+	if (mFileName == "")
+	{
+		mFileName = mFileDialog->SaveFile();
+
+		if (mFileName == "")
+			return;
+
+		mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+	}
+	else
+	{
+		mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+		LOG_INFO("FILES SAVED!!");
+	}
+}
+
 ImGuiFuncs::ImGuiFuncs()
 	: mFileName("")
 	, mImageName("")
@@ -76,9 +166,14 @@ ImGuiFuncs::ImGuiFuncs()
 	, mImageLoaded(false)
 	, mExit(false)
 	, mCollider(false)
+	, mCleared(false)
+	, mCheck(false)
+	, mCloseWindow(true)
 	, mLoadedTilesets()
+	, mTilesetLocations()
 {
-
+	mFileDialog = std::make_unique<FileDialog>();
+	mFileLoader = std::make_unique<FileLoader>();
 }
 ImGuiFuncs::~ImGuiFuncs()
 {
@@ -177,39 +272,45 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const std::unique_ptr<class Asset
 {
 	if (ImGui::MenuItem("New", "Ctrl + N"))
 	{
-
+		mCloseWindow = false;
 	}
 
 	if (ImGui::MenuItem("Open", "Ctrl + O"))
 	{
-		FileDialog fileDialog;
-		FileLoader fileLoader;
-		mFileName = fileDialog.OpenFile();
-
-		if (mFileName == "")
-			return;
-
-		fileLoader.LoadProject(lua, mFileName, assetManager, renderer, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
-
+		OpenProject(lua, assetManager, renderer, canvasWidth, canvasHeight, tileSize);
 	}
 
 	if (ImGui::MenuItem("Save", "Ctrl + S"))
 	{
-
+		Save(assetManager, renderer, canvasWidth, canvasHeight, tileSize);
 	}
 
 	if (ImGui::MenuItem("Save As..", "Ctrl + Shift + S"))
 	{
-		FileDialog fileDialog;
-		FileLoader fileLoader;
-
-		mFileName = fileDialog.SaveFile();
-
 		if (mFileName == "")
-			return;
+		{
+			mFileName = mFileDialog->SaveFile();
 
-		//fileLoader.SaveMap(mFileName);
-		fileLoader.SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+			if (mFileName == "")
+				return;
+
+			mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+		}
+		else
+		{
+			// Create a temp string from the save dialog
+			std::string filename = mFileDialog->SaveFile();
+
+			// If the string is empty, leave the function
+			if (filename == "")
+				return;
+			
+			mFileLoader->SaveProject(filename, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+			
+			// Change the main filename to the new filename
+			mFileName = filename;
+
+		}
 	}
 
 	if (ImGui::MenuItem("Exit"))
@@ -257,39 +358,41 @@ void ImGuiFuncs::ShowToolsMenu(std::unique_ptr<SDL_Renderer, Util::SDLDestroyer>
 	}
 }
 
-void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl, const std::unique_ptr<AssetManager>& assetManager)
+void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl, const std::unique_ptr<AssetManager>& assetManager, bool collider)
 {
 	if (ImGui::Begin("Tile Properties"))
 	{
-		static std::string currentTileset = "";
-		static std::string prevTileSet = mAssetID;
-
-		if (ImGui::BeginCombo("Change tileset", currentTileset.c_str()))
+		if (!collider)
 		{
-			for (int i = 0; i < mLoadedTilesets.size(); i++)
-			{
-				bool isSelectable = (currentTileset == mLoadedTilesets[i]);
-				if (ImGui::Selectable(mLoadedTilesets[i].c_str(), isSelectable))
-					currentTileset = mLoadedTilesets[i];
-				if (isSelectable)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
+			static std::string currentTileset = "";
+			static std::string prevTileSet = mAssetID;
 
-		if (currentTileset != "")
-		{
-			if (prevTileSet != currentTileset)
+			if (ImGui::BeginCombo("Change tileset", currentTileset.c_str()))
 			{
-				mAssetID = currentTileset;
-				SDL_QueryTexture(assetManager->GetTexture(mAssetID).get(), NULL, NULL, &mImageWidth, &mImageHeight);
-				prevTileSet = currentTileset;
-				LOG_INFO("QUERY");
+				for (int i = 0; i < mLoadedTilesets.size(); i++)
+				{
+					bool isSelectable = (currentTileset == mLoadedTilesets[i]);
+					if (ImGui::Selectable(mLoadedTilesets[i].c_str(), isSelectable))
+						currentTileset = mLoadedTilesets[i];
+					if (isSelectable)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
 			}
-			if (currentTileset != mAssetID)
-				currentTileset = mAssetID;
-		}
 
+			if (currentTileset != "")
+			{
+				if (prevTileSet != currentTileset)
+				{
+					mAssetID = currentTileset;
+					SDL_QueryTexture(assetManager->GetTexture(mAssetID).get(), NULL, NULL, &mImageWidth, &mImageHeight);
+					prevTileSet = currentTileset;
+					LOG_INFO("QUERY");
+				}
+				if (currentTileset != mAssetID)
+					currentTileset = mAssetID;
+			}
+		}
 
 		ImGui::Text("Transform Component");
 		ImGui::SliderInt("X Scale", &mScaleX, 1, 10);
@@ -311,7 +414,11 @@ void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl,
 				mMouseRectX = 0;
 		}
 
-		ImGui::Checkbox("Box Collider", &mCollider);
+		// If we are making box colliders, mColliders is always true
+		if (collider)
+			mCollider = true;
+		else
+			ImGui::Checkbox("Box Collider", &mCollider);
 
 		if (mCollider)
 		{
@@ -346,7 +453,10 @@ void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl,
 			if (mCollider)
 				mouseControl->SetBoxColliderProperties(mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY);
 		}
-		mouseControl->SetSpriteProperties(mAssetID, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY);
+		// The box collider does not have a sprite
+		if (!collider)
+			mouseControl->SetSpriteProperties(mAssetID, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY);
+
 		ImGui::End();
 	}
 }

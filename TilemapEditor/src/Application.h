@@ -16,8 +16,14 @@ private:
 
 
 private:
-	const int mWindowWidth = 1366;
-	const int mWindowHeight = 768;
+	const int WINDOW_HEIGHT = 768;
+	const int WINDOW_WIDTH = 1366;
+
+	const int DEFAULT_ZOOM = 1;
+	const int DEFAULT_CAM_X = -360;
+	const int DEFAULT_CAM_Y = -176;
+
+	const int CAM_SPEED = 10;
 
 	std::unique_ptr<SDL_Window, Util::SDLDestroyer> mWindow;
 	std::unique_ptr<SDL_Renderer, Util::SDLDestroyer> mRenderer;
