@@ -11,6 +11,7 @@ class FileLoader
 private:
 	void LoadMap(const AssetManager_Ptr& assetManager, const std::string& filename);
 	void SaveMap(std::filesystem::path filename);
+	void SaveColliders(std::filesystem::path filename);
 
 public:
 	FileLoader();

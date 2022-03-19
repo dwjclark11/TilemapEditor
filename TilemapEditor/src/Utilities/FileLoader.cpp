@@ -212,6 +212,41 @@ void FileLoader::SaveMap(std::filesystem::path filename)
 	mapFile.close();
 }
 
+void FileLoader::SaveColliders(std::filesystem::path filename)
+{
+	// Check to see if there are any tile entities to save to a file
+	if (!Registry::Instance().DoesGroupExist("colliders"))
+	{
+		LOG_ERROR("FILELOADER__LINE__220: Trying to save Colliders that do not exist!");
+		return;
+	}
+
+	std::ofstream mapFile;
+
+	mapFile.open(filename);
+
+	if (!mapFile.is_open())
+	{
+		LOG_ERROR("FILELOADER__LINE__230: Unable to open[{0}] for saving", filename);
+		return;
+	}
+
+	auto colliders = Registry::Instance().GetEntitiesByGroup("colliders");
+
+	for (const auto& collider : colliders)
+	{
+		std::string group = "collider";
+		const auto& boxCollider = collider.GetComponent<BoxColliderComponent>();
+		const auto& transform = collider.GetComponent<TransformComponent>();
+
+		// Save to the map file
+		mapFile << group << " " << transform.mPosition.x << " " << transform.mPosition.y << " " << transform.mScale.x << " " << transform.mScale.y 
+			<< " " << boxCollider.mWidth << " " << boxCollider.mHeight << " " << boxCollider.mOffset.x << " " << boxCollider.mOffset.y << " " << std::endl;
+	}
+	// Close the file
+	mapFile.close();
+}
+
 void FileLoader::SaveProject(const std::string& filename, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths,
 	const int& canvasWidth, const int& canvasHeight, const int& tileSize)
 {
@@ -270,17 +305,35 @@ void FileLoader::SaveProject(const std::string& filename, std::vector<std::strin
 	projFile.close();
 
 	std::fstream mapFile;
-
-
-
+	
 	mapFile.open(filepath, std::ios::out);
 
 	if (!mapFile.is_open())
 	{
-		LOG_ERROR("FILELOADER__LINE__187: Unable to open[{0}] for saving", filepath.u8string());
+		LOG_ERROR("FILELOADER__LINE__313: Unable to open[{0}] for saving", filepath.u8string());
 		return;
 	}
 
 	SaveMap(filepath);
+
+	if (!Registry::Instance().DoesGroupExist("colliders"))
+		return;
+
+	std::fstream colliderFile;
+	std::string newFile = filepath.stem().string() += "_colliders.map";
+
+	filepath.replace_filename(newFile);
+
+	colliderFile.open(filepath, std::ios::out);
+	
+	if (!colliderFile.is_open())
+	{
+		LOG_ERROR("FILELOADER__LINE__327: Unable to open[{0}] for saving", filepath.u8string());
+		return;
+	}
+	LOG_INFO("Collider: {0}", filepath.string());
+
+	SaveColliders(filepath);
+
 }
 
