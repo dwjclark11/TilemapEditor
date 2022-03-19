@@ -10,24 +10,24 @@
 class ImGuiFuncs
 {
 private:
-	std::string mFileName, mImageName, mAssetID;
+	std::string mFileName, mImageName, mAssetID, mWindowName;
 	int mScaleX, mScaleY, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY;
 	int mImageWidth, mImageHeight, mMouseRectY, mMouseRectX;
 	int mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY;
 
-	bool mImageLoaded, mExit, mCollider, mCleared, mCheck, mCloseWindow;
+	bool mImageLoaded, mExit, mCollider, mCleared, mCheck, mNewFile;
 
 	const int TITLE_BAR_SIZE = 26;
 
 	std::vector<std::string> mLoadedTilesets;
 	std::vector<std::string> mTilesetLocations;
 
-	std::unique_ptr<class FileDialog> mFileDialog;
+	std::unique_ptr<class FileDialogWin> mFileDialog;
 	std::unique_ptr<class FileLoader> mFileLoader;
 
 private:
 	void ClearLoadedFiles();
-
+	void SetWindowName(const std::string& filename);
 public:
 	ImGuiFuncs();
 	~ImGuiFuncs();
@@ -42,7 +42,10 @@ public:
 
 	inline const bool& FilesCleared() const { return mCleared; }
 	inline void SetFilesCleared(bool cleared) { mCleared = cleared; }
+
 	const bool& GetExit() const { return mExit; }
+	const bool& GetNewFile() const { return mNewFile; }
+
 	void OpenCheckWindow();
 
 	void UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetManager,
@@ -54,4 +57,5 @@ public:
 	void Save(const AssetManager_Ptr& assetManager,
 		Renderer& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize);
 
+	inline const std::string& GetWindowName() const { return mWindowName; }
 };

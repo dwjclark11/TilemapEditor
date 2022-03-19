@@ -7,6 +7,7 @@
 #include "Rendering/RenderSystem.h"
 #include "Rendering/RenderCollisionSystem.h"
 #include "Rendering/RenderImGui.h"
+#include <cmath>
 
 void Application::Init()
 {
@@ -31,8 +32,8 @@ void Application::Init()
 	// Create the window
 	mWindow = Window(SDL_CreateWindow(
 		"Tilemap Editor",
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
+		0, // Place the window in the top left corner 
+		WINDOW_BAR, // Subtract the window title bar from y position
 		WINDOW_WIDTH,
 		WINDOW_HEIGHT,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
@@ -151,6 +152,9 @@ void Application::Update()
 	UpdateDeltaTime();
 	Registry::Instance().Update();
 
+	// Change the window title based on the current project
+	Registry::Instance().GetSystem<RenderGuiSystem>().SetWindowName(mWindow);
+
 	// Check for Exit
 	if (Registry::Instance().GetSystem<RenderGuiSystem>().GetExit())
 		mIsRunning = false;
@@ -179,17 +183,17 @@ void Application::CameraControl(SDL_Event& event)
 	{
 		switch (event.key.keysym.sym)
 		{
-		case SDLK_w:
-			mCamera.y -= 8;
+		case SDLK_w: // Move Cam up
+			mCamera.y -= CAM_SPEED;
 			break;
-		case SDLK_s:
-			mCamera.y += 8;
+		case SDLK_s: // Move Cam down
+			mCamera.y += CAM_SPEED;
 			break;
-		case SDLK_a:
-			mCamera.x -= 8;
+		case SDLK_a: // Move Cam left
+			mCamera.x -= CAM_SPEED;
 			break;
-		case SDLK_d:
-			mCamera.x += 8;
+		case SDLK_d: // Move Cam right
+			mCamera.x += CAM_SPEED;
 			break;
 		case SDLK_SPACE: // Space Resets Zoom and pan to orginal values
 			mZoom = DEFAULT_ZOOM;
@@ -197,8 +201,6 @@ void Application::CameraControl(SDL_Event& event)
 			mCamera.y = DEFAULT_CAM_Y;
 			break;
 		}
-
-		LOG_INFO("CAM [X:{0}, Y:{1}]", mCamera.x, mCamera.y);
 	}
 }
 
@@ -206,13 +208,16 @@ void Application::Zoom(SDL_Event& event)
 {
 	if (event.wheel.y > 0)
 	{
-		mZoom += 0.2f;
-		//LOG_INFO("Zoom: {0}", mZoom);
+		float temp = mZoom;
+		float temp2 = temp + 0.1f;
+		mZoom = Util::Lerp(temp, temp2, 0.5);
+
 	}
 	else if (event.wheel.y < 0)
 	{
-		mZoom -= 0.2f;
-		//LOG_INFO("Zoom: {0}", mZoom);
+		float temp = mZoom;
+		float temp2 = temp - 0.1f;
+		mZoom = Util::Lerp(temp, temp2, 0.5);
 
 		if (mZoom <= 0.5)
 			mZoom = 0.5;

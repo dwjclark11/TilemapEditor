@@ -19,8 +19,8 @@ void ImGuiFuncs::TileSetWindow(const AssetManager_Ptr& assetManager, Renderer& r
 
 		ImGui::Image(assetManager->GetTexture(mAssetID).get(), ImVec2(imageWidth, imageHeight));
 
-		int mousePosX = ImGui::GetMousePos().x - ImGui::GetWindowPos().x;
-		int mousePosY = ImGui::GetMousePos().y - ImGui::GetWindowPos().y - TITLE_BAR_SIZE;
+		int mousePosX = static_cast<int>(ImGui::GetMousePos().x - ImGui::GetWindowPos().x);
+		int mousePosY = static_cast<int>(ImGui::GetMousePos().y - ImGui::GetWindowPos().y - TITLE_BAR_SIZE);
 
 		int rows = imageHeight / (mouseRect.y * 2);
 		int cols = imageWidth / (mouseRect.x * 2);
@@ -64,9 +64,16 @@ void ImGuiFuncs::ClearLoadedFiles()
 	mCleared = true;
 }
 
+void ImGuiFuncs::SetWindowName(const std::string& filename)
+{
+	fs::path path(filename);
+	std::string title = "Tilemap Editor - " + path.stem().string();
+	mWindowName = title;
+}
+
 void ImGuiFuncs::OpenCheckWindow()
 {
-	if (mCloseWindow)
+	if (!mNewFile)
 		return;
 
 	if (ImGui::Begin("Create New Canvas"))
@@ -75,15 +82,12 @@ void ImGuiFuncs::OpenCheckWindow()
 		ImGui::Spacing();
 
 		if (ImGui::Button("yes"))
-		{
 			mCheck = true;
-			mCloseWindow = true;
-		}
 
 		ImGui::SameLine();
 
 		if (ImGui::Button("cancel"))
-			mCloseWindow = true;
+			mNewFile = false;
 
 		ImGui::End();
 	}
@@ -93,6 +97,8 @@ void ImGuiFuncs::OpenCheckWindow()
 		// Clear all of the data
 		ClearLoadedFiles();
 		mCheck = false;
+		mNewFile = false;
+		SetWindowName("");
 		LOG_INFO("CLEARED ALL FILES");
 	}
 }
@@ -101,14 +107,24 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetM
 	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	const Uint8* state = SDL_GetKeyboardState(NULL);
-	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_S]) {
+
+	// SaveFile Dialog || Save if file is loaded
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_S])
+	{
 		Save(assetManager, renderer, canvasWidth, canvasHeight, tileSize);
 	}
 
-	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_O]) {
+	// OpenFile Dialog
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_O])
+	{
 		OpenProject(lua, assetManager, renderer, canvasWidth, canvasHeight, tileSize);
 	}
 
+	// Call to create new canvas
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_N])
+	{
+		mNewFile = true;
+	}
 }
 
 void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
@@ -121,6 +137,7 @@ void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManag
 		return;
 
 	mFileLoader->LoadProject(lua, mFileName, assetManager, renderer, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+	SetWindowName(mFileName);
 }
 
 void ImGuiFuncs::Save(const AssetManager_Ptr& assetManager, Renderer& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize)
@@ -133,6 +150,7 @@ void ImGuiFuncs::Save(const AssetManager_Ptr& assetManager, Renderer& renderer, 
 			return;
 
 		mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+		SetWindowName(mFileName);
 	}
 	else
 	{
@@ -145,8 +163,9 @@ ImGuiFuncs::ImGuiFuncs()
 	: mFileName("")
 	, mImageName("")
 	, mAssetID("")
-	, mScaleX(1)
-	, mScaleY(1)
+	, mWindowName("Tilemap Editor")
+	, mScaleX(4)
+	, mScaleY(4)
 	, mWidth(16)
 	, mHeight(16)
 	, mLayer(0)
@@ -154,8 +173,8 @@ ImGuiFuncs::ImGuiFuncs()
 	, mSrcRectY(0)
 	, mImageWidth(0)
 	, mImageHeight(0)
-	, mMouseRectX(8)
-	, mMouseRectY(8)
+	, mMouseRectX(16)
+	, mMouseRectY(16)
 	, mBoxWidth(0)
 	, mBoxHeight(0)
 	, mBoxOffsetX(0)
@@ -165,11 +184,11 @@ ImGuiFuncs::ImGuiFuncs()
 	, mCollider(false)
 	, mCleared(false)
 	, mCheck(false)
-	, mCloseWindow(true)
+	, mNewFile(false)
 	, mLoadedTilesets()
 	, mTilesetLocations()
 {
-	mFileDialog = std::make_unique<FileDialog>();
+	mFileDialog = std::make_unique<FileDialogWin>();
 	mFileLoader = std::make_unique<FileLoader>();
 }
 ImGuiFuncs::~ImGuiFuncs()
@@ -268,19 +287,13 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
 {
 	if (ImGui::MenuItem("New", "Ctrl + N"))
-	{
-		mCloseWindow = false;
-	}
+		mNewFile = true;
 
 	if (ImGui::MenuItem("Open", "Ctrl + O"))
-	{
 		OpenProject(lua, assetManager, renderer, canvasWidth, canvasHeight, tileSize);
-	}
 
 	if (ImGui::MenuItem("Save", "Ctrl + S"))
-	{
 		Save(assetManager, renderer, canvasWidth, canvasHeight, tileSize);
-	}
 
 	if (ImGui::MenuItem("Save As..", "Ctrl + Shift + S"))
 	{
@@ -301,27 +314,23 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 			// If the string is empty, leave the function
 			if (filename == "")
 				return;
-			
+
 			mFileLoader->SaveProject(filename, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
-			
 			// Change the main filename to the new filename
 			mFileName = filename;
-
 		}
 	}
 
+	// Exit the application
 	if (ImGui::MenuItem("Exit"))
-	{
-		// Exit the application
 		mExit = true;
-	}
 }
 
 void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& assetManager)
 {
 	if (ImGui::MenuItem("Load Tileset"))
 	{
-		FileDialog fileDialog;
+		FileDialogWin fileDialog;
 		mImageName = fileDialog.OpenImageFile();
 
 		// If the action was cancelled or returned an empty string, exit the function
@@ -349,8 +358,6 @@ void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& asset
 			// for access of the assetID via ImGui combo-box
 			mLoadedTilesets.push_back(mAssetID);
 			mTilesetLocations.push_back(mImageName);
-
-			LOG_INFO("Filename: {0}", path.stem().string());
 		}
 	}
 }

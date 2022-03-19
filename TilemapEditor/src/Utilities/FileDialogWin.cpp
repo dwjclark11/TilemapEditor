@@ -1,6 +1,6 @@
 #include "FileDialogWin.h"
 
-std::string FileDialog::OpenFile(const char* filter, HWND owner)
+std::string FileDialogWin::OpenFile(const char* filter, HWND owner)
 {
 	OPENFILENAMEA ofn;
 	CHAR szFile[260] = { 0 };
@@ -24,7 +24,7 @@ std::string FileDialog::OpenFile(const char* filter, HWND owner)
 	return std::string();
 }
 
-std::string FileDialog::SaveFile(const char* filter, HWND owner)
+std::string FileDialogWin::SaveFile(const char* filter, HWND owner)
 {
 	OPENFILENAMEA ofn;
 	CHAR szFile[260] = { 0 };
@@ -48,7 +48,7 @@ std::string FileDialog::SaveFile(const char* filter, HWND owner)
 	return std::string();
 }
 
-std::string FileDialog::OpenImageFile(const char* filter, HWND owner)
+std::string FileDialogWin::OpenImageFile(const char* filter, HWND owner)
 {
 	return OpenFile(filter, owner);
 }

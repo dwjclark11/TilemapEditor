@@ -9,7 +9,8 @@
 
 
 RenderGuiSystem::RenderGuiSystem()
-	: mCreateTiles(false)
+	: mWindowName("")
+	, mCreateTiles(false)
 	, mCreateColliders(false)
 	, mGridSnap(false)
 	, mExit(false)
@@ -47,12 +48,6 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 		{
 			mImFuncs->ShowFileMenu(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize);
 
-			if (mImFuncs->FilesCleared())
-			{
-				CreateNewCanvas();
-				mImFuncs->SetFilesCleared(false);
-			}
-
 			ImGui::EndMenu();
 		}
 
@@ -88,18 +83,30 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 			// Put a space between the Tileset loader and the checkboxes
 			ImGui::Spacing(); ImGui::Spacing();
 
-			ImGui::Checkbox("Create Tiles", &mCreateTiles);
-			ImGui::Checkbox("Create Colliders", &mCreateColliders);
+			if (ImGui::Checkbox("Create Tiles", &mCreateTiles))
+				mCreateColliders = false;
+			if (ImGui::Checkbox("Create Colliders", &mCreateColliders))
+				mCreateTiles = false;
+
+			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Checkbox("Grid Snap", &mGridSnap);
 
 			ImGui::EndMenu();
 		}
 		// Mouse Location Text inside menu bar
 		ShowMouseLocationText(mouseBox, camera);
+
 		ImGui::EndMainMenuBar();
 	}
 
+	// Check for new file creation
 	mImFuncs->OpenCheckWindow();
+
+	if (mImFuncs->FilesCleared())
+	{
+		CreateNewCanvas();
+		mImFuncs->SetFilesCleared(false);
+	}
 
 	// Creating tiles
 	if (mCreateTiles)
@@ -129,6 +136,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 	mMouseControl->UpdateMousePos(camera);
 	mMouseControl->UpdateGridSize(mTileSize);
 
+	// Render ImGui Windows
 	ImGui::Render();
 	ImGuiSDL::Render(ImGui::GetDrawData());
 
@@ -141,6 +149,11 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 
 	// Check for Exit
 	SetExit(mImFuncs->GetExit());
+
+	// Set the main window name 
+	mWindowName = mImFuncs->GetWindowName();
+
+	// Check to see if shortcut keys has been pressed
 	mImFuncs->UpdateShortCuts(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize);
 }
 
@@ -151,7 +164,7 @@ void RenderGuiSystem::RenderGrid(Renderer& renderer, SDL_Rect& camera, const flo
 	auto yTiles = (mCanvasHeight / mTileSize);
 
 	// Set the grid colour to a light grey that is semi-transparent
-	SDL_SetRenderDrawColor(renderer.get(), 70, 70, 70, 70);
+	SDL_SetRenderDrawColor(renderer.get(), 125, 125, 125, 125);
 
 	for (int i = 0; i < yTiles; i++)
 	{
@@ -165,7 +178,7 @@ void RenderGuiSystem::RenderGrid(Renderer& renderer, SDL_Rect& camera, const flo
 
 void RenderGuiSystem::CreateNewCanvas()
 {
-
+	// Set Everything back to default
 	mGridSnap = false;
 	mCreateTiles = false;
 	mCreateColliders = false;

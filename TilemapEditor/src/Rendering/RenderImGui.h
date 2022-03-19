@@ -11,8 +11,9 @@ private:
 	std::unique_ptr<class ImGuiFuncs> mImFuncs;
 	std::unique_ptr<class MouseControl> mMouseControl;
 
-	bool mCreateTiles, mCreateColliders, mGridSnap, mExit;
+	std::string mWindowName;
 
+	bool mCreateTiles, mCreateColliders, mGridSnap, mExit;
 	int mCanvasWidth, mCanvasHeight, mTileSize, mGridX, mGridY;
 
 	sol::state mLua;
@@ -35,7 +36,8 @@ public:
 		This also works with the zoom and pan functionality.
 	*/
 	void RenderGrid(Renderer& renderer, SDL_Rect& camera, const float& zoom);
-	void CreateNewCanvas();
 
-	const bool GetExit() const { return mExit; }
+	void CreateNewCanvas();
+	inline void SetWindowName(Window& window) { SDL_SetWindowTitle(window.get(), mWindowName.c_str()); }
+	inline const bool& GetExit() const { return mExit; }
 };

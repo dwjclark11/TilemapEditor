@@ -3,25 +3,13 @@
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_mixer.h>
 #include <memory>
 #include "./Utilities/Utilities.h"
 
 class AssetManager
 {
-public:
-
-
 private:
-
-
-
 	std::map<std::string, Texture> mTextures;
-	//std::map<std::string, std::unique_ptr<TTF_Font>> mFonts;
-	//std::map<std::string, std::unique_ptr<Mix_Music>> mMusic;
-	//std::map<std::string, std::unique_ptr<Mix_Chunk>> mSoundFX;
-
 
 public:
 

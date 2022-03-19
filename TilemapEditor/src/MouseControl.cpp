@@ -155,8 +155,8 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 			if (mIsCollider)
 			{
 				tile.AddComponent<BoxColliderComponent>(
-					mBoxColliderComponent.mHeight,
 					mBoxColliderComponent.mWidth,
+					mBoxColliderComponent.mHeight,
 					mBoxColliderComponent.mOffset
 					);
 			}
