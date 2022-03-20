@@ -50,6 +50,7 @@ void AddTileCommand::Undo()
 void AddTileCommand::Redo()
 {
 	Entity newEntity = Registry::Instance().CreateEntity();
+	newEntity.Group("tiles");
 	newEntity.AddComponent<TransformComponent>(mTransformComponent);
 	newEntity.AddComponent<SpriteComponent>(mSpriteComponent);
 

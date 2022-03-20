@@ -10,11 +10,12 @@ class RenderGuiSystem : public System
 private:
 	std::unique_ptr<class ImGuiFuncs> mImFuncs;
 	std::shared_ptr<class MouseControl> mMouseControl;
+	std::shared_ptr<class Canvas> mCanvas;
 
 	std::string mWindowName;
 
 	bool mCreateTiles, mCreateColliders, mGridSnap, mExit;
-	int mCanvasWidth, mCanvasHeight, mTileSize, mGridX, mGridY;
+	int mCanvasWidth, mPrevCanvasWidth, mCanvasHeight, mPrevCanvasHeight, mTileSize, mPrevTileSize, mGridX, mGridY;
 
 	sol::state mLua;
 	std::unique_ptr<class CommandManager> mCommandManager;
@@ -23,6 +24,7 @@ private:
 	void SetExit(bool exit) { mExit = exit; }
 	void ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera);
 	const bool MouseOffCanvas() const;
+	void UpdateCanvas();
 
 public:
 	RenderGuiSystem();

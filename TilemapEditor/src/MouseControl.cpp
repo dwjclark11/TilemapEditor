@@ -87,17 +87,19 @@ MouseControl::MouseControl()
 	, mGridSize(16)
 	, mPanX(0)
 	, mPanY(0)
+	, mMostRecentTileId(-1)
 	, mIsCollider(false)
 	, mGridSnap(true)
 	, mOverImGuiWindow(false)
 	, mLeftPressed(false)
 	, mRightPressed(false)
 	, mTileAdded(false)
+	, mTileRemoved(false)
 	, mSpriteComponent()
 	, mTransformComponent()
 	, mBoxColliderComponent()
 {
-
+	
 }
 
 void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& renderer, SDL_Rect& mouseBox, SDL_Rect& camera, SDL_Event& event)
@@ -191,7 +193,7 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 			// Loop through tiles and remove the one that the mouse is hovering over
 			for (auto& entity : entities)
 			{
-				auto& transform = entity.GetComponent<TransformComponent>();
+				const auto& transform = entity.GetComponent<TransformComponent>();
 
 				if (transform.mPosition.x <= mMousePosX - subtract.x + TOLERANCE
 					&& transform.mPosition.x >= mMousePosX - subtract.x - TOLERANCE
@@ -199,8 +201,18 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 					&& transform.mPosition.y >= mMousePosY - subtract.y - TOLERANCE
 					)
 				{
+					const auto& sprite = entity.GetComponent<SpriteComponent>();
+					auto boxComponent = BoxColliderComponent();
+					
+					if (entity.HasComponent<BoxColliderComponent>())
+						mRemovedBoxComponent = boxComponent;
+
+					mRemovedSpriteComponent = sprite;
+					mRemovedTransformComponent = transform;
+
 					entity.Kill();
 					mRightPressed = true;
+					mTileRemoved = true;
 					LOG_INFO("Tile with ID: {0} has been removed!", entity.GetID());
 				}
 			}

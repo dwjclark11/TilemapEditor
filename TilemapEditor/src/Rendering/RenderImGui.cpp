@@ -6,6 +6,8 @@
 #include "../Utilities/Utilities.h"
 #include "../MouseControl.h"
 #include "../Utilities/CommandManager.h"
+#include "../Canvas.h"
+
 #include <SDL.h>
 
 
@@ -18,6 +20,7 @@ RenderGuiSystem::RenderGuiSystem()
 	, mCanvasWidth(640)
 	, mCanvasHeight(448)
 	, mTileSize(64)
+	, mPrevTileSize(mTileSize)
 	, mGridX(0)
 	, mGridY(0)
 
@@ -26,10 +29,14 @@ RenderGuiSystem::RenderGuiSystem()
 	mMouseControl = std::make_shared<MouseControl>();
 	mImFuncs = std::make_unique<ImGuiFuncs>(mMouseControl);
 	mCommandManager = std::make_unique<CommandManager>();
+	mCanvas = std::make_shared<Canvas>(mCanvasWidth, mCanvasHeight);
 
 	// Set-Up ImGui Properties
 	mImFuncs->SetupImgui();
 	mImFuncs->SetupImguiStyle();
+
+	mPrevCanvasWidth = 640;
+	mPrevCanvasHeight = 448;
 
 	// Open sol/lua libraries
 	mLua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
@@ -37,7 +44,7 @@ RenderGuiSystem::RenderGuiSystem()
 
 RenderGuiSystem::~RenderGuiSystem()
 {
-
+	//LOG_INFO("Render Gui System Destroyed!");
 }
 
 void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& renderer,
@@ -66,6 +73,15 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 			// Clamp the minimum Canvas width
 			if (ImGui::InputInt("Canvas Width", &mCanvasWidth, mTileSize, mTileSize))
 			{
+				// If there is a change of width, add the canvas change to the command stack
+				if (mPrevCanvasWidth != mCanvasWidth)
+				{
+					mCanvas->SetWidth(mCanvasWidth);
+					mCommandManager->ExecuteCmd(std::make_shared<ChangeCanvasSizeCommand>(mCanvas, mPrevCanvasWidth, mPrevCanvasHeight));
+					mPrevCanvasWidth = mCanvasWidth;
+				}
+
+				// Clamp the canvas width to 640
 				if (mCanvasWidth <= 640)
 					mCanvasWidth = 640;
 			}
@@ -73,6 +89,15 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 			// Clamp the minimum Canvas height
 			if (ImGui::InputInt("Canvas Height", &mCanvasHeight, mTileSize, mTileSize))
 			{
+				// If there is a change of height, add the canvas change to the command stack
+				if (mPrevCanvasHeight != mCanvasHeight)
+				{
+					mCanvas->SetHeight(mCanvasHeight);
+					mCommandManager->ExecuteCmd(std::make_shared<ChangeCanvasSizeCommand>(mCanvas, mPrevCanvasWidth, mPrevCanvasHeight));
+					mPrevCanvasHeight = mCanvasHeight;
+				}
+
+				// Clamp the canvas height to 480
 				if (mCanvasHeight <= 480)
 					mCanvasHeight = 480;
 			}
@@ -133,6 +158,12 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 			mCommandManager->ExecuteCmd(std::make_shared<AddTileCommand>(mMouseControl));
 			mMouseControl->SetTileAdded(false);
 		}
+
+		if (mMouseControl->TileRemoved())
+		{
+			mCommandManager->ExecuteCmd(std::make_shared<RemoveTileCommand>(mMouseControl));
+			mMouseControl->SetTileRemoved(false);
+		}
 	}
 	// Creating Box Colliders
 	if (mCreateColliders)
@@ -171,13 +202,14 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 
 	// Check to see if shortcut keys has been pressed
 	mImFuncs->UpdateShortCuts(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize, mCommandManager);
+	UpdateCanvas();
 }
 
 void RenderGuiSystem::RenderGrid(Renderer& renderer, SDL_Rect& camera, const float& zoom)
 {
 	// This grid changes size based on the canvas and tile sizes. 
-	auto xTiles = (mCanvasWidth / mTileSize);
-	auto yTiles = (mCanvasHeight / mTileSize);
+	auto xTiles = (mCanvas->GetWidth() / mTileSize);
+	auto yTiles = (mCanvas->GetHeight() / mTileSize);
 
 	for (int i = 0; i < yTiles; i++)
 	{
@@ -243,4 +275,11 @@ const bool RenderGuiSystem::MouseOffCanvas() const
 		return true;
 
 	return false;
+}
+
+void RenderGuiSystem::UpdateCanvas()
+{
+	mCanvasWidth = mCanvas->GetWidth();
+	mCanvasHeight = mCanvas->GetHeight();
+
 }

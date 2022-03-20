@@ -173,11 +173,13 @@
     <ClCompile Include="src\Rendering\RenderImGui.cpp" />
     <ClCompile Include="src\Rendering\RenderSystem.cpp" />
     <ClCompile Include="src\Utilities\AddTileCommand.cpp" />
+    <ClCompile Include="src\Utilities\ChangeCanvasSizeCommand.cpp" />
     <ClCompile Include="src\Utilities\CommandManager.cpp" />
     <ClCompile Include="src\Utilities\FileDialog.cpp" />
     <ClCompile Include="src\Utilities\FileDialogWin.cpp" />
     <ClCompile Include="src\Utilities\FileLoader.cpp" />
     <ClCompile Include="src\Utilities\LuaWriter.cpp" />
+    <ClCompile Include="src\Utilities\RemoveTileCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\imgui\imconfig.h" />
@@ -192,6 +194,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\AssetManager.h" />
+    <ClInclude Include="src\Canvas.h" />
     <ClInclude Include="src\Components\BoxColliderComponent.h" />
     <ClInclude Include="src\Components\SpriteComponent.h" />
     <ClInclude Include="src\Components\TransformComponent.h" />
@@ -203,12 +206,14 @@
     <ClInclude Include="src\Rendering\RenderImGui.h" />
     <ClInclude Include="src\Rendering\RenderSystem.h" />
     <ClInclude Include="src\Utilities\AddTileCommand.h" />
+    <ClInclude Include="src\Utilities\ChangeCanvasSizeCommand.h" />
     <ClInclude Include="src\Utilities\CommandManager.h" />
     <ClInclude Include="src\Utilities\FileDialog.h" />
     <ClInclude Include="src\Utilities\FileDialogWin.h" />
     <ClInclude Include="src\Utilities\FileLoader.h" />
     <ClInclude Include="src\Utilities\ICommand.h" />
     <ClInclude Include="src\Utilities\LuaWriter.h" />
+    <ClInclude Include="src\Utilities\RemoveTileCommand.h" />
     <ClInclude Include="src\Utilities\Utilities.h" />
   </ItemGroup>
   <ItemGroup>

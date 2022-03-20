@@ -16,3 +16,5 @@ public:
 typedef std::stack<std::shared_ptr<ICommand>> CommandStack;
 
 #include "AddTileCommand.h"
+#include "RemoveTileCommand.h"
+#include "ChangeCanvasSizeCommand.h"

@@ -26,13 +26,15 @@ private:
 	bool mLeftPressed;
 	bool mRightPressed;
 	bool mTileAdded;
+	bool mTileRemoved;
 
 	int mMostRecentTileId;
 
 	// Components 
-	SpriteComponent mSpriteComponent;
-	TransformComponent mTransformComponent;
-	BoxColliderComponent mBoxColliderComponent;
+	SpriteComponent mSpriteComponent, mRemovedSpriteComponent;
+	TransformComponent mTransformComponent, mRemovedTransformComponent;
+	BoxColliderComponent mBoxColliderComponent, mRemovedBoxComponent;
+
 
 	// +/- tolerance for tile removal
 	const int TOLERANCE = 15;
@@ -88,4 +90,10 @@ public:
 	inline void SetTileAdded(bool tile) { mTileAdded = tile; }
 	inline const int& GetRecentTileId() const { return mMostRecentTileId; }
 
+	inline const bool& TileRemoved() const { return mTileRemoved; }
+	inline void SetTileRemoved(bool tile) { mTileRemoved = tile; }
+
+	const BoxColliderComponent& GetRemovedBoxComponent() { return mRemovedBoxComponent; }
+	const TransformComponent& GetRemovedTransform() { return mRemovedTransformComponent; }
+	const SpriteComponent& GetRemovedSpriteComponent() { return mRemovedSpriteComponent; }
 };
