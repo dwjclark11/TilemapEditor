@@ -17,7 +17,11 @@ void CommandManager::Undo()
 {
 	// If the undo stack is empty, there is nothing to do
 	if (mUndoStack.size() <= 0)
+	{
+		LOG_ERROR("Undo Stack Empty!");
 		return;
+	}
+		
 
 	// Undo the most recently executed command
 	mUndoStack.top()->Undo();
@@ -32,7 +36,7 @@ void CommandManager::Redo()
 	// If the redo stack is empty, there is nothing to do
 	if (mRedoStack.size() <= 0)
 	{
-		LOG_ERROR("RedoSize: {0}", mRedoStack.size());
+		LOG_ERROR("Redo Stack Empty!");
 		return;
 	}
 		

@@ -128,7 +128,8 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetM
 	}
 
 	// Call to create undo last Command
-	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_Z] && !mUndone)
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_Z] 
+		&& (!state[SDL_SCANCODE_RSHIFT] && !state[SDL_SCANCODE_LSHIFT]) &&!mUndone)
 	{
 		commandManager->Undo();
 		mUndone = true;
@@ -138,8 +139,9 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetM
 		mUndone = false;
 	}
 
-	// Call to create undo last Command
-	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && (state[SDL_SCANCODE_Z] && (state[SDL_SCANCODE_RSHIFT] || state[SDL_SCANCODE_LSHIFT])) && !mRedone)
+	// Call to create Redo last Undo Command
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && (state[SDL_SCANCODE_Z] 
+		&& (state[SDL_SCANCODE_RSHIFT] || state[SDL_SCANCODE_LSHIFT])) && !mRedone)
 	{
 		commandManager->Redo();
 		mRedone = true;
