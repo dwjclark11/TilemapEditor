@@ -76,6 +76,13 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 				if (mCanvasHeight <= 480)
 					mCanvasHeight = 480;
 			}
+
+			if (ImGui::MenuItem("Undo", "Ctrl + Z"))
+				mCommandManager->Undo();
+
+			if (ImGui::MenuItem("Redo", "Ctrl + Shift + Z"))
+				mCommandManager->Redo();
+
 			ImGui::EndMenu();
 		}
 

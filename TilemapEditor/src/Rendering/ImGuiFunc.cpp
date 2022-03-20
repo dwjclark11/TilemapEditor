@@ -137,6 +137,17 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetM
 	{
 		mUndone = false;
 	}
+
+	// Call to create undo last Command
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && (state[SDL_SCANCODE_Z] && (state[SDL_SCANCODE_RSHIFT] || state[SDL_SCANCODE_LSHIFT])) && !mRedone)
+	{
+		commandManager->Redo();
+		mRedone = true;
+	}
+	else if (!state[SDL_SCANCODE_Z] && mRedone)
+	{
+		mRedone = false;
+	}
 }
 
 void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
@@ -198,6 +209,7 @@ ImGuiFuncs::ImGuiFuncs(std::shared_ptr<MouseControl>& mouseControl)
 	, mCheck(false)
 	, mNewFile(false)
 	, mUndone(false)
+	, mRedone(false)
 	, mLoadedTilesets()
 	, mTilesetLocations()
 	, mMouseControl(mouseControl)

@@ -55,4 +55,6 @@ void AddTileCommand::Redo()
 
 	if (mCollider)
 		newEntity.AddComponent<BoxColliderComponent>(mBoxColliderComponent);
+
+	mTileId = newEntity.GetID();
 }
