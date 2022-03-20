@@ -172,6 +172,8 @@
     <ClCompile Include="src\Rendering\RenderCollisionSystem.cpp" />
     <ClCompile Include="src\Rendering\RenderImGui.cpp" />
     <ClCompile Include="src\Rendering\RenderSystem.cpp" />
+    <ClCompile Include="src\Utilities\AddTileCommand.cpp" />
+    <ClCompile Include="src\Utilities\CommandManager.cpp" />
     <ClCompile Include="src\Utilities\FileDialog.cpp" />
     <ClCompile Include="src\Utilities\FileDialogWin.cpp" />
     <ClCompile Include="src\Utilities\FileLoader.cpp" />
@@ -200,9 +202,12 @@
     <ClInclude Include="src\Rendering\RenderCollisionSystem.h" />
     <ClInclude Include="src\Rendering\RenderImGui.h" />
     <ClInclude Include="src\Rendering\RenderSystem.h" />
+    <ClInclude Include="src\Utilities\AddTileCommand.h" />
+    <ClInclude Include="src\Utilities\CommandManager.h" />
     <ClInclude Include="src\Utilities\FileDialog.h" />
     <ClInclude Include="src\Utilities\FileDialogWin.h" />
     <ClInclude Include="src\Utilities\FileLoader.h" />
+    <ClInclude Include="src\Utilities\ICommand.h" />
     <ClInclude Include="src\Utilities\LuaWriter.h" />
     <ClInclude Include="src\Utilities\Utilities.h" />
   </ItemGroup>

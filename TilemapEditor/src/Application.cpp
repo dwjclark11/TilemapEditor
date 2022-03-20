@@ -94,9 +94,9 @@ void Application::Draw()
 	SDL_RenderClear(mRenderer.get());
 
 	// Render Application Systems
+	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera, mZoom);
-	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent, mZoom, mDeltaTime);
 
 	/*

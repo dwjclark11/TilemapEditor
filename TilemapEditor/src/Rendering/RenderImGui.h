@@ -9,7 +9,7 @@ class RenderGuiSystem : public System
 {
 private:
 	std::unique_ptr<class ImGuiFuncs> mImFuncs;
-	std::unique_ptr<class MouseControl> mMouseControl;
+	std::shared_ptr<class MouseControl> mMouseControl;
 
 	std::string mWindowName;
 
@@ -17,6 +17,7 @@ private:
 	int mCanvasWidth, mCanvasHeight, mTileSize, mGridX, mGridY;
 
 	sol::state mLua;
+	std::unique_ptr<class CommandManager> mCommandManager;
 
 private:
 	void SetExit(bool exit) { mExit = exit; }

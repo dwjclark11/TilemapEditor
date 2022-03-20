@@ -5,6 +5,7 @@
 #include "ImGuiFunc.h"
 #include "../Utilities/Utilities.h"
 #include "../MouseControl.h"
+#include "../Utilities/CommandManager.h"
 #include <SDL.h>
 
 
@@ -21,8 +22,10 @@ RenderGuiSystem::RenderGuiSystem()
 	, mGridY(0)
 
 {
-	mImFuncs = std::make_unique<ImGuiFuncs>();
-	mMouseControl = std::make_unique<MouseControl>();
+	
+	mMouseControl = std::make_shared<MouseControl>();
+	mImFuncs = std::make_unique<ImGuiFuncs>(mMouseControl);
+	mCommandManager = std::make_unique<CommandManager>();
 
 	// Set-Up ImGui Properties
 	mImFuncs->SetupImgui();
@@ -117,6 +120,12 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 		// If the mouse is off the canvas, do not render the mouse box and do not create a new tile
 		if (!MouseOffCanvas())
 			mMouseControl->CreateTile(assetManager, renderer, mouseBox, camera, event);
+	
+		if (mMouseControl->TileAdded())
+		{
+			mCommandManager->ExecuteCmd(std::make_shared<AddTileCommand>(mMouseControl));
+			mMouseControl->SetTileAdded(false);
+		}
 	}
 	// Creating Box Colliders
 	if (mCreateColliders)
@@ -154,7 +163,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 	mWindowName = mImFuncs->GetWindowName();
 
 	// Check to see if shortcut keys has been pressed
-	mImFuncs->UpdateShortCuts(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize);
+	mImFuncs->UpdateShortCuts(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize, mCommandManager);
 }
 
 void RenderGuiSystem::RenderGrid(Renderer& renderer, SDL_Rect& camera, const float& zoom)
@@ -163,15 +172,19 @@ void RenderGuiSystem::RenderGrid(Renderer& renderer, SDL_Rect& camera, const flo
 	auto xTiles = (mCanvasWidth / mTileSize);
 	auto yTiles = (mCanvasHeight / mTileSize);
 
-	// Set the grid colour to a light grey that is semi-transparent
-	SDL_SetRenderDrawColor(renderer.get(), 125, 125, 125, 125);
-
 	for (int i = 0; i < yTiles; i++)
 	{
 		for (int j = 0; j < xTiles; j++)
 		{
+			// Create a checkerboard
+			if ((j - i)  % 2 == 0 && (i - j) % 2 == 0)
+				SDL_SetRenderDrawColor(renderer.get(), 125, 125, 125, 70);
+			else
+				SDL_SetRenderDrawColor(renderer.get(), 200, 200, 200, 70);
+			
 			SDL_Rect newRect = { (j * mTileSize * zoom) - camera.x, (i * mTileSize * zoom) - camera.y, mTileSize * zoom, mTileSize * zoom };
-			SDL_RenderDrawRect(renderer.get(), &newRect);
+			
+			SDL_RenderFillRect(renderer.get(), &newRect);
 		}
 	}
 }

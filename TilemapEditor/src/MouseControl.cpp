@@ -92,6 +92,7 @@ MouseControl::MouseControl()
 	, mOverImGuiWindow(false)
 	, mLeftPressed(false)
 	, mRightPressed(false)
+	, mTileAdded(false)
 	, mSpriteComponent()
 	, mTransformComponent()
 	, mBoxColliderComponent()
@@ -161,8 +162,11 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 					);
 			}
 
-			mLeftPressed = true;
+			// Get Most Recent Tile Id
+			mMostRecentTileId = tile.GetID();
 
+			mLeftPressed = true;
+			mTileAdded = true;
 			// This is used for Creating tiles faster
 			mPrevMousePos.x = pos.x;
 			mPrevMousePos.y = pos.y;

@@ -5,6 +5,7 @@
 #include "../Utilities/FileLoader.h"
 #include "../Logger/Logger.h"
 #include "../MouseControl.h"
+#include "../Utilities/CommandManager.h"
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -104,7 +105,7 @@ void ImGuiFuncs::OpenCheckWindow()
 }
 
 void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetManager,
-	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize, const std::unique_ptr<CommandManager>& commandManager)
 {
 	const Uint8* state = SDL_GetKeyboardState(NULL);
 
@@ -124,6 +125,17 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetM
 	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_N])
 	{
 		mNewFile = true;
+	}
+
+	// Call to create undo last Command
+	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_Z] && !mUndone)
+	{
+		commandManager->Undo();
+		mUndone = true;
+	}
+	else if (!state[SDL_SCANCODE_Z] && mUndone)
+	{
+		mUndone = false;
 	}
 }
 
@@ -159,7 +171,7 @@ void ImGuiFuncs::Save(const AssetManager_Ptr& assetManager, Renderer& renderer, 
 	}
 }
 
-ImGuiFuncs::ImGuiFuncs()
+ImGuiFuncs::ImGuiFuncs(std::shared_ptr<MouseControl>& mouseControl)
 	: mFileName("")
 	, mImageName("")
 	, mAssetID("")
@@ -185,8 +197,10 @@ ImGuiFuncs::ImGuiFuncs()
 	, mCleared(false)
 	, mCheck(false)
 	, mNewFile(false)
+	, mUndone(false)
 	, mLoadedTilesets()
 	, mTilesetLocations()
+	, mMouseControl(mouseControl)
 {
 	mFileDialog = std::make_unique<FileDialogWin>();
 	mFileLoader = std::make_unique<FileLoader>();
@@ -362,7 +376,7 @@ void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& asset
 	}
 }
 
-void ImGuiFuncs::ShowTileProperties(std::unique_ptr<MouseControl>& mouseControl, const AssetManager_Ptr& assetManager, bool collider)
+void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl, const AssetManager_Ptr& assetManager, bool collider)
 {
 	if (ImGui::Begin("Tile Properties"))
 	{

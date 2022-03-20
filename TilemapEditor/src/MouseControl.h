@@ -25,6 +25,9 @@ private:
 	bool mOverImGuiWindow;
 	bool mLeftPressed;
 	bool mRightPressed;
+	bool mTileAdded;
+
+	int mMostRecentTileId;
 
 	// Components 
 	SpriteComponent mSpriteComponent;
@@ -80,4 +83,9 @@ public:
 	inline const glm::vec2& GetMousePosScreen() const { return mMousePosScreen; }
 	inline void UpdateZoom(const float& zoom) { mZoom = zoom; }
 	inline void UpdateGridSize(const int& grid) { mGridSize = grid; }
+
+	inline const bool& TileAdded() const { return mTileAdded; }
+	inline void SetTileAdded(bool tile) { mTileAdded = tile; }
+	inline const int& GetRecentTileId() const { return mMostRecentTileId; }
+
 };
