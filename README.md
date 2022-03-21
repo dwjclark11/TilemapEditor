@@ -18,6 +18,14 @@ This application was created to quickly make tile maps for small games created w
 *    **Sol/Lua** - for loading files
 *    **ECS** - from Pikuma Game Engine 
 
+# Dependencies
+* SDL2
+* ImGui
+* SDPLOG
+* Sol/Lua
+
+# Build
+* Premake file under construction
 
 ## Functionality
 * Load/Add multiple tilemaps
