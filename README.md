@@ -25,7 +25,7 @@ https://user-images.githubusercontent.com/63356975/159281938-66793ba8-79ea-48b7-
 # Dependencies
 * SDL2
 * ImGui
-* SDPLOG
+* SPDLOG
 * Sol/Lua
 
 # Build
