@@ -10,7 +10,11 @@ This application was created to quickly make tile maps for small games created w
 **ZeldaClone** https://github.com/dwjclark11/ZeldaClone_NES. I added more functionality and made the code more clean and concise as my abilities continue to grow.
 
 ## Video 
-* Under Construction!
+
+
+https://user-images.githubusercontent.com/63356975/159281938-66793ba8-79ea-48b7-aa38-ed50d9cf23ee.mp4
+
+
 
 ## Technologies
 *    **ImGui** - for user interface
