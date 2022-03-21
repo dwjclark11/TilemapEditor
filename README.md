@@ -6,7 +6,8 @@ The Editor uses the **ECS** system from that course and you can load and save da
 When saving and loading, the editor uses a [.lua] file that loads the the location of the 
 [.map] files and the tilesets that are used.
 
-This application was created to quickly make tile maps for small games created with the **Pikuma Game Engine**.
+This application was created to quickly make tile maps for small games created with the **Pikuma Game Engine**. I re-made the tilemap editor that I created in my 
+**ZeldaClone** https://github.com/dwjclark11/ZeldaClone_NES. I added more functionality and made the code more clean and concise as my abilities continue to grow.
 
 ## Video 
 * Under Construction!
