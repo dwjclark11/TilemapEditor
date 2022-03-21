@@ -8,6 +8,9 @@ When saving and loading, the editor uses a [.lua] file that loads the the locati
 
 This application was created to quickly make tile maps for small games created with the **Pikuma Game Engine**.
 
+## Video 
+* Under Construction!
+
 ## Technologies
 *    **ImGui** - for user interface
 *    **SDL2** - for rendering and window/inputs
@@ -25,7 +28,9 @@ This application was created to quickly make tile maps for small games created w
 * Panning and Zooming
  
 ## Tilemap Editor Controls
-| key | Function | 
+
+### Key Shortcuts and Functions
+| **key** | **Function** | 
 | --- | -------- |
 | W   | Move Camara Up |
 | S   | Move Camera Down |
@@ -38,7 +43,8 @@ This application was created to quickly make tile maps for small games created w
 | Ctrl + O | Open Project |
 | Ctrl + N | New Canvas/Project | 
 
-| Mouse Button | Function |
+### Mouse Functions
+| **Mouse Button** | **Function** |
 | ------------ | -------- | 
 | Left Button | Add Tile |
 | Middle Button | Pan/Move the Camera |
