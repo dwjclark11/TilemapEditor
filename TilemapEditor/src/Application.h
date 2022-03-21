@@ -11,12 +11,9 @@ class Application
 {
 
 private:
-
-
-private:
 	const int WINDOW_BAR = 25;
-	const int WINDOW_HEIGHT = 768 - WINDOW_BAR;
-	const int WINDOW_WIDTH = 1366;
+	const int WINDOW_HEIGHT = 1080 - WINDOW_BAR;
+	const int WINDOW_WIDTH = 1920;
 
 	const int DEFAULT_ZOOM = 1;
 	const int DEFAULT_CAM_X = -360;
@@ -37,8 +34,6 @@ private:
 	int mMsPrevFrame, mMsPerFrame;
 
 	float mZoom;
-
-	//std::unique_ptr<class AssetManager> mAssetManager;
 
 	AssetManager_Ptr mAssetManager;
 

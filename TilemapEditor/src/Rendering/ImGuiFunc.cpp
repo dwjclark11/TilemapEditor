@@ -356,7 +356,7 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 
 void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& assetManager)
 {
-	if (ImGui::MenuItem("Load Tileset"))
+	if (ImGui::MenuItem("Add Tileset"))
 	{
 		FileDialogWin fileDialog;
 		mImageName = fileDialog.OpenImageFile();
@@ -429,6 +429,20 @@ void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl,
 		ImGui::Text("Transform Component");
 		ImGui::SliderInt("X Scale", &mScaleX, 1, 10);
 		ImGui::SliderInt("Y Scale", &mScaleY, 1, 10);
+		
+		// If not creating colliders
+		if (!collider)
+		{
+			ImGui::Text("Sprite Component");
+			if (ImGui::InputInt("Layer", &mLayer, 1, 10))
+			{
+				// Clamp the layer [0 <= mLayer <= 10]
+				if (mLayer <= 0)
+					mLayer = 0;
+				if (mLayer >= 10)
+					mLayer = 10;
+			}
+		}
 
 		if (ImGui::InputInt("Mouse Rect Y", &mMouseRectY, 8, 8))
 		{
@@ -452,10 +466,11 @@ void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl,
 		else
 			ImGui::Checkbox("Box Collider", &mCollider);
 
+		// Set the collider for creating tiles/colliders
+		mouseControl->SetCollider(mCollider);
+
 		if (mCollider)
 		{
-			mouseControl->SetCollider(mCollider);
-
 			if (ImGui::InputInt("Box Width", &mBoxWidth, 8, 8))
 			{
 				// Clamp Box Width at zero
