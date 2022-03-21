@@ -86,6 +86,8 @@ void Application::Init()
 	Registry::Instance().AddSystem<RenderSystem>();
 	Registry::Instance().AddSystem<RenderCollisionSystem>();
 	Registry::Instance().AddSystem<RenderGuiSystem>();
+	// Add the mouse hand texture right away
+	mAssetManager->AddTexture(mRenderer, "mouse_hand", "./assets/mouse_hand.png");
 }
 
 void Application::Draw()
@@ -241,7 +243,7 @@ Application::Application()
 	, mMsPerFrame(0)
 	, mZoom(1)
 {
-
+	
 }
 
 Application::~Application()

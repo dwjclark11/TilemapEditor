@@ -179,7 +179,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 
 	// Update Mouse functions
 	mMouseControl->UpdateZoom(zoom);
-	mMouseControl->PanCamera(camera, dt);
+	mMouseControl->PanCamera(camera, dt, assetManager, renderer);
 	mMouseControl->UpdateMousePos(camera);
 	mMouseControl->UpdateGridSize(mTileSize);
 

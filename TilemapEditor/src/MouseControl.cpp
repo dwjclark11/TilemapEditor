@@ -339,22 +339,29 @@ const bool MouseControl::MouseOutOfBounds() const
 	return false;
 }
 
-void MouseControl::PanCamera(SDL_Rect& camera, const float& dt)
+void MouseControl::PanCamera(SDL_Rect& camera, const float& dt, const AssetManager_Ptr& assetManager, Renderer& renderer)
 {
 	if (MiddleButtonDown())
 	{
+		// Hide the mouse cursor
+		SDL_ShowCursor(0);
+		SDL_Rect srcRect { 0, 0, 24, 24 };
+		// The destination rect is around the mouse cursor area
+		SDL_Rect dstRect{ mMousePosX * mZoom - camera.x, mMousePosY * mZoom - camera.y, 48, 48};
+		// Draw the mouse hand image when using the panning function
+		SDL_RenderCopyEx(renderer.get(), assetManager->GetTexture("mouse_hand").get(), &srcRect, &dstRect, NULL, NULL, SDL_FLIP_NONE);
+		// Check the current mouse values to the last pan value and move the camera accordingly
 		if (mPanX != mMousePosScreen.x)
-		{
 			camera.x -= (mMousePosScreen.x - mPanX) * mZoom * dt * 10;
-		}
 
 		if (mPanY != mMousePosScreen.y)
-		{
 			camera.y -= (mMousePosScreen.y - mPanY) * mZoom * dt * 10;
-		}
 	}
 	else
 	{
+		// Show the original mouse cursor
+		SDL_ShowCursor(1);
+		// Reset the pan values to the current mouse values
 		mPanX = mMousePosScreen.x;
 		mPanY = mMousePosScreen.y;
 	}

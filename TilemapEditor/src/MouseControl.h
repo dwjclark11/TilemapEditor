@@ -74,7 +74,7 @@ public:
 
 	const bool MouseOutOfBounds() const;
 
-	void PanCamera(SDL_Rect& camera, const float& dt);
+	void PanCamera(SDL_Rect& camera, const float& dt, const AssetManager_Ptr& assetManager, Renderer& renderer);
 	inline void SetMouseOverImGuiWindow(bool over) { mOverImGuiWindow = over; }
 	inline const glm::vec2& GetMouseRect() const { return mMouseRect; }
 	inline void SetMouseRect(int mouseRectX, int mouseRectY) { mMouseRect = glm::vec2(mouseRectX, mouseRectY); }

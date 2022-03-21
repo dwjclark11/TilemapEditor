@@ -52,8 +52,22 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-
 IDI_ICON1               ICON                    "assets\\TilemapEditor.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "assets\\mouse_hand.png"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

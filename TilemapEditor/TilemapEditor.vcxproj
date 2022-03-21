@@ -220,6 +220,7 @@
     <ResourceCompile Include="TilemapEditor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\mouse_hand.png" />
     <Image Include="assets\TilemapEditor.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

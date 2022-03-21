@@ -201,5 +201,8 @@
     <Image Include="assets\TilemapEditor.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\mouse_hand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
