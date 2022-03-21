@@ -5,8 +5,8 @@ When saving and loading, the editor uses a [.lua] file that loads the the locati
 [.map] files and the tilesets that are used.
 
 ## Technologies
-*    ImGui - for user interface
-*    SDL2 - for rendering and window/inputs
-*    Sol/Lua - for loading files
-*    ECS - from Pikuma Game Engine 
+*    **ImGui** - for user interface
+*    **SDL2** - for rendering and window/inputs
+*    **Sol/Lua** - for loading files
+*    **ECS** - from Pikuma Game Engine 
 *    
