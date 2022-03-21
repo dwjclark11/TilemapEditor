@@ -19,8 +19,8 @@ This application was created to quickly make tile maps for small games created w
 *    Load/Add multiple tilemaps
 *    Undo/Redo functionality when adding/removing tiles and changing canvas size
 *    Save/Load capabilities.
-     **    I have changed the way that I load/save files. It differs from the course; therefore, you may have to rewrite the save functionality.
-     **    The load function uses lua/sol and loads previously saved projects and their assets/tilemaps into the asset manager.
+  **    I have changed the way that I load/save files. It differs from the course; therefore, you may have to rewrite the save functionality.
+  **    The load function uses lua/sol and loads previously saved projects and their assets/tilemaps into the asset manager.
 *    Selecting different tiles based on where you click on the displayed tileset
 
 
