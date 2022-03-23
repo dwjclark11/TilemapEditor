@@ -7,6 +7,7 @@
 #include "../MouseControl.h"
 #include "../Utilities/CommandManager.h"
 #include "../Canvas.h"
+#include "IconsFontAwesome.h"
 
 #include <SDL.h>
 
@@ -54,14 +55,14 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 
 	if (ImGui::BeginMainMenuBar())
 	{
-		if (ImGui::BeginMenu("File"))
+		if (ImGui::BeginMenu(ICON_FA_FILE_ARCHIVE " File"))
 		{
 			mImFuncs->ShowFileMenu(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize);
 
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Edit"))
+		if (ImGui::BeginMenu(ICON_FA_EDIT " Edit"))
 		{
 			// Clamp the minimum Tile Size
 			if (ImGui::InputInt("Tile Size", &mTileSize, 8, 8))
@@ -102,16 +103,16 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 					mCanvasHeight = 480;
 			}
 
-			if (ImGui::MenuItem("Undo", "Ctrl + Z"))
+			if (ImGui::MenuItem(ICON_FA_UNDO " Undo", "Ctrl + Z"))
 				mCommandManager->Undo();
 
-			if (ImGui::MenuItem("Redo", "Ctrl + Shift + Z"))
+			if (ImGui::MenuItem(ICON_FA_REDO " Redo", "Ctrl + Shift + Z"))
 				mCommandManager->Redo();
 
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Tools"))
+		if (ImGui::BeginMenu(/*ICON_FA_TOOLS*/ "Tools")) // Tools Icon shows up as question mark
 		{
 			mImFuncs->ShowToolsMenu(renderer, assetManager);
 

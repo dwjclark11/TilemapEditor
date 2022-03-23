@@ -6,6 +6,7 @@
 #include "../Logger/Logger.h"
 #include "../MouseControl.h"
 #include "../Utilities/CommandManager.h"
+#include "IconsFontAwesome.h"
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -227,8 +228,11 @@ ImGuiFuncs::~ImGuiFuncs()
 
 void ImGuiFuncs::SetupImgui()
 {
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	// Setup ImGui Context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 	// Setup ImGui Keys
 	io.KeyMap[ImGuiKey_Backspace] = SDL_SCANCODE_BACKSPACE;
@@ -314,16 +318,16 @@ void ImGuiFuncs::SetupImguiStyle()
 void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetManager,
 	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
 {
-	if (ImGui::MenuItem("New", "Ctrl + N"))
+	if (ImGui::MenuItem(ICON_FA_FILE " New", "Ctrl + N"))
 		mNewFile = true;
 
-	if (ImGui::MenuItem("Open", "Ctrl + O"))
+	if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Open", "Ctrl + O"))
 		OpenProject(lua, assetManager, renderer, canvasWidth, canvasHeight, tileSize);
 
-	if (ImGui::MenuItem("Save", "Ctrl + S"))
+	if (ImGui::MenuItem(ICON_FA_SAVE " Save", "Ctrl + S"))
 		Save(assetManager, renderer, canvasWidth, canvasHeight, tileSize);
 
-	if (ImGui::MenuItem("Save As..", "Ctrl + Shift + S"))
+	if (ImGui::MenuItem(ICON_FA_SAVE " Save As..", "Ctrl + Shift + S"))
 	{
 		if (mFileName == "")
 		{
@@ -356,7 +360,7 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 
 void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& assetManager)
 {
-	if (ImGui::MenuItem("Add Tileset"))
+	if (ImGui::MenuItem(ICON_FA_PLUS " Add Tileset"))
 	{
 		FileDialogWin fileDialog;
 		mImageName = fileDialog.OpenImageFile();
@@ -419,7 +423,6 @@ void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl,
 					mAssetID = currentTileset;
 					SDL_QueryTexture(assetManager->GetTexture(mAssetID).get(), NULL, NULL, &mImageWidth, &mImageHeight);
 					prevTileSet = currentTileset;
-					LOG_INFO("QUERY");
 				}
 				if (currentTileset != mAssetID)
 					currentTileset = mAssetID;

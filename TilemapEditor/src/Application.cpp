@@ -7,6 +7,7 @@
 #include "Rendering/RenderSystem.h"
 #include "Rendering/RenderCollisionSystem.h"
 #include "Rendering/RenderImGui.h"
+#include "Rendering/IconsFontAwesome.h"
 #include <cmath>
 
 void Application::Init()
@@ -61,8 +62,27 @@ void Application::Init()
 	// Set the renderer to blend mode
 	SDL_SetRenderDrawBlendMode(mRenderer.get(), SDL_BLENDMODE_BLEND);
 
+
+
+
 	// Initialize ImGui context
 	ImGui::CreateContext();
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.Fonts->AddFontDefault();
+	// Config fonts
+	ImFontConfig config;
+	config.MergeMode = true;
+	//config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+	static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+	if (!io.Fonts->AddFontFromFileTTF("fonts/fontawesome-webfont.ttf", 14.0f, &config, icon_ranges))
+		LOG_ERROR("FAILED TO LOAD FONT!");
+
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
+
+
 	ImGuiSDL::Initialize(mRenderer.get(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	// Initialize Camera --> This Centers the Grid

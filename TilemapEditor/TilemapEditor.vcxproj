@@ -201,6 +201,7 @@
     <ClInclude Include="src\ECS\ECS.h" />
     <ClInclude Include="src\Logger\Logger.h" />
     <ClInclude Include="src\MouseControl.h" />
+    <ClInclude Include="src\Rendering\IconsFontAwesome.h" />
     <ClInclude Include="src\Rendering\ImGuiFunc.h" />
     <ClInclude Include="src\Rendering\RenderCollisionSystem.h" />
     <ClInclude Include="src\Rendering\RenderImGui.h" />
