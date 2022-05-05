@@ -353,6 +353,31 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 		}
 	}
 
+	if (ImGui::MenuItem(ICON_FA_SAVE " Save To Lua Table"))
+	{
+		if (mFileName == "")
+		{
+			mFileName = mFileDialog->SaveFile();
+
+			if (mFileName == "")
+				return;
+
+			mFileLoader->SaveToLuaTable(mFileName, mLoadedTilesets, mTilesetLocations, tileSize);
+		}
+		//else
+		//{
+		//	// Create a temp string from the save dialog
+		//	std::string filename = mFileDialog->SaveFile();
+
+		//	// If the string is empty, leave the function
+		//	if (filename == "")
+		//		return;
+
+		//	mFileLoader->SaveProject(filename, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+		//	// Change the main filename to the new filename
+		//	mFileName = filename;
+		//}
+	}
 	// Exit the application
 	if (ImGui::MenuItem("Exit"))
 		mExit = true;

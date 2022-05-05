@@ -13,8 +13,8 @@ void MouseControl::MouseBox(const AssetManager_Ptr& assetManager, Renderer& rend
 		if (mMousePosX >= 0) mMousePosGrid.x = mMousePosX / mGridSize;
 		if (mMousePosY >= 0) mMousePosGrid.y = mMousePosY / mGridSize;
 
-		mouseBox.x = (mMousePosGrid.x * mGridSize * mZoom) - camera.x;
-		mouseBox.y = (mMousePosGrid.y * mGridSize * mZoom) - camera.y;
+		mouseBox.x = std::round(mMousePosGrid.x * mGridSize * mZoom) - camera.x;
+		mouseBox.y = std::round(mMousePosGrid.y * mGridSize * mZoom) - camera.y;
 	}
 	else // Float the center of the tile on the mouse
 	{
@@ -36,8 +36,8 @@ void MouseControl::MouseBox(const AssetManager_Ptr& assetManager, Renderer& rend
 	SDL_Rect dstRect = {
 		mouseBox.x,
 		mouseBox.y,
-		mouseBox.w * mMouseRect.x * mTransformComponent.mScale.x * mZoom,
-		mouseBox.h * mMouseRect.y * mTransformComponent.mScale.y * mZoom
+		std::round(mouseBox.w * mMouseRect.x * mTransformComponent.mScale.x * mZoom),
+		std::round(mouseBox.h * mMouseRect.y * mTransformComponent.mScale.y * mZoom)
 	};
 
 	// If not a collider, draw the selected tile image
@@ -134,11 +134,26 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 		// If the left mouse button is pressed, create a tile/collider at that location
 		if ((event.button.button == SDL_BUTTON_LEFT && !mLeftPressed) || FastTile(pos))
 		{
+			// Update Grid values
+			int mGridX = static_cast<int>(mMousePosScreen.x) / mGridSize;
+			int mGridY = static_cast<int>(mMousePosScreen.y) / mGridSize;
+
+			if (mGridSnap)
+			{
+				mTransformComponent.mPosition.x = mGridX * mGridSize;
+				mTransformComponent.mPosition.y = mGridY * mGridSize;
+			}
+			else
+			{
+				mTransformComponent.mPosition.x = static_cast<int>(mMousePosScreen.x);
+				mTransformComponent.mPosition.y = static_cast<int>(mMousePosScreen.y);
+			}
+
 			// Create a new tile entity and add the necessary components
 			Entity tile = Registry::Instance().CreateEntity();
 			tile.Group("tiles");
 			tile.AddComponent<TransformComponent>(
-				mTransformComponent.mPosition / glm::vec2(mZoom, mZoom),
+				glm::vec2(mTransformComponent.mPosition.x, mTransformComponent.mPosition.y),
 				mTransformComponent.mScale,
 				mTransformComponent.mRotation
 				);

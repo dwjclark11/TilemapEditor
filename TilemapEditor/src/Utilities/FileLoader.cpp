@@ -337,3 +337,117 @@ void FileLoader::SaveProject(const std::string& filename, std::vector<std::strin
 
 }
 
+void FileLoader::SaveToLuaTable(const std::string& filename, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths, const int& tileSize)
+{
+	std::fstream projFile;
+	projFile.open(filename, std::ios::out | std::ios::trunc);
+
+	if (!projFile.is_open())
+	{
+		LOG_ERROR("FILELOADER__LINE__223: Unable to open[{0}] for saving", filename);
+		return;
+	}
+
+	LuaWriter luaWriter;
+	// Start the lua project document
+	luaWriter.WriteStartDocument();
+
+	luaWriter.WriteCommentSeparation(projFile);
+	luaWriter.WriteCommentLine("", projFile);
+	luaWriter.WriteCommentSeparation(projFile);
+
+	luaWriter.WriteWords("return {", projFile, true);
+	luaWriter.WriteKeyAndUnquotedValue("id", "id", projFile, false, false);
+	luaWriter.WriteKeyAndUnquotedValue("name", "", projFile, false, false);
+	luaWriter.WriteKeyAndUnquotedValue("tileWidth", tileSize, projFile, false, false);
+	luaWriter.WriteKeyAndUnquotedValue("tileHeight", tileSize, projFile, false, false);
+	luaWriter.WriteDeclareTable("on_wake", projFile);
+	luaWriter.WriteEndTable(false, projFile);
+	luaWriter.WriteDeclareTable("actions", projFile);
+	luaWriter.WriteEndTable(false, projFile);
+	luaWriter.WriteDeclareTable("trigger_types", projFile);
+	luaWriter.WriteEndTable(false, projFile);
+	luaWriter.WriteDeclareTable("triggers", projFile);
+	luaWriter.WriteEndTable(false, projFile);
+	luaWriter.WriteDeclareTable("tiles", projFile);
+
+	if (Registry::Instance().DoesGroupExist("tiles"))
+	{
+		int i = 1;
+		for (const auto& tile : Registry::Instance().GetEntitiesByGroup("tiles"))
+		{
+			luaWriter.WriteStartTable(i, false, projFile);
+			luaWriter.WriteDeclareTable("components", projFile);
+			if (tile.HasComponent<TransformComponent>())
+			{
+				const auto& transform = tile.GetComponent<TransformComponent>();
+
+				luaWriter.WriteDeclareTable("transform", projFile);
+				luaWriter.WriteDeclareTable("position", projFile);
+				luaWriter.WriteKeyAndValue("x", transform.mPosition.x, false, projFile);
+				luaWriter.WriteKeyAndValue("y", transform.mPosition.y, true, projFile);
+				luaWriter.WriteEndTable(true, projFile);
+				luaWriter.WriteDeclareTable("scale", projFile);
+				luaWriter.WriteKeyAndValue("x", transform.mScale.x, false, projFile);
+				luaWriter.WriteKeyAndValue("y", transform.mScale.y, true, projFile);
+				luaWriter.WriteEndTable(true, projFile);
+				luaWriter.WriteKeyAndUnquotedValue("rotation", transform.mRotation, projFile, false, false);
+				luaWriter.WriteEndTable(false, projFile);
+			}
+
+			if (tile.HasComponent<SpriteComponent>())
+			{
+				const auto& sprite = tile.GetComponent<SpriteComponent>();
+
+				std::string fixed = "false";
+				
+				if (sprite.mIsFixed)
+					fixed = "true";
+
+				luaWriter.WriteDeclareTable("sprite", projFile);
+				luaWriter.WriteKeyAndQuotedValue("asset_id", sprite.mAssetId, projFile);
+				luaWriter.WriteKeyAndValue("width", sprite.mWidth, false, projFile);
+				luaWriter.WriteKeyAndValue("height", sprite.mHeight, false, projFile);
+				luaWriter.WriteKeyAndValue("z_index", sprite.mLayer, false, projFile);
+				luaWriter.WriteKeyAndValue("is_fixed", fixed, true, projFile);
+				luaWriter.WriteDeclareTable("src_rect", projFile);
+				luaWriter.WriteKeyAndValue("x", sprite.mSrcRect.x, false, projFile);
+				luaWriter.WriteKeyAndValue("y", sprite.mSrcRect.y, true, projFile);
+				luaWriter.WriteEndTable(true, projFile);
+				luaWriter.WriteDeclareTable("offset", projFile);
+				luaWriter.WriteKeyAndValue("x", sprite.mOffset.x, false, projFile);
+				luaWriter.WriteKeyAndValue("y", sprite.mOffset.y, true, projFile);
+				luaWriter.WriteEndTable(true, projFile);
+				luaWriter.WriteEndTable(false, projFile);
+			}
+
+			if (tile.HasComponent<BoxColliderComponent>())
+			{
+				const auto& boxCollider = tile.GetComponent<BoxColliderComponent>();
+
+				luaWriter.WriteDeclareTable("box_collider", projFile);
+				luaWriter.WriteKeyAndValue("width", boxCollider.mWidth, false, projFile);
+				luaWriter.WriteKeyAndValue("height", boxCollider.mHeight, true, projFile);
+				luaWriter.WriteDeclareTable("offset", projFile);
+				luaWriter.WriteKeyAndValue("x", boxCollider.mOffset.x, false, projFile);
+				luaWriter.WriteKeyAndValue("y", boxCollider.mOffset.y, true, projFile);
+				luaWriter.WriteEndTable(true, projFile);
+				luaWriter.WriteKeyAndUnquotedValue("is_collider", "true", projFile);
+				luaWriter.WriteKeyAndUnquotedValue("is_trigger", "false", projFile);
+				luaWriter.WriteEndTable(false, projFile);
+			}
+
+			luaWriter.WriteEndTable(false, projFile);
+			luaWriter.WriteEndTable(false, projFile);
+			i++;
+		}
+	}
+
+	// Loop through all the tiles 
+	luaWriter.WriteEndTable(false, projFile);
+	luaWriter.WriteEndTable(false, projFile);
+	luaWriter.WriteEndDocument(projFile);
+	luaWriter.WriteWords("end", projFile);
+	projFile.close();
+}
+

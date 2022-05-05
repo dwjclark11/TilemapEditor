@@ -23,4 +23,6 @@ public:
 
 	void SaveProject(const std::string& filename, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths,
 		const int& canvasWidth, const int& canvasHeight, const int& tileSize);
+
+	void SaveToLuaTable(const std::string& filename, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths, const int& tileSize);
 };

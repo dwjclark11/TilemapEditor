@@ -54,7 +54,8 @@ public:
 
 	// Template functions for entering values and keys 
 		// Template functions for enter values/keys of different types --> Generic
-	template <typename TValue> void WriteValue(TValue value, std::fstream& file);
+	template <typename TValue> void WriteValue(TValue value, std::fstream& file, bool indent = false);
+	template <typename TValue> void WriteWords(TValue value, std::fstream& file, bool indent = false);
 	template <typename TName> void WriteStartTable(TName name, bool quoted, std::fstream& file);
 	template <typename TValue> void WriteUnquotedValue(TValue value, std::fstream& file);
 	template <typename TValue> void WriteUnquotedValue(TValue value, bool newLine, std::fstream& file);
@@ -62,7 +63,7 @@ public:
 	template <typename TKey, typename TValue> void WriteKeyAndValue(TKey key, TValue value, std::fstream& file);
 	template <typename TKey, typename TValue> void WriteKeyAndValue(TKey key, TValue value, bool finalValue, std::fstream& file);
 	template <typename TKey, typename TValue> void WriteKeyAndUnquotedValue(TKey key, TValue value, std::fstream& file, bool sameLine = false, bool lastValue = false);
-	template <typename TKey, typename TValue> void WriteKeyAndQuotedValue(TKey key, TValue value, std::fstream& file);
+	template <typename TKey, typename TValue> void WriteKeyAndQuotedValue(TKey key, TValue value, std::fstream& file, bool finalValue = false);
 };
 
 
@@ -74,10 +75,24 @@ void LuaWriter::Write(const T value, std::fstream& fileName)
 }
 
 template<typename TValue>
-void LuaWriter::WriteValue(TValue value, std::fstream& file)
+void LuaWriter::WriteValue(TValue value, std::fstream& file, bool indent)
 {
 	WriteUnquotedValue(value, file);
+	
+	if (indent)
+		++mIndent;
+
 }
+
+template<typename TValue>
+void LuaWriter::WriteWords(TValue value, std::fstream& file, bool indent)
+{
+	file << value;
+
+	if (indent)
+		++mIndent;
+}
+
 
 template<typename TName>
 void LuaWriter::WriteStartTable(TName name, bool quoted, std::fstream& file)
@@ -176,13 +191,14 @@ void LuaWriter::WriteKeyAndUnquotedValue(TKey key, TValue value, std::fstream& f
 }
 
 template<typename TKey, typename TValue>
-void LuaWriter::WriteKeyAndQuotedValue(TKey key, TValue value, std::fstream& file)
+void LuaWriter::WriteKeyAndQuotedValue(TKey key, TValue value, std::fstream& file, bool finalValue)
 {
 	PrepareNewLine(file);
 	Write(key, file);
 	Write(mMinimize ? "=" : " = ", file);
 	Write(Quote(value), file);
-	//Write('"', file);
+	if (!finalValue)
+		Write(mSeparator, file);
 	mNewLine = false;
 	mValueWritten = true;
 }

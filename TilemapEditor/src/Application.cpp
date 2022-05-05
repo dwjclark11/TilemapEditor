@@ -165,6 +165,7 @@ void Application::ProcessEvents()
 			break;
 		case SDL_MOUSEWHEEL:
 			Zoom(mEvent);
+			break;
 		}
 	}
 }
@@ -231,18 +232,21 @@ void Application::Zoom(SDL_Event& event)
 	if (event.wheel.y > 0)
 	{
 		float temp = mZoom;
-		float temp2 = temp + 0.1f;
+		float temp2 = temp + 0.4f;
 		mZoom = Util::Lerp(temp, temp2, 0.5);
+		
+		if (mZoom >= 2.2)
+			mZoom = 2.2;
 
 	}
 	else if (event.wheel.y < 0)
 	{
 		float temp = mZoom;
-		float temp2 = temp - 0.1f;
+		float temp2 = temp - 0.4f;
 		mZoom = Util::Lerp(temp, temp2, 0.5);
 
-		if (mZoom <= 0.5)
-			mZoom = 0.5;
+		if (mZoom <= 0.4)
+			mZoom = 0.4;
 	}
 
 	// Zoom in the camera as well?

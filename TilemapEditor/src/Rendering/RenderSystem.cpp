@@ -62,11 +62,12 @@ void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetMan
 		SDL_Rect srcRect = sprite.mSrcRect;
 
 		// Set the Destination rect with the x, y position to be rendered
+
 		SDL_Rect dstRect = {
-			((transform.mPosition.x * zoom) - (sprite.mIsFixed ? 0 : camera.x)), // If the sprite is fixed, do not subtract the camera value 
-			((transform.mPosition.y * zoom) - (sprite.mIsFixed ? 0 : camera.y)),
-			(sprite.mWidth * transform.mScale.x * zoom),
-			(sprite.mHeight * transform.mScale.y * zoom)
+			(std::floor(transform.mPosition.x * zoom) - (sprite.mIsFixed ? 0 : camera.x)), 
+			(std::floor(transform.mPosition.y * zoom) - (sprite.mIsFixed ? 0 : camera.y)),
+			std::ceil(sprite.mWidth * transform.mScale.x * zoom),
+			std::ceil(sprite.mHeight * transform.mScale.y * zoom)
 		};
 
 		SDL_RenderCopyEx(

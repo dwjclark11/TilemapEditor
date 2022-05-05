@@ -18,7 +18,7 @@ void AssetManager::AddTexture(Renderer& renderer, const std::string& assetId, co
 		if (!surface)
 			LOG_ERROR("Unable to make Surface!");
 
-		Texture texture = Texture(SDL_CreateTextureFromSurface(renderer.get(), std::move(surface)));
+		Texture texture = Texture(SDL_CreateTextureFromSurface(renderer.get(), surface));
 
 		if (!texture)
 		{

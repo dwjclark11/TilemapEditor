@@ -69,6 +69,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 			{
 				if (mTileSize <= 8)
 					mTileSize = 8;
+
 			}
 
 			// Clamp the minimum Canvas width
@@ -183,6 +184,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 	mMouseControl->PanCamera(camera, dt, assetManager, renderer);
 	mMouseControl->UpdateMousePos(camera);
 	mMouseControl->UpdateGridSize(mTileSize);
+	mMouseControl->SetGridSize(mTileSize);
 
 	// Render ImGui Windows
 	ImGui::Render();
@@ -222,7 +224,7 @@ void RenderGuiSystem::RenderGrid(Renderer& renderer, SDL_Rect& camera, const flo
 			else
 				SDL_SetRenderDrawColor(renderer.get(), 200, 200, 200, 70);
 			
-			SDL_Rect newRect = { (j * mTileSize * zoom) - camera.x, (i * mTileSize * zoom) - camera.y, mTileSize * zoom, mTileSize * zoom };
+			SDL_Rect newRect = { (std::floor(j * mTileSize * zoom)) - camera.x, (std::floor(i * mTileSize * zoom)) - camera.y, std::ceil(mTileSize * zoom), std::ceil(mTileSize * zoom )};
 			
 			SDL_RenderFillRect(renderer.get(), &newRect);
 		}

@@ -80,6 +80,7 @@ public:
 	inline void SetMouseRect(int mouseRectX, int mouseRectY) { mMouseRect = glm::vec2(mouseRectX, mouseRectY); }
 
 	inline void SetGridSnap(bool snap) { mGridSnap = snap; }
+
 	inline void SetGridSize(int size) { mGridSize = size; }
 	inline void SetCollider(bool collider) { mIsCollider = collider; }
 	inline const glm::vec2& GetMousePosScreen() const { return mMousePosScreen; }
