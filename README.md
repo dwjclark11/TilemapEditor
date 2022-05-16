@@ -1,10 +1,10 @@
 # Tilemap Editor 
-This is a Tilemap editor that is to be used for making maps for the **Pikuma Game Engine**, by **Gustavo Pezzi**. 
-https://pikuma.com/courses/cpp-2d-game-engine-development.
 
-The Editor uses the **ECS** system from that course and you can load and save data to [.map] files.
+The Editor uses the **ECS** system from the course https://pikuma.com/courses/cpp-2d-game-engine-development. You can load and save data to [.map] files.
 When saving and loading, the editor uses a [.lua] file that loads the the location of the 
 [.map] files and the tilesets that are used.
+
+Just Added Save to Lua Table Functionality. It creates a formatted lua table currently set up for another project that I am working on. 
 
 This application was created to quickly make tile maps for small games created with the **Pikuma Game Engine**. I re-made the tilemap editor that I created in my 
 **ZeldaClone** https://github.com/dwjclark11/ZeldaClone_NES. I added more functionality and made the code more clean and concise as my abilities continue to grow.
