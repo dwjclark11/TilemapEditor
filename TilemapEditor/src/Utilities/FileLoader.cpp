@@ -25,7 +25,7 @@ FileLoader::~FileLoader()
 
 void FileLoader::LoadProject(sol::state& lua, const std::string& filename, const AssetManager_Ptr& assetManager,
 	Renderer& renderer, std::vector<std::string>& assetIds, std::vector<std::string>& assetFilepaths,
-	int& canvasWidth, int& canvasHeight, int& tileSize)
+	std::shared_ptr<Canvas>& canvas,  int& tileSize)
 {
 	/*
 		Things that need to be set by load project:
@@ -104,13 +104,17 @@ void FileLoader::LoadProject(sol::state& lua, const std::string& filename, const
 		mapNum++;
 	}
 
-	sol::optional<sol::table> canvas = project["canvas"];
-	if (canvas != sol::nullopt)
+	sol::optional<sol::table> luaCanvas = project["canvas"];
+	if (luaCanvas != sol::nullopt)
 	{
-		canvasWidth = project["canvas"]["canvas_width"];
-		canvasHeight = project["canvas"]["canvas_height"];
+		int canvasWidth = project["canvas"]["canvas_width"];
+		int canvasHeight = project["canvas"]["canvas_height"];
 		tileSize = project["canvas"]["tile_size"];
+
+		canvas->SetWidth(std::move(canvasWidth));
+		canvas->SetHeight(std::move(canvasHeight));
 	}
+
 
 	LoadMap(assetManager, mapFile);
 }

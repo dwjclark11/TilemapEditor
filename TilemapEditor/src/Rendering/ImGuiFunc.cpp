@@ -106,20 +106,20 @@ void ImGuiFuncs::OpenCheckWindow()
 }
 
 void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetManager,
-	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize, const std::unique_ptr<CommandManager>& commandManager)
+	Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize, const std::unique_ptr<CommandManager>& commandManager)
 {
 	const Uint8* state = SDL_GetKeyboardState(NULL);
 
 	// SaveFile Dialog || Save if file is loaded
 	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_S])
 	{
-		Save(assetManager, renderer, canvasWidth, canvasHeight, tileSize);
+		Save(assetManager, renderer, canvas->GetWidth(), canvas->GetHeight(), tileSize);
 	}
 
 	// OpenFile Dialog
 	if ((state[SDL_SCANCODE_LCTRL] || state[SDL_SCANCODE_RCTRL]) && state[SDL_SCANCODE_O])
 	{
-		OpenProject(lua, assetManager, renderer, canvasWidth, canvasHeight, tileSize);
+		OpenProject(lua, assetManager, renderer, canvas, tileSize);
 	}
 
 	// Call to create new canvas
@@ -153,7 +153,7 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetM
 	}
 }
 
-void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize)
 {
 	mFileDialog;
 	mFileLoader;
@@ -162,7 +162,7 @@ void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManag
 	if (mFileName == "")
 		return;
 
-	mFileLoader->LoadProject(lua, mFileName, assetManager, renderer, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+	mFileLoader->LoadProject(lua, mFileName, assetManager, renderer, mLoadedTilesets, mTilesetLocations, canvas, tileSize);
 	SetWindowName(mFileName);
 }
 
@@ -316,16 +316,16 @@ void ImGuiFuncs::SetupImguiStyle()
 }
 
 void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetManager,
-	Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize)
+	Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize)
 {
 	if (ImGui::MenuItem(ICON_FA_FILE " New", "Ctrl + N"))
 		mNewFile = true;
 
 	if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Open", "Ctrl + O"))
-		OpenProject(lua, assetManager, renderer, canvasWidth, canvasHeight, tileSize);
+		OpenProject(lua, assetManager, renderer, canvas, tileSize);
 
 	if (ImGui::MenuItem(ICON_FA_SAVE " Save", "Ctrl + S"))
-		Save(assetManager, renderer, canvasWidth, canvasHeight, tileSize);
+		Save(assetManager, renderer, canvas->GetWidth(), canvas->GetHeight(), tileSize);
 
 	if (ImGui::MenuItem(ICON_FA_SAVE " Save As..", "Ctrl + Shift + S"))
 	{
@@ -336,7 +336,7 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 			if (mFileName == "")
 				return;
 
-			mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+			mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvas->GetWidth(), canvas->GetHeight(), tileSize);
 		}
 		else
 		{
@@ -347,7 +347,7 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 			if (filename == "")
 				return;
 
-			mFileLoader->SaveProject(filename, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
+			mFileLoader->SaveProject(filename, mLoadedTilesets, mTilesetLocations, canvas->GetWidth(), canvas->GetHeight(), tileSize);
 			// Change the main filename to the new filename
 			mFileName = filename;
 		}

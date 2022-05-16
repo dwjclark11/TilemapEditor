@@ -57,7 +57,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 	{
 		if (ImGui::BeginMenu(ICON_FA_FILE_ARCHIVE " File"))
 		{
-			mImFuncs->ShowFileMenu(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize);
+			mImFuncs->ShowFileMenu(mLua, assetManager, renderer, mCanvas, mTileSize);
 
 			ImGui::EndMenu();
 		}
@@ -204,7 +204,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 	mWindowName = mImFuncs->GetWindowName();
 
 	// Check to see if shortcut keys has been pressed
-	mImFuncs->UpdateShortCuts(mLua, assetManager, renderer, mCanvasWidth, mCanvasHeight, mTileSize, mCommandManager);
+	mImFuncs->UpdateShortCuts(mLua, assetManager, renderer, mCanvas, mTileSize, mCommandManager);
 	UpdateCanvas();
 }
 

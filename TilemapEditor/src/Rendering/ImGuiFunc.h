@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <sol/sol.hpp>
+#include "../Canvas.h"
 
 class ImGuiFuncs
 {
@@ -36,7 +37,7 @@ public:
 	void SetupImgui();
 	void SetupImguiStyle();
 
-	void ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
+	void ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize);
 	void ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& assetManager);
 	void ShowTileProperties(std::shared_ptr<class MouseControl>& mouseControl, const AssetManager_Ptr& assetManager, bool collider);
 	void TileSetWindow(const AssetManager_Ptr& assetManager, Renderer& renderer, const glm::vec2& mouseRect);
@@ -50,10 +51,10 @@ public:
 	void OpenCheckWindow();
 
 	void UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetManager,
-		Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize, const std::unique_ptr<class CommandManager>& commandManager);
+		Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize, const std::unique_ptr<class CommandManager>& commandManager);
 
 	void OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager,
-		Renderer& renderer, int& canvasWidth, int& canvasHeight, int& tileSize);
+		Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize);
 
 	void Save(const AssetManager_Ptr& assetManager,
 		Renderer& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize);
