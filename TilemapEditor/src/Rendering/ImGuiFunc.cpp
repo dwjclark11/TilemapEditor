@@ -421,7 +421,11 @@ void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& asset
 
 void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl, const AssetManager_Ptr& assetManager, bool collider)
 {
-	if (ImGui::Begin("Tile Properties"))
+	std::string boxName = "Tile Properties";
+
+	if (collider) boxName = "Box Collider Properties";
+
+	if (ImGui::Begin(boxName.c_str()))
 	{
 		if (!collider)
 		{

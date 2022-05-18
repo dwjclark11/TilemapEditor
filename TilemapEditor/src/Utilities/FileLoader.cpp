@@ -277,8 +277,8 @@ void FileLoader::SaveProject(const std::string& filename, std::vector<std::strin
 	for (const auto& asset : assetIds)
 	{
 		luaWriter.WriteStartTable(assetNum, false, projFile);
-		luaWriter.WriteKeyAndQuotedValue("asset_id", asset, projFile);
-		luaWriter.WriteKeyAndQuotedValue("file_path", assetFilepaths[assetNum], projFile);
+		luaWriter.WriteKeyAndQuotedValue("asset_id", asset, projFile, true);
+		luaWriter.WriteKeyAndQuotedValue("file_path", assetFilepaths[assetNum], projFile, true);
 		luaWriter.WriteEndTable(false, projFile);
 		assetNum++;
 	}
