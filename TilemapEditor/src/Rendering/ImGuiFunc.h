@@ -11,7 +11,7 @@
 class ImGuiFuncs
 {
 private:
-	std::string mFileName, mImageName, mAssetID, mWindowName;
+	std::string mFileName, mImageName, mAssetID, mWindowName, mLuaTableFile;
 	int mScaleX, mScaleY, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY;
 	int mImageWidth, mImageHeight, mMouseRectY, mMouseRectX;
 	int mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY;

@@ -190,6 +190,7 @@ ImGuiFuncs::ImGuiFuncs(std::shared_ptr<MouseControl>& mouseControl)
 	, mImageName("")
 	, mAssetID("")
 	, mWindowName("Tilemap Editor")
+	, mLuaTableFile("")
 	, mScaleX(4)
 	, mScaleY(4)
 	, mWidth(16)
@@ -329,55 +330,35 @@ void ImGuiFuncs::ShowFileMenu(sol::state& lua, const AssetManager_Ptr& assetMana
 
 	if (ImGui::MenuItem(ICON_FA_SAVE " Save As..", "Ctrl + Shift + S"))
 	{
-		if (mFileName == "")
-		{
-			mFileName = mFileDialog->SaveFile();
-
-			if (mFileName == "")
-				return;
-
-			mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvas->GetWidth(), canvas->GetHeight(), tileSize);
-		}
-		else
-		{
-			// Create a temp string from the save dialog
-			std::string filename = mFileDialog->SaveFile();
-
-			// If the string is empty, leave the function
-			if (filename == "")
-				return;
-
-			mFileLoader->SaveProject(filename, mLoadedTilesets, mTilesetLocations, canvas->GetWidth(), canvas->GetHeight(), tileSize);
-			// Change the main filename to the new filename
-			mFileName = filename;
-		}
+		// Get the file path from the file dialog
+		std::string filename =  mFileDialog->SaveFile();
+		
+		// Check to see if we got the filepath from the dialog
+		// The user may have cancelled the save 
+		if (filename == "")
+			return;
+		
+		// Change the filename to the dialog path 
+		mFileName = filename;
+		// Call the save project function 
+		mFileLoader->SaveProject(mFileName, mLoadedTilesets, mTilesetLocations, canvas->GetWidth(), canvas->GetHeight(), tileSize);
 	}
 
 	if (ImGui::MenuItem(ICON_FA_SAVE " Save To Lua Table"))
 	{
-		if (mFileName == "")
-		{
-			mFileName = mFileDialog->SaveFile();
+		// Create a temp string from the save dialog
+		std::string filename = mFileDialog->SaveFile();
 
-			if (mFileName == "")
-				return;
-
-			mFileLoader->SaveToLuaTable(mFileName, mLoadedTilesets, mTilesetLocations, tileSize);
-		}
-		//else
-		//{
-		//	// Create a temp string from the save dialog
-		//	std::string filename = mFileDialog->SaveFile();
-
-		//	// If the string is empty, leave the function
-		//	if (filename == "")
-		//		return;
-
-		//	mFileLoader->SaveProject(filename, mLoadedTilesets, mTilesetLocations, canvasWidth, canvasHeight, tileSize);
-		//	// Change the main filename to the new filename
-		//	mFileName = filename;
-		//}
+		// If the string is empty, leave the function
+		if (filename == "")
+			return;
+		
+		// Change the main filename to the new filename
+		mLuaTableFile = filename;
+		// Actually save the lua table to a file
+		mFileLoader->SaveToLuaTable(mLuaTableFile, mLoadedTilesets, mTilesetLocations, tileSize);	
 	}
+	
 	// Exit the application
 	if (ImGui::MenuItem("Exit"))
 		mExit = true;
