@@ -1,4 +1,5 @@
-# Tilemap Editor 
+![TilemapEditor](https://user-images.githubusercontent.com/63356975/169343832-a648e10d-b156-46f5-8d2a-8fd044c74144.png)
+# Jade Tilemap Editor 
 
 The Editor uses the **ECS** system from the course https://pikuma.com/courses/cpp-2d-game-engine-development. You can load and save data to [.map] files.
 When saving and loading, the editor uses a [.lua] file that loads the the location of the 
