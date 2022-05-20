@@ -36,6 +36,7 @@ std::string FileDialogWin::SaveFile(const char* filter, HWND owner)
 	ofn.hwndOwner = owner;
 	ofn.lpstrFilter = filter;
 	ofn.lpstrFile = szFile;
+	ofn.lpstrDefExt = "lua"; // If the user does not put the lua extension, add it 
 	ofn.nMaxFile = sizeof(szFile);
 	ofn.nFilterIndex = 1;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;

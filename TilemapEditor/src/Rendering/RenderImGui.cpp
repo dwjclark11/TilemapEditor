@@ -148,7 +148,7 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 	// Creating tiles
 	if (mCreateTiles)
 	{
-		mImFuncs->TileSetWindow(assetManager, renderer, mMouseControl->GetMouseRect());
+		mImFuncs->TileSetWindow(assetManager,  mMouseControl->GetMouseRect());
 		mImFuncs->ShowTileProperties(mMouseControl, assetManager, false);
 
 		// If the mouse is off the canvas, do not render the mouse box and do not create a new tile

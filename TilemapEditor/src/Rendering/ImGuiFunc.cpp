@@ -11,7 +11,7 @@
 
 namespace fs = std::filesystem;
 
-void ImGuiFuncs::TileSetWindow(const AssetManager_Ptr& assetManager, Renderer& renderer, const glm::vec2& mouseRect)
+void ImGuiFuncs::TileSetWindow(const AssetManager_Ptr& assetManager, const glm::vec2& mouseRect)
 {
 	// 
 	if (ImGui::Begin("Texture", &mImageLoaded))
