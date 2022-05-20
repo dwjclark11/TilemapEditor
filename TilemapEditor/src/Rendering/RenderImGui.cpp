@@ -85,7 +85,12 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 
 				// Clamp the canvas width to 640
 				if (mCanvasWidth <= 640)
+				{
 					mCanvasWidth = 640;
+					mCanvas->SetWidth(mCanvasWidth);
+					mPrevCanvasWidth = mCanvasWidth;
+				}
+					
 			}
 
 			// Clamp the minimum Canvas height
@@ -101,7 +106,12 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 
 				// Clamp the canvas height to 480
 				if (mCanvasHeight <= 480)
+				{
 					mCanvasHeight = 480;
+					mCanvas->SetHeight(mCanvasHeight);
+					mPrevCanvasHeight = mCanvasHeight;
+				}
+					
 			}
 
 			if (ImGui::MenuItem(ICON_FA_UNDO " Undo", "Ctrl + Z"))

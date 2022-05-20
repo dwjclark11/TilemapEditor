@@ -1,211 +1,207 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="libs">
+      <UniqueIdentifier>{2F149A7C-1B4B-9B0D-C437-8110B04D170F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="libs\imgui">
+      <UniqueIdentifier>{D948162C-C500-5879-2E08-31D51ADFF269}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Components">
+      <UniqueIdentifier>{221ADC4D-0EE8-CF53-F77B-407AE3E8ABB8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ECS">
+      <UniqueIdentifier>{F76D2FA9-634D-AE44-6C65-391BD8C314A6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Logger">
+      <UniqueIdentifier>{5CCC981E-4884-DA6B-B18B-B3C79D62755C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Rendering">
+      <UniqueIdentifier>{BA10DABB-26D1-55F2-EF0B-9F6F5B8B9ACE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Utilities">
+      <UniqueIdentifier>{D86B3A83-442C-B6B9-0D67-FF3679E6FA95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_impl_sdl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_sdl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_stdlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AssetManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Logger\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ECS\ECS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Rendering\ImGuiFunc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Rendering\RenderSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Rendering\RenderImGui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\FileDialogWin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MouseControl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Rendering\RenderCollisionSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\LuaWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\FileLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\FileDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\CommandManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\AddTileCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\RemoveTileCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utilities\ChangeCanvasSizeCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="libs\imgui\imconfig.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imgui.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imgui_impl_sdl.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imgui_internal.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imgui_sdl.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imgui_stdlib.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="libs\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\AssetManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Logger\Logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ECS\ECS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\RenderImGui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\ImGuiFunc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\RenderSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\TransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\SpriteComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\FileDialogWin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MouseControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\BoxColliderComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering\RenderCollisionSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\LuaWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\FileLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\FileDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\ICommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\CommandManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\AddTileCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\RemoveTileCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utilities\ChangeCanvasSizeCommand.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Canvas.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Components\BoxColliderComponent.h">
+      <Filter>src\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Components\SpriteComponent.h">
+      <Filter>src\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Components\TransformComponent.h">
+      <Filter>src\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\ECS.h">
+      <Filter>src\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Logger\Logger.h">
+      <Filter>src\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MouseControl.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering\IconsFontAwesome.h">
-      <Filter>Header Files</Filter>
+      <Filter>src\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\ImGuiFunc.h">
+      <Filter>src\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderCollisionSystem.h">
+      <Filter>src\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderImGui.h">
+      <Filter>src\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering\RenderSystem.h">
+      <Filter>src\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\AddTileCommand.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\ChangeCanvasSizeCommand.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\CommandManager.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\FileDialog.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\FileDialogWin.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\FileLoader.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\ICommand.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\LuaWriter.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\RemoveTileCommand.h">
+      <Filter>src\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\Utilities.h">
+      <Filter>src\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TilemapEditor.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\TilemapEditor.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\mouse_hand.png">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClCompile Include="libs\imgui\imgui.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_demo.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_draw.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_sdl.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_sdl.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_stdlib.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_widgets.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AssetManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\ECS.cpp">
+      <Filter>src\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Logger\Logger.cpp">
+      <Filter>src\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MouseControl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\ImGuiFunc.cpp">
+      <Filter>src\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderCollisionSystem.cpp">
+      <Filter>src\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderImGui.cpp">
+      <Filter>src\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\RenderSystem.cpp">
+      <Filter>src\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\AddTileCommand.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\ChangeCanvasSizeCommand.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\CommandManager.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\FileDialog.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\FileDialogWin.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\FileLoader.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\LuaWriter.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\RemoveTileCommand.cpp">
+      <Filter>src\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
