@@ -30,7 +30,10 @@ https://user-images.githubusercontent.com/63356975/159281938-66793ba8-79ea-48b7-
 * Sol/Lua
 
 # Build
-* Premake file under construction
+* Added Premake5.lua build script. Just run the **GenerateSln.bat** file and it should create the Visual Studio 2022 solution for you. 
+* You may need to edit the GenerateSln.bat to run your version of VS if not using 2022. 
+* Ex: change call *premake\bin\premake5 vs2022* to *call premake\bin\premake5 vs2019*
+* I have not added any other platforms to the build for I use VS and windows; however, you should be able to add your OS to the build script
 
 ## Functionality
 * Load/Add multiple tilemaps
