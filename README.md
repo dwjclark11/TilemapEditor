@@ -15,6 +15,11 @@ This application was created to quickly make tile maps for small games created w
 
 https://user-images.githubusercontent.com/63356975/159281938-66793ba8-79ea-48b7-aa38-ed50d9cf23ee.mp4
 
+## Loading a Map Project
+
+
+https://user-images.githubusercontent.com/63356975/169720893-22976487-dec7-431e-8047-50c2e60b8411.mp4
+
 
 
 ## Technologies
