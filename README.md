@@ -74,3 +74,7 @@ https://user-images.githubusercontent.com/63356975/169720893-22976487-dec7-431e-
 | Wheel Up | Zoom In | 
 | Wheel down | Zoom Out
 
+### Issues to Work On
+* Only works on 1920 1080 Resolution, does not take into affect other screen resolutions
+* Box Collider Offset not scaling properly with zoom
+* 
