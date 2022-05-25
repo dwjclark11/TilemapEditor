@@ -17,10 +17,10 @@ void RenderCollisionSystem::Update(std::unique_ptr<SDL_Renderer, Util::SDLDestro
 		const auto& collider = entity.GetComponent<BoxColliderComponent>();
 
 		const SDL_Rect srcRect = {
-			transform.mPosition.x * zoom + collider.mOffset.x - camera.x,
-			transform.mPosition.y * zoom + collider.mOffset.y - camera.y,
-			collider.mWidth * transform.mScale.x * zoom,
-			collider.mHeight * transform.mScale.y * zoom
+			std::floor((transform.mPosition.x + collider.mOffset.x) * zoom) - camera.x,
+			std::floor((transform.mPosition.y + collider.mOffset.y) * zoom) - camera.y,
+			std::ceil(collider.mWidth * transform.mScale.x * zoom ),
+			std::ceil(collider.mHeight * transform.mScale.y * zoom)
 		};
 
 		SDL_SetRenderDrawColor(renderer.get(), 255, 0, 0, 125);

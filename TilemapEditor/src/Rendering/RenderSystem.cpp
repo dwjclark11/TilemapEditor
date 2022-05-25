@@ -36,12 +36,6 @@ void RenderSystem::Update(SDL_Renderer* renderer, std::unique_ptr<class AssetMan
 			renderableEntity.transformComponent.mPosition.y > camera.y + camera.h
 			);
 
-		// Bypass entites that are outside of the camera and fixed sprites
-		//if (isEntityOutsideCamera && !renderableEntity.spriteComponent.mIsFixed)
-		//{
-		//	continue;
-		//}
-
 		// place the entity inside of the Renderable entities vector
 		renderableEntities.emplace_back(renderableEntity);
 	}
