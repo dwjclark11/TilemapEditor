@@ -15,6 +15,11 @@ This application was created to quickly make tile maps for small games created w
 
 https://user-images.githubusercontent.com/63356975/159281938-66793ba8-79ea-48b7-aa38-ed50d9cf23ee.mp4
 
+## Loading a Map Project
+
+
+https://user-images.githubusercontent.com/63356975/169720893-22976487-dec7-431e-8047-50c2e60b8411.mp4
+
 
 
 ## Technologies
@@ -30,7 +35,10 @@ https://user-images.githubusercontent.com/63356975/159281938-66793ba8-79ea-48b7-
 * Sol/Lua
 
 # Build
-* Premake file under construction
+* Added Premake5.lua build script. Just run the **GenerateSln.bat** file and it should create the Visual Studio 2022 solution for you. 
+* You may need to edit the GenerateSln.bat to run your version of VS if not using 2022. 
+* Ex: change call *premake\bin\premake5 vs2022* to *call premake\bin\premake5 vs2019*
+* I have not added any other platforms to the build for I use VS and windows; however, you should be able to add your OS to the build script
 
 ## Functionality
 * Load/Add multiple tilemaps
@@ -66,3 +74,7 @@ https://user-images.githubusercontent.com/63356975/159281938-66793ba8-79ea-48b7-
 | Wheel Up | Zoom In | 
 | Wheel down | Zoom Out
 
+### Issues to Work On
+* Only works on 1920 1080 Resolution, does not take into affect other screen resolutions
+* Box Collider Offset not scaling properly with zoom
+* 
