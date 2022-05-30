@@ -164,7 +164,9 @@ void Application::ProcessEvents()
 			CameraControl(mEvent);
 			break;
 		case SDL_MOUSEWHEEL:
-			Zoom(mEvent);
+			// If the mouse is over an ImGui window, do not zoom!
+			if (!io.WantCaptureMouse)
+				Zoom(mEvent);
 			break;
 		}
 	}

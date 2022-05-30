@@ -14,15 +14,23 @@ namespace fs = std::filesystem;
 void ImGuiFuncs::TileSetWindow(const AssetManager_Ptr& assetManager, const glm::vec2& mouseRect)
 {
 	// 
-	if (ImGui::Begin("Texture", &mImageLoaded))
+	if (ImGui::Begin("Texture", &mImageLoaded, ImGuiWindowFlags_HorizontalScrollbar)) // We also want the horizontal bar
 	{
+		// The image might be larger than the ImGui window, so we want to add the current scroll value to the 
+		// mouse position for the selected image 
+		auto scrollY = ImGui::GetScrollY();
+		auto scrollX = ImGui::GetScrollX();
+		
+		//LOG_INFO("Scroll Y: {0}", scrollY);
+		//LOG_INFO("Scroll X: {0}", scrollX);
+		
 		int imageWidth = mImageWidth * 2;
 		int imageHeight = mImageHeight * 2;
 
 		ImGui::Image(assetManager->GetTexture(mAssetID).get(), ImVec2(imageWidth, imageHeight));
 
-		int mousePosX = static_cast<int>(ImGui::GetMousePos().x - ImGui::GetWindowPos().x);
-		int mousePosY = static_cast<int>(ImGui::GetMousePos().y - ImGui::GetWindowPos().y - TITLE_BAR_SIZE);
+		int mousePosX = static_cast<int>(ImGui::GetMousePos().x - ImGui::GetWindowPos().x + scrollX);
+		int mousePosY = static_cast<int>(ImGui::GetMousePos().y - ImGui::GetWindowPos().y - TITLE_BAR_SIZE + scrollY);
 
 		int rows = imageHeight / (mouseRect.y * 2);
 		int cols = imageWidth / (mouseRect.x * 2);
