@@ -145,8 +145,8 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 			}
 			else
 			{
-				mTransformComponent.mPosition.x = static_cast<int>(mMousePosScreen.x);
-				mTransformComponent.mPosition.y = static_cast<int>(mMousePosScreen.y);
+				mTransformComponent.mPosition.x = static_cast<int>(mMousePosScreen.x - (mMouseRect.x * mTransformComponent.mScale.x / 2));
+				mTransformComponent.mPosition.y = static_cast<int>(mMousePosScreen.y - (mMouseRect.y * mTransformComponent.mScale.y / 2));
 			}
 
 			// Create a new tile entity and add the necessary components
