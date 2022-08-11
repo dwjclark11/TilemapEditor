@@ -88,9 +88,20 @@ public:
 	void UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetManager,
 		Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize, const std::unique_ptr<class CommandManager>& commandManager);
 
+	/*
+	*	OpenProject - Loads a previously saved project from a lua table project file
+	*	@param - sol::state& lua -> used to read the lua table. 
+	*	@param - AssetManager -> Loads the required assets into the asset manager from the lua file
+	*	@param - Canvas - Sets the canvas size of the project
+	*	@param - int tileSize -> Set the tilesize of the loaded project
+	*/
 	void OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager,
 		Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize);
 
+	/*
+	*  Save - Checks to see if the file has already been save, if not, opens a file dialog 
+	*	and saves the project by creating a new project file, tiles file and colliders file.
+	*/
 	void Save(const AssetManager_Ptr& assetManager,
 		Renderer& renderer, const int& canvasWidth, const int& canvasHeight, const int& tileSize);
 

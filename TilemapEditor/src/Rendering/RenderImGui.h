@@ -40,7 +40,20 @@ public:
 	*/
 	void RenderGrid(Renderer& renderer, SDL_Rect& camera, const float& zoom);
 
+	/*
+	*	CreateNewCanvas() - This function erases all tiles and removes them from the registry. 
+	*	It also resets all settings back to default, starting a new fresh canvas
+	*/
 	void CreateNewCanvas();
+
+	/*
+	*	SetWindowName - Sets the Title for the main SDL Window. This will change based on if the project has 
+	*	been loaded or saved. The name of the project will be in the title.
+	*/
 	inline void SetWindowName(Window& window) { SDL_SetWindowTitle(window.get(), mWindowName.c_str()); }
+
+	/*
+	*	GetExit() - Exit the application
+	*/
 	inline const bool& GetExit() const { return mExit; }
 };

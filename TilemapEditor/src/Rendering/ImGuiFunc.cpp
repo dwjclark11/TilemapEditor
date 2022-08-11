@@ -163,8 +163,6 @@ void ImGuiFuncs::UpdateShortCuts(sol::state& lua, const AssetManager_Ptr& assetM
 
 void ImGuiFuncs::OpenProject(sol::state& lua, const AssetManager_Ptr& assetManager, Renderer& renderer, std::shared_ptr<Canvas>& canvas, int& tileSize)
 {
-	mFileDialog;
-	mFileLoader;
 	mFileName = mFileDialog->OpenFile();
 
 	if (mFileName == "")

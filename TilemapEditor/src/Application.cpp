@@ -62,9 +62,6 @@ void Application::Init()
 	// Set the renderer to blend mode
 	SDL_SetRenderDrawBlendMode(mRenderer.get(), SDL_BLENDMODE_BLEND);
 
-
-
-
 	// Initialize ImGui context
 	ImGui::CreateContext();
 
@@ -81,7 +78,6 @@ void Application::Init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
-
 
 	ImGuiSDL::Initialize(mRenderer.get(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -130,7 +126,6 @@ void Application::Draw()
 	SDL_SetRenderDrawColor(mRenderer.get(), 255, 0, 0, 0);
 	SDL_RenderFillRect(mRenderer.get(), &rect);
 	SDL_RenderDrawRect(mRenderer.get(), &rect);
-
 
 	SDL_RenderPresent(mRenderer.get());
 }
