@@ -10,6 +10,9 @@ Just Added Save to Lua Table Functionality. It creates a formatted lua table cur
 This application was created to quickly make tile maps for small games created with the **Pikuma Game Engine**. I re-made the tilemap editor that I created in my 
 **ZeldaClone** https://github.com/dwjclark11/ZeldaClone_NES. I added more functionality and made the code more clean and concise as my abilities continue to grow.
 
+## Read the Docs
+* Just created a quick documation site created with MD Book. Check it out here (Work in progress):  https://dwjclark11.github.io/TilemapEditor_Document_Site/
+
 ## Video 
 
 
