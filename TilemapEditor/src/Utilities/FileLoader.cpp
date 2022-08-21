@@ -11,6 +11,7 @@
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/AnimationComponent.h"
 #include "LuaWriter.h"
 
 namespace fs = std::filesystem;
@@ -139,13 +140,20 @@ void FileLoader::LoadMap(const AssetManager_Ptr& assetManager, const std::string
 		glm::vec2 scale = glm::vec2(1, 1);
 		glm::vec2 offset = glm::vec2(1, 1);
 		std::string group = "", assetID = "";
-		bool collider = false;
+		int numFrames = 0, frameSpeed = 0, frameOffset = 0;
+		bool collider = false, animated = false, vertical = false, looped = false;
 
 		// Read the contents of the file into the temporary variables
 		mapFile >> group >> assetID >> tileWidth >> tileHeight >> srcRectX >> srcRectY >> layer >> transform.x >> transform.y >> scale.x >> scale.y >> collider;
 
 		// If the tile is also a collider, load collider data
-		if (collider) mapFile >> colWidth >> colHeight >> offset.x >> offset.y;
+		if (collider) 
+			mapFile >> colWidth >> colHeight >> offset.x >> offset.y;
+
+		mapFile >> animated;
+		
+		if (animated)
+			mapFile >> numFrames >> frameSpeed >> vertical >> looped >> frameOffset;
 
 		// Create a new entity based on the above information
 		Entity tile = Registry::Instance().CreateEntity();
@@ -155,6 +163,8 @@ void FileLoader::LoadMap(const AssetManager_Ptr& assetManager, const std::string
 
 		if (collider)
 			tile.AddComponent<BoxColliderComponent>(colWidth, colHeight, offset);
+		if (animated)
+			tile.AddComponent<AnimationComponent>(numFrames, frameSpeed, vertical, looped, frameOffset);
 
 		// Check for end of file
 		if (mapFile.eof())
@@ -188,10 +198,12 @@ void FileLoader::SaveMap(std::filesystem::path filename)
 
 	for (const auto& tile : tiles)
 	{
-		bool collider = false;
+		bool collider = false, animated = false;
 		std::string group = "tiles";
 		const auto& sprite = tile.GetComponent<SpriteComponent>();
 		const auto& transform = tile.GetComponent<TransformComponent>();
+		
+
 
 		// Save to the map file
 		mapFile << group << " " << sprite.mAssetId << " " << sprite.mWidth << " " << sprite.mHeight << " " << sprite.mSrcRect.x << " " << sprite.mSrcRect.y << " " << sprite.mLayer << " " <<
@@ -204,13 +216,30 @@ void FileLoader::SaveMap(std::filesystem::path filename)
 		if (collider)
 		{
 			const auto& boxCollider = tile.GetComponent<BoxColliderComponent>();
-			mapFile << collider << " " << boxCollider.mWidth << " " << boxCollider.mHeight << " " << boxCollider.mOffset.x << " " << boxCollider.mOffset.y << " " << std::endl;
+			mapFile << collider << " " << boxCollider.mWidth << " " << boxCollider.mHeight << " " << boxCollider.mOffset.x << " " << boxCollider.mOffset.y << " ";// << std::endl;
 		}
 		else
 		{
 			collider = false;
-			mapFile << collider << " " << std::endl;
+			mapFile << collider << " ";// << std::endl;
 		}
+
+		// Check to see if the tile has an animation component
+		if (tile.HasComponent<AnimationComponent>())
+			animated = true;
+
+		if (animated)
+		{
+			const auto& animation = tile.GetComponent<AnimationComponent>();
+			mapFile << animated << " " << animation.mNumFrames << " " << animation.mFrameSpeedRate << " " << animation.mVertical << " " <<
+				animation.mIsLooped << " " << animation.mFrameOffset << " " << std::endl;
+		}
+		else
+		{
+			animated = false;
+			mapFile << animated << " " << std::endl;
+		}
+
 	}
 	// Close the file
 	mapFile.close();
