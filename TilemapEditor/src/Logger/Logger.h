@@ -27,7 +27,7 @@ public:
 	#define LOG_FATAL(...)		Logger::GetLogger()->fatal(__VA_ARGS__);
 	#define TM_ASSERT(x, ...) { if (!(x)) {LOG_ERROR("Assertion failed: {0}", __VA_ARGS__); __debugbreak(); } }
 
-#elif NDEBUG // If we are not in debug, don't display debug information
+#else // If we are not in debug, don't display debug information
 	#define LOG_TRACE(...)		
 	#define LOG_INFO(...)		
 	#define LOG_WARN(...)		

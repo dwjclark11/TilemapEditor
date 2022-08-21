@@ -78,26 +78,20 @@ bool MouseControl::FastTile(const glm::vec2& pos)
 
 MouseControl::MouseControl()
 	: mMouseRect(glm::vec2(16, 16))
-	, mMousePosX(0)
-	, mMousePosY(0)
-	, mMousePosGrid(glm::vec2(0))
-	, mPrevMousePos(glm::vec2(mMousePosX, mMousePosY))
+	, mMousePosX(0), mMousePosY(0)
+	, mMousePosGrid(glm::vec2(0)), mPrevMousePos(glm::vec2(mMousePosX, mMousePosY))
 	, mMousePosScreen(glm::vec2(0))
 	, mZoom(0)
 	, mGridSize(16)
-	, mPanX(0)
-	, mPanY(0)
+	, mPanX(0), mPanY(0)
 	, mMostRecentTileId(-1)
-	, mIsCollider(false)
+	, mIsCollider(false), mIsAnimated(false)
 	, mGridSnap(true)
 	, mOverImGuiWindow(false)
-	, mLeftPressed(false)
-	, mRightPressed(false)
-	, mTileAdded(false)
-	, mTileRemoved(false)
-	, mSpriteComponent()
-	, mTransformComponent()
-	, mBoxColliderComponent()
+	, mLeftPressed(false), mRightPressed(false)
+	, mTileAdded(false), mTileRemoved(false)
+	, mSpriteComponent(), mTransformComponent()
+	, mBoxColliderComponent(), mAnimationComponent()
 {
 	
 }
@@ -156,7 +150,7 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 				glm::vec2(mTransformComponent.mPosition.x, mTransformComponent.mPosition.y),
 				mTransformComponent.mScale,
 				mTransformComponent.mRotation
-				);
+			);
 
 			tile.AddComponent<SpriteComponent>(
 				mSpriteComponent.mAssetId,
@@ -167,7 +161,7 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 				mSpriteComponent.mSrcRect.x,
 				mSpriteComponent.mSrcRect.y,
 				mSpriteComponent.mOffset
-				);
+			);
 
 			// If the tile is a box collider, Add a BoxColliderComponent
 			if (mIsCollider)
@@ -176,7 +170,18 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 					mBoxColliderComponent.mWidth,
 					mBoxColliderComponent.mHeight,
 					mBoxColliderComponent.mOffset
-					);
+				);
+			}
+
+			if (mIsAnimated)
+			{
+				tile.AddComponent<AnimationComponent>(
+					mAnimationComponent.mNumFrames,
+					mAnimationComponent.mFrameSpeedRate,
+					mAnimationComponent.mVertical,
+					mAnimationComponent.mIsLooped,
+					mAnimationComponent.mFrameOffset
+				);
 			}
 
 			// Get Most Recent Tile Id
@@ -209,7 +214,7 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 			for (auto& entity : entities)
 			{
 				const auto& transform = entity.GetComponent<TransformComponent>();
-
+				const auto& sprite = entity.GetComponent<SpriteComponent>();
 				if (transform.mPosition.x <= mMousePosX - subtract.x + TOLERANCE
 					&& transform.mPosition.x >= mMousePosX - subtract.x - TOLERANCE
 					&& transform.mPosition.y <= mMousePosY - subtract.y + TOLERANCE
@@ -290,8 +295,8 @@ void MouseControl::CreateCollider(const AssetManager_Ptr& assetManager, Renderer
 			for (auto& entity : entities)
 			{
 				auto& transform = entity.GetComponent<TransformComponent>();
-
-				if (transform.mPosition.x <= mMousePosX - subtract.x + TOLERANCE
+				const auto& box_collider = entity.GetComponent<BoxColliderComponent>();
+				if (transform.mPosition.x <= mMousePosX - subtract.x +    TOLERANCE
 					&& transform.mPosition.x >= mMousePosX - subtract.x - TOLERANCE
 					&& transform.mPosition.y <= mMousePosY - subtract.y + TOLERANCE
 					&& transform.mPosition.y >= mMousePosY - subtract.y - TOLERANCE
@@ -323,7 +328,7 @@ void MouseControl::UpdateMousePos(const SDL_Rect& camera)
 	mMousePosScreen.y = mMousePosY;
 }
 
-void MouseControl::SetSpriteProperties(const std::string& assetID, const int& width, const int& height, const int& layer, const int& srcRectX, const int& srcRectY)
+void MouseControl::SetSpriteProperties(const std::string& assetID, const int width, const int height, const int layer, const int srcRectX, const int srcRectY)
 {
 	mSpriteComponent.mAssetId = assetID;
 	mSpriteComponent.mWidth = width;
@@ -334,16 +339,25 @@ void MouseControl::SetSpriteProperties(const std::string& assetID, const int& wi
 	mSpriteComponent.mSrcRect = { srcRectX, srcRectY, width, height };
 }
 
-void MouseControl::SetTransformScale(const int& scaleX, const int& scaleY)
+void MouseControl::SetTransformScale(const int scaleX, const int scaleY)
 {
 	mTransformComponent.mScale = glm::vec2(scaleX, scaleY);
 }
 
-void MouseControl::SetBoxColliderProperties(const int& width, const int& height, const int& offsetX, const int& offsetY)
+void MouseControl::SetBoxColliderProperties(const int width, const int height, const int offsetX, const int offsetY)
 {
 	mBoxColliderComponent.mWidth = width;
 	mBoxColliderComponent.mHeight = height;
 	mBoxColliderComponent.mOffset = glm::vec2(offsetX, offsetY);
+}
+
+void MouseControl::SetAnimationProperties(const int numFrames, const int frameSpeedRate, bool vertical, bool looped, int frameOffset)
+{
+	mAnimationComponent.mNumFrames = numFrames;
+	mAnimationComponent.mFrameSpeedRate = frameSpeedRate;
+	mAnimationComponent.mVertical = vertical;
+	mAnimationComponent.mIsLooped = looped;
+	mAnimationComponent.mFrameOffset = frameOffset;
 }
 
 const bool MouseControl::MouseOutOfBounds() const

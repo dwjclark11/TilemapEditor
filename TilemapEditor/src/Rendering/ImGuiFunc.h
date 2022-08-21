@@ -19,8 +19,11 @@ private:
 	int mScaleX, mScaleY, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY;
 	int mImageWidth, mImageHeight, mMouseRectY, mMouseRectX;
 	int mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY;
+	
+	int mNumFrames, mFrameSpeed, mFrameOffset;
+	bool mVertical, mLooped;
 
-	bool mImageLoaded, mExit, mCollider, mCleared, mCheck, mNewFile, mUndone, mRedone;
+	bool mImageLoaded, mExit, mCollider, mAnimated, mCleared, mCheck, mNewFile, mUndone, mRedone;
 
 	const int TITLE_BAR_SIZE = 26;
 

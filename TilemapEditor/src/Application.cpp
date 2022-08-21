@@ -6,6 +6,7 @@
 #include <SDL_ttf.h>
 #include "Rendering/RenderSystem.h"
 #include "Rendering/RenderCollisionSystem.h"
+#include "Rendering/AnimationSystem.h"
 #include "Rendering/RenderImGui.h"
 #include "Rendering/IconsFontAwesome.h"
 #include <cmath>
@@ -102,6 +103,7 @@ void Application::Init()
 	Registry::Instance().AddSystem<RenderSystem>();
 	Registry::Instance().AddSystem<RenderCollisionSystem>();
 	Registry::Instance().AddSystem<RenderGuiSystem>();
+	Registry::Instance().AddSystem<AnimationSystem>();
 	// Add the mouse hand texture right away
 	mAssetManager->AddTexture(mRenderer, "mouse_hand", "./assets/mouse_hand.png");
 }
@@ -116,6 +118,7 @@ void Application::Draw()
 	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent, mZoom, mDeltaTime);
+	Registry::Instance().GetSystem<AnimationSystem>().Update();
 
 	/*
 		This is a little hack to get SDL and ImGui to stop Ghosting!

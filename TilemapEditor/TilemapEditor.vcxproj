@@ -115,12 +115,14 @@
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\AssetManager.h" />
     <ClInclude Include="src\Canvas.h" />
+    <ClInclude Include="src\Components\AnimationComponent.h" />
     <ClInclude Include="src\Components\BoxColliderComponent.h" />
     <ClInclude Include="src\Components\SpriteComponent.h" />
     <ClInclude Include="src\Components\TransformComponent.h" />
     <ClInclude Include="src\ECS\ECS.h" />
     <ClInclude Include="src\Logger\Logger.h" />
     <ClInclude Include="src\MouseControl.h" />
+    <ClInclude Include="src\Rendering\AnimationSystem.h" />
     <ClInclude Include="src\Rendering\IconsFontAwesome.h" />
     <ClInclude Include="src\Rendering\ImGuiFunc.h" />
     <ClInclude Include="src\Rendering\RenderCollisionSystem.h" />
@@ -150,6 +152,7 @@
     <ClCompile Include="src\ECS\ECS.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
     <ClCompile Include="src\MouseControl.cpp" />
+    <ClCompile Include="src\Rendering\AnimationSystem.cpp" />
     <ClCompile Include="src\Rendering\ImGuiFunc.cpp" />
     <ClCompile Include="src\Rendering\RenderCollisionSystem.cpp" />
     <ClCompile Include="src\Rendering\RenderImGui.cpp" />

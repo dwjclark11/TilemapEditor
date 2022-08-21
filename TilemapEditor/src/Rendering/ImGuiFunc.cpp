@@ -192,36 +192,23 @@ void ImGuiFuncs::Save(const AssetManager_Ptr& assetManager, Renderer& renderer, 
 }
 
 ImGuiFuncs::ImGuiFuncs(std::shared_ptr<MouseControl>& mouseControl)
-	: mFileName("")
-	, mImageName("")
-	, mAssetID("")
-	, mWindowName("Tilemap Editor")
-	, mLuaTableFile("")
-	, mScaleX(4)
-	, mScaleY(4)
-	, mWidth(16)
-	, mHeight(16)
-	, mLayer(0)
-	, mSrcRectX(0)
-	, mSrcRectY(0)
-	, mImageWidth(0)
-	, mImageHeight(0)
-	, mMouseRectX(16)
-	, mMouseRectY(16)
-	, mBoxWidth(0)
-	, mBoxHeight(0)
-	, mBoxOffsetX(0)
-	, mBoxOffsetY(0)
-	, mImageLoaded(false)
-	, mExit(false)
-	, mCollider(false)
-	, mCleared(false)
-	, mCheck(false)
-	, mNewFile(false)
-	, mUndone(false)
+	: mFileName(""), mImageName(""), mAssetID("")
+	, mWindowName("Tilemap Editor"), mLuaTableFile("")
+	, mScaleX(4), mScaleY(4)
+	, mWidth(16), mHeight(16), mLayer(0)
+	, mSrcRectX(0), mSrcRectY(0)
+	, mImageWidth(0), mImageHeight(0)
+	, mMouseRectX(16), mMouseRectY(16)
+	, mBoxWidth(0), mBoxHeight(0)
+	, mBoxOffsetX(0), mBoxOffsetY(0)
+	, mNumFrames(1), mFrameSpeed(10), mFrameOffset(0)
+	, mVertical(false), mLooped(false)
+	, mImageLoaded(false), mExit(false)
+	, mCollider(false), mAnimated(false)
+	, mCleared(false), mCheck(false)
+	, mNewFile(false), mUndone(false)
 	, mRedone(false)
-	, mLoadedTilesets()
-	, mTilesetLocations()
+	, mLoadedTilesets(), mTilesetLocations()
 	, mMouseControl(mouseControl)
 {
 	mFileDialog = std::make_unique<FileDialogWin>();
@@ -508,6 +495,32 @@ void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl,
 			ImGui::InputInt("Box Offset Y", &mBoxOffsetY, 8, 8);
 		}
 
+		ImGui::Checkbox("Animation", &mAnimated);
+
+		if (mAnimated)
+		{
+			if (ImGui::InputInt("Num Frames", &mNumFrames, 1, 1))
+			{
+				if (mNumFrames <= 0)
+					mNumFrames = 0;
+			}
+
+			if (ImGui::InputInt("Frame Speed", &mFrameSpeed, 1, 1))
+			{
+				if (mFrameSpeed <= 0)
+					mFrameSpeed = 0;
+			}
+
+			if (ImGui::InputInt("Frame Offset", &mFrameOffset, 1, 1))
+			{
+				if (mFrameOffset <= 0)
+					mFrameOffset = 0;
+			}
+
+			ImGui::Checkbox("Vertical", &mVertical);
+			ImGui::Checkbox("Looped", &mLooped);
+		}
+		
 		if (ImGui::Button("Set Tile Properties"))
 		{
 			mWidth = mMouseRectX;
@@ -516,6 +529,14 @@ void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl,
 			mouseControl->SetTransformScale(mScaleX, mScaleY);
 			mouseControl->SetMouseRect(mMouseRectX, mMouseRectY);
 
+			if (mAnimated)
+			{
+				mouseControl->SetAnimated(true);
+				mouseControl->SetAnimationProperties(mNumFrames, mFrameSpeed, mVertical, mLooped, mSrcRectX);
+			}
+			else
+				mouseControl->SetAnimated(false);
+				
 			if (mCollider)
 				mouseControl->SetBoxColliderProperties(mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY);
 		}

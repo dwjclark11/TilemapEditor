@@ -2,6 +2,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/BoxColliderComponent.h"
+#include "Components/AnimationComponent.h"
 #include "AssetManager.h"
 #include "Utilities/Utilities.h"
 #include "ECS/ECS.h"
@@ -20,7 +21,7 @@ private:
 	float mZoom;
 	int mGridSize, mPanX, mPanY;
 
-	bool mIsCollider;
+	bool mIsCollider, mIsAnimated;
 	bool mGridSnap;
 	bool mOverImGuiWindow;
 	bool mLeftPressed;
@@ -34,6 +35,7 @@ private:
 	SpriteComponent mSpriteComponent, mRemovedSpriteComponent;
 	TransformComponent mTransformComponent, mRemovedTransformComponent;
 	BoxColliderComponent mBoxColliderComponent, mRemovedBoxComponent;
+	AnimationComponent mAnimationComponent, mRemovedAnimationComponent;
 
 
 	// +/- tolerance for tile removal
@@ -94,10 +96,10 @@ public:
 	/*
 	Set the Component Properties
 	*/
-	void SetSpriteProperties(const std::string& assetID, const int& width, const int& height, const int& layer, const int& srcRectX, const int& srcRectY);
-	void SetTransformScale(const int& scaleX, const int& scaleY);
-	void SetBoxColliderProperties(const int& width, const int& height, const int& offsetX, const int& offsetY);
-
+	void SetSpriteProperties(const std::string& assetID, const int width, const int height, const int layer, const int srcRectX, const int srcRectY);
+	void SetTransformScale(const int scaleX, const int scaleY);
+	void SetBoxColliderProperties(const int width, const int height, const int offsetX, const int offsetY);
+	void SetAnimationProperties(const int numFrames, const int frameSpeedRate, bool vertical, bool looped, int frameOffset);
 	/*
 	*  If the mouse is not currently overtop of the canvas, the mouse will be considered out of bounds and
 	*  will not render the selected tile and will not allow you to create a tile in that area.
@@ -140,6 +142,7 @@ public:
 
 
 	inline void SetCollider(bool collider) { mIsCollider = collider; }
+	inline void SetAnimated(bool animated) { mIsAnimated = animated; }
 	inline const glm::vec2& GetMousePosScreen() const { return mMousePosScreen; }
 	inline void UpdateZoom(const float& zoom) { mZoom = zoom; }
 	inline void UpdateGridSize(const int& grid) { mGridSize = grid; }
@@ -158,4 +161,5 @@ public:
 	const BoxColliderComponent& GetRemovedBoxComponent() { return mRemovedBoxComponent; }
 	const TransformComponent& GetRemovedTransform() { return mRemovedTransformComponent; }
 	const SpriteComponent& GetRemovedSpriteComponent() { return mRemovedSpriteComponent; }
+	const AnimationComponent& GetRemovedAnimationComponent() { return mRemovedAnimationComponent; }
 };

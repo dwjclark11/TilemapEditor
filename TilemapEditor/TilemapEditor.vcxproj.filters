@@ -126,6 +126,8 @@
     <ClInclude Include="src\Utilities\Utilities.h">
       <Filter>src\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="src\Components\AnimationComponent.h" />
+    <ClInclude Include="src\Rendering\AnimationSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="libs\imgui\imgui.cpp">
@@ -203,5 +205,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\AnimationSystem.cpp" />
   </ItemGroup>
 </Project>
