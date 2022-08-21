@@ -90,7 +90,6 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 					mCanvas->SetWidth(mCanvasWidth);
 					mPrevCanvasWidth = mCanvasWidth;
 				}
-					
 			}
 
 			// Clamp the minimum Canvas height
@@ -257,6 +256,9 @@ void RenderGuiSystem::CreateNewCanvas()
 	{
 		entity.Kill();
 	}
+
+	// Test to clear the saved commands
+	mCommandManager->Clear();
 }
 
 void RenderGuiSystem::ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera)

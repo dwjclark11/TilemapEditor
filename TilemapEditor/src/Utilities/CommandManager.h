@@ -38,4 +38,6 @@ public:
 	*/
 	void Redo();
 
+	// Test to clear stacks
+	void Clear();
 };

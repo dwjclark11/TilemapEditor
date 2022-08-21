@@ -50,3 +50,9 @@ void CommandManager::Redo()
 	mRedoStack.pop();
 	LOG_ERROR("RedoSize: {0}", mRedoStack.size());
 }
+
+void CommandManager::Clear()
+{
+	mUndoStack = {};
+	mRedoStack = {};
+}

@@ -470,6 +470,26 @@ void FileLoader::SaveToLuaTable(const std::string& filename, std::vector<std::st
 				luaWriter.WriteEndTable(false, projFile);
 			}
 
+			if (tile.HasComponent<AnimationComponent>())
+			{
+				const auto& animation = tile.GetComponent<AnimationComponent>();
+
+				std::string vertical = "false";
+				std::string looped = "false";
+				if (animation.mVertical)
+					vertical = "true";
+				if (animation.mIsLooped)
+					looped = "true";
+
+				luaWriter.WriteDeclareTable("animation", projFile);
+				luaWriter.WriteKeyAndValue("num_frames", animation.mNumFrames, false, projFile);
+				luaWriter.WriteKeyAndValue("frame_speed", animation.mFrameSpeedRate, false, projFile);
+				luaWriter.WriteKeyAndValue("vertical", vertical, false, projFile);
+				luaWriter.WriteKeyAndValue("looped", looped, false, projFile);
+				luaWriter.WriteKeyAndValue("frame_offset", animation.mFrameOffset, true, projFile);
+				luaWriter.WriteEndTable(false, projFile);
+			}
+
 			luaWriter.WriteEndTable(false, projFile);
 			luaWriter.WriteEndTable(false, projFile);
 			i++;
