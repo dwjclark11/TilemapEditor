@@ -29,7 +29,7 @@ private:
 	SDL_Event mEvent;
 
 	float mDeltaTime;
-	bool mIsRunning;
+	bool mIsRunning, mShowColliders;
 
 	int mMsPrevFrame, mMsPerFrame;
 

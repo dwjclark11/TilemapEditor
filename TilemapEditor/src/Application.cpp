@@ -116,7 +116,10 @@ void Application::Draw()
 	// Render Application Systems
 	Registry::Instance().GetSystem<RenderGuiSystem>().RenderGrid(mRenderer, mCamera, mZoom);
 	Registry::Instance().GetSystem<RenderSystem>().Update(mRenderer.get(), mAssetManager, mCamera, mZoom);
-	Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera, mZoom);
+	
+	if (mShowColliders)
+		Registry::Instance().GetSystem<RenderCollisionSystem>().Update(mRenderer, mCamera, mZoom);
+	
 	Registry::Instance().GetSystem<RenderGuiSystem>().Update(mAssetManager, mRenderer, mMouseBox, mCamera, mEvent, mZoom, mDeltaTime);
 	Registry::Instance().GetSystem<AnimationSystem>().Update();
 
@@ -159,7 +162,13 @@ void Application::ProcessEvents()
 		case SDL_KEYDOWN:
 			if (mEvent.key.keysym.sym == SDLK_ESCAPE)
 				mIsRunning = false;
+
 			CameraControl(mEvent);
+			
+			// Toggle Colliders
+			if (mEvent.key.keysym.sym == SDLK_c)
+				mShowColliders = !mShowColliders;
+
 			break;
 		case SDL_MOUSEWHEEL:
 			// If the mouse is over an ImGui window, do not zoom!
@@ -259,7 +268,7 @@ Application::Application()
 	, mRenderer(nullptr)
 	, mCamera()
 	, mMouseBox()
-	, mIsRunning(true)
+	, mIsRunning(true), mShowColliders(true)
 	, mDeltaTime(0.f)
 	, mEvent()
 	, mAssetManager(nullptr)
