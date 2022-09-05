@@ -4,10 +4,11 @@
 RemoveTileCommand::RemoveTileCommand(std::shared_ptr<MouseControl>& mouseControl)
 	: mMouseControl(mouseControl)
 	, mTileId(-1)
-	, mCollider(false)
+	, mCollider(false), mAnimated(false)
 	, mBoxColliderComponent()
 	, mTransformComponent()
 	, mSpriteComponent()
+	, mAnimationComponent()
 {
 
 }
@@ -24,6 +25,13 @@ void RemoveTileCommand::Execute()
 
 	mTransformComponent = mMouseControl->GetRemovedTransform();
 	mSpriteComponent = mMouseControl->GetRemovedSpriteComponent();
+	
+	mAnimationComponent = mMouseControl->GetRemovedAnimationComponent();
+
+	if (mAnimationComponent.mNumFrames > 1)
+		mAnimated = true;
+	else
+		mAnimated = false;
 
 }
 
@@ -37,6 +45,9 @@ void RemoveTileCommand::Undo()
 	// If there is a collider, add the collider
 	if (mCollider)
 		newEntity.AddComponent<BoxColliderComponent>(mBoxColliderComponent);
+
+	if (mAnimated)
+		newEntity.AddComponent<AnimationComponent>(mAnimationComponent);
 
 	// The Tile id is need for the redo so we can remove the tile
 	mTileId = newEntity.GetID();

@@ -5,10 +5,11 @@
 AddTileCommand::AddTileCommand(std::shared_ptr<MouseControl>& mouseControl)
 	: mMouseControl(mouseControl)
 	, mTileId(-1) // -1 means no Id
-	, mCollider(false)
+	, mCollider(false), mAnimated(false)
 	, mBoxColliderComponent()
 	, mTransformComponent()
 	, mSpriteComponent()
+	, mAnimationComponent()
 {
 
 }
@@ -41,6 +42,13 @@ void AddTileCommand::Undo()
 				mBoxColliderComponent = boxCollider;
 			}
 
+			if (entity.HasComponent<AnimationComponent>())
+			{
+				mAnimated = true;
+				const auto& animation = entity.GetComponent<AnimationComponent>();
+				mAnimationComponent = animation;
+			}
+
 			entity.Kill();
 			LOG_INFO("UNDO: Remove Tile: {0}", mTileId);
 		}
@@ -56,6 +64,9 @@ void AddTileCommand::Redo()
 
 	if (mCollider)
 		newEntity.AddComponent<BoxColliderComponent>(mBoxColliderComponent);
+	
+	if (mAnimated)
+		newEntity.AddComponent<AnimationComponent>(mAnimationComponent);
 
 	mTileId = newEntity.GetID();
 }

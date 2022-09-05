@@ -90,8 +90,8 @@ MouseControl::MouseControl()
 	, mOverImGuiWindow(false)
 	, mLeftPressed(false), mRightPressed(false)
 	, mTileAdded(false), mTileRemoved(false)
-	, mSpriteComponent(), mTransformComponent()
-	, mBoxColliderComponent(), mAnimationComponent()
+	, mSpriteComponent(), mTransformComponent(), mRemovedTransformComponent()
+	, mBoxColliderComponent(), mRemovedBoxComponent(), mAnimationComponent(), mRemovedAnimationComponent()
 {
 	
 }
@@ -223,9 +223,17 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 				{
 					const auto& sprite = entity.GetComponent<SpriteComponent>();
 					auto boxComponent = BoxColliderComponent();
-					
+					auto animComponent = AnimationComponent();
+
 					if (entity.HasComponent<BoxColliderComponent>())
+						mRemovedBoxComponent = entity.GetComponent<BoxColliderComponent>();
+					else
 						mRemovedBoxComponent = boxComponent;
+
+					if (entity.HasComponent<AnimationComponent>())
+						mRemovedAnimationComponent = entity.GetComponent<AnimationComponent>();
+					else
+						mRemovedAnimationComponent = animComponent;
 
 					mRemovedSpriteComponent = sprite;
 					mRemovedTransformComponent = transform;
