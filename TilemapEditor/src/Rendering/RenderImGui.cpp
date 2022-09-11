@@ -286,7 +286,7 @@ void RenderGuiSystem::ShowMouseLocationText(SDL_Rect& mouseBox, SDL_Rect& camera
 
 const bool RenderGuiSystem::MouseOffCanvas() const
 {
-	if (mMouseControl->GetMousePosScreen().x > mCanvasWidth || mMouseControl->GetMousePosScreen().y > mCanvasHeight)
+	if (mMouseControl->GetMousePosScreen().x > mCanvasWidth - (mTileSize / 3) || mMouseControl->GetMousePosScreen().y > mCanvasHeight - (mTileSize / 3))
 		return true;
 
 	return false;
