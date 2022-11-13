@@ -21,9 +21,6 @@ void ImGuiFuncs::TileSetWindow(const AssetManager_Ptr& assetManager, const glm::
 		auto scrollY = ImGui::GetScrollY();
 		auto scrollX = ImGui::GetScrollX();
 		
-		//LOG_INFO("Scroll Y: {0}", scrollY);
-		//LOG_INFO("Scroll X: {0}", scrollX);
-		
 		int imageWidth = mImageWidth * 2;
 		int imageHeight = mImageHeight * 2;
 
