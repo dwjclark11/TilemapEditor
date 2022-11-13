@@ -17,7 +17,7 @@ RenderGuiSystem::RenderGuiSystem()
 	, mCreateTiles(false)
 	, mCreateColliders(false)
 	, mGridSnap(false)
-	, mExit(false)
+	, mExit(false), mTileRemoved(false)
 	, mCanvasWidth(640)
 	, mCanvasHeight(448)
 	, mTileSize(64)
@@ -26,7 +26,6 @@ RenderGuiSystem::RenderGuiSystem()
 	, mGridY(0)
 
 {
-	
 	mMouseControl = std::make_shared<MouseControl>();
 	mImFuncs = std::make_unique<ImGuiFuncs>(mMouseControl);
 	mCommandManager = std::make_unique<CommandManager>();
@@ -141,6 +140,9 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 		}
 		// Mouse Location Text inside menu bar
 		ShowMouseLocationText(mouseBox, camera);
+		
+		if (mTileRemoved)
+			ImGui::TextColored(ImVec4{ 255, 0, 0, 255 }, "Tile Removed!!");
 
 		ImGui::EndMainMenuBar();
 	}
@@ -168,12 +170,14 @@ void RenderGuiSystem::Update(const AssetManager_Ptr& assetManager, Renderer& ren
 		{
 			mCommandManager->ExecuteCmd(std::make_shared<AddTileCommand>(mMouseControl));
 			mMouseControl->SetTileAdded(false);
+			mTileRemoved = false;
 		}
 
 		if (mMouseControl->TileRemoved())
 		{
 			mCommandManager->ExecuteCmd(std::make_shared<RemoveTileCommand>(mMouseControl));
 			mMouseControl->SetTileRemoved(false);
+			mTileRemoved = true;
 		}
 	}
 	// Creating Box Colliders

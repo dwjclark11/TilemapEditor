@@ -14,7 +14,7 @@ private:
 
 	std::string mWindowName;
 
-	bool mCreateTiles, mCreateColliders, mGridSnap, mExit;
+	bool mCreateTiles, mCreateColliders, mGridSnap, mExit, mTileRemoved;
 	int mCanvasWidth, mPrevCanvasWidth, mCanvasHeight, mPrevCanvasHeight, mTileSize, mPrevTileSize, mGridX, mGridY;
 
 	sol::state mLua;
