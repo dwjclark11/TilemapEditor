@@ -363,6 +363,11 @@ void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& asset
 		fs::path path(mImageName);
 		mAssetID = path.stem().string();
 
+		// Check to see if tileset is already being used
+		for (const auto& assetIDs : mLoadedTilesets)
+			if (assetIDs == mAssetID)
+				return;
+
 		// Add the new texture to the asset manager
 		assetManager->AddTexture(renderer, mAssetID, mImageName);
 
