@@ -301,13 +301,14 @@ void MouseControl::CreateCollider(const AssetManager_Ptr& assetManager, Renderer
 			// Loop through tiles and remove the one that the mouse is hovering over
 			for (auto& entity : entities)
 			{
+				if (entity.HasComponent<SpriteComponent>())
+					continue;
+
 				auto& transform = entity.GetComponent<TransformComponent>();
 				const auto& box_collider = entity.GetComponent<BoxColliderComponent>();
-				if (transform.mPosition.x <= mMousePosX - subtract.x +    TOLERANCE
-					&& transform.mPosition.x >= mMousePosX - subtract.x - TOLERANCE
-					&& transform.mPosition.y <= mMousePosY - subtract.y + TOLERANCE
-					&& transform.mPosition.y >= mMousePosY - subtract.y - TOLERANCE
-					)
+
+				if (mMousePosX >= transform.mPosition.x && mMousePosX <= transform.mPosition.x + box_collider.mWidth * transform.mScale.x &&
+					mMousePosY >= transform.mPosition.y && mMousePosY <= transform.mPosition.y + box_collider.mHeight * transform.mScale.y)
 				{
 					entity.Kill();
 					mRightPressed = true;
