@@ -37,10 +37,6 @@ private:
 	BoxColliderComponent mBoxColliderComponent, mRemovedBoxComponent;
 	AnimationComponent mAnimationComponent, mRemovedAnimationComponent;
 
-
-	// +/- tolerance for tile removal
-	const int TOLERANCE = 15;
-
 	// Private functions
 private:
 	void MouseBox(const AssetManager_Ptr& assetManager, Renderer& renderer,

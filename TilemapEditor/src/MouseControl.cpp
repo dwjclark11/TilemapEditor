@@ -215,11 +215,10 @@ void MouseControl::CreateTile(const AssetManager_Ptr& assetManager, Renderer& re
 			{
 				const auto& transform = entity.GetComponent<TransformComponent>();
 				const auto& sprite = entity.GetComponent<SpriteComponent>();
-				if (transform.mPosition.x <= mMousePosX - subtract.x + TOLERANCE
-					&& transform.mPosition.x >= mMousePosX - subtract.x - TOLERANCE
-					&& transform.mPosition.y <= mMousePosY - subtract.y + TOLERANCE
-					&& transform.mPosition.y >= mMousePosY - subtract.y - TOLERANCE
-					)
+	
+				if (mMousePosX >= transform.mPosition.x && mMousePosX <= transform.mPosition.x + sprite.mWidth * transform.mScale.x &&
+					mMousePosY >= transform.mPosition.y && mMousePosY <= transform.mPosition.y + sprite.mHeight * transform.mScale.y &&
+					mSpriteComponent.mLayer == sprite.mLayer)
 				{
 					const auto& sprite = entity.GetComponent<SpriteComponent>();
 					auto boxComponent = BoxColliderComponent();
