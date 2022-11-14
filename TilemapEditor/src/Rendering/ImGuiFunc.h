@@ -15,14 +15,39 @@
 class ImGuiFuncs
 {
 private:
-	std::string mFileName, mImageName, mAssetID, mWindowName, mLuaTableFile;
-	int mScaleX, mScaleY, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY;
-	int mImageWidth, mImageHeight, mMouseRectY, mMouseRectX;
-	int mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY;
-	
-	int mNumFrames, mFrameSpeed, mFrameOffset;
-	bool mVertical, mLooped;
+	struct TileProperties
+	{
+		int scaleX, scaleY, boxWidth, boxHeight, boxOffsetX, boxOffsetY, layer, srcRectX, srcRectY, mouseRectX, mouseRectY;
+		int numFrames, frameSpeed, frameOffset;
+		bool vertical, looped;
 
+		TileProperties(int scale_x = 1, int scale_y = 1, int box_width = 16, int box_height = 16, int box_offset_x = 0, int box_offset_y = 0, int layer = 0,
+			int src_rect_x = 0, int src_rect_y = 0, int mouse_rect_x = 16, int mouse_rect_y = 16, int num_frames = 1, int frame_speed = 10, int frame_offset = 0,
+			bool vertical = false, bool looped = true)
+		{
+			this->scaleX = scale_x;
+			this->scaleY = scale_y;
+			this->boxWidth = box_width;
+			this->boxHeight = box_height;
+			this->boxOffsetX = box_offset_x;
+			this->boxOffsetY = box_offset_y;
+			this->layer = layer;
+			this->srcRectX = src_rect_x;
+			this->srcRectY = src_rect_y;
+			this->mouseRectX = mouse_rect_x;
+			this->mouseRectY = mouse_rect_y;
+			this->numFrames = num_frames;
+			this->frameSpeed = frame_speed;
+			this->frameOffset = frame_offset;
+			this->vertical = vertical;
+			this->looped = looped;
+		}
+	};
+
+	TileProperties mTileProps, mPrevTileProps;
+	int mWidth, mHeight, mImageWidth, mImageHeight;
+
+	std::string mFileName, mImageName, mAssetID, mWindowName, mLuaTableFile;
 	bool mImageLoaded, mExit, mCollider, mAnimated, mCleared, mCheck, mNewFile, mUndone, mRedone;
 
 	const int TITLE_BAR_SIZE = 26;
@@ -37,6 +62,29 @@ private:
 private:
 	void ClearLoadedFiles();
 	void SetWindowName(const std::string& filename);
+	/*
+	* CheckColliderStatus() 
+	* This checks for any changes in the collider properties of the tile. 
+	* @return - Returns true if any of the collider properties are different from 
+	* the previous tile properties.
+	*/
+	bool CheckCollidersStatus();
+	
+	/*
+	* CheckTransformStatus()
+	* This checks for any changes in the transform properties of the tile.
+	* @return - Returns true if any of the transform properties are different from
+	* the previous tile properties.
+	*/
+	bool CheckTransformStatus();
+
+	/*
+	* CheckAnimationStatus()
+	* This checks for any changes in the animation properties of the tile.
+	* @return - Returns true if any of the animation properties are different from
+	* the previous tile properties.
+	*/
+	bool CheckAnimationStatus();
 public:
 	ImGuiFuncs(class std::shared_ptr<MouseControl>& mouseControl);
 	~ImGuiFuncs();
