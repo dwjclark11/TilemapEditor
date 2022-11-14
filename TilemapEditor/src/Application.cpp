@@ -160,8 +160,6 @@ void Application::ProcessEvents()
 			mIsRunning = false;
 			break;
 		case SDL_KEYDOWN:
-			if (mEvent.key.keysym.sym == SDLK_ESCAPE)
-				mIsRunning = false;
 
 			CameraControl(mEvent);
 			
