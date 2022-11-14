@@ -47,8 +47,8 @@ void ImGuiFuncs::TileSetWindow(const AssetManager_Ptr& assetManager, const glm::
 
 						if (ImGui::IsMouseClicked(0))
 						{
-							mSrcRectX = i * mouseRect.x;
-							mSrcRectY = j * mouseRect.y;
+							mTileProps.srcRectX = i * mouseRect.x;
+							mTileProps.srcRectY = j * mouseRect.y;
 						}
 					}
 				}
@@ -191,15 +191,9 @@ void ImGuiFuncs::Save(const AssetManager_Ptr& assetManager, Renderer& renderer, 
 ImGuiFuncs::ImGuiFuncs(std::shared_ptr<MouseControl>& mouseControl)
 	: mFileName(""), mImageName(""), mAssetID("")
 	, mWindowName("Tilemap Editor"), mLuaTableFile("")
-	, mScaleX(4), mScaleY(4)
-	, mWidth(16), mHeight(16), mLayer(0)
-	, mSrcRectX(0), mSrcRectY(0)
+	, mTileProps(), mPrevTileProps()
+	, mWidth(16), mHeight(16)
 	, mImageWidth(0), mImageHeight(0)
-	, mMouseRectX(16), mMouseRectY(16)
-	, mBoxWidth(0), mBoxHeight(0)
-	, mBoxOffsetX(0), mBoxOffsetY(0)
-	, mNumFrames(1), mFrameSpeed(10), mFrameOffset(0)
-	, mVertical(false), mLooped(false)
 	, mImageLoaded(false), mExit(false)
 	, mCollider(false), mAnimated(false)
 	, mCleared(false), mCheck(false)
@@ -390,6 +384,101 @@ void ImGuiFuncs::ShowToolsMenu(Renderer& renderer, const AssetManager_Ptr& asset
 	}
 }
 
+bool ImGuiFuncs::CheckCollidersStatus()
+{
+	bool statusChanged = false;
+	if (mTileProps.boxWidth != mPrevTileProps.boxWidth)
+	{
+		mPrevTileProps.boxWidth = mTileProps.boxWidth;
+		statusChanged = true;
+	}
+	
+	if (mTileProps.boxHeight!= mPrevTileProps.boxHeight)
+	{
+		mPrevTileProps.boxHeight = mTileProps.boxHeight;
+		statusChanged = true;
+	}
+	
+	if (mTileProps.boxOffsetX != mPrevTileProps.boxOffsetX)
+	{
+		mPrevTileProps.boxOffsetX = mTileProps.boxOffsetX;
+		statusChanged = true;
+	}
+	
+	if (mTileProps.boxOffsetY != mPrevTileProps.boxOffsetY)
+	{
+		mPrevTileProps.boxOffsetY = mTileProps.boxOffsetY;
+		statusChanged = true;
+
+	}
+
+	return statusChanged;
+}
+
+bool ImGuiFuncs::CheckTransformStatus()
+{
+	bool statusChanged = false;
+
+	if (mTileProps.scaleX != mPrevTileProps.scaleX)
+	{
+		mPrevTileProps.scaleX = mTileProps.scaleX;
+		statusChanged = true;
+	}
+
+	if (mTileProps.scaleY != mPrevTileProps.scaleY)
+	{
+		mPrevTileProps.scaleY = mTileProps.scaleY;
+		statusChanged = true;
+	}
+
+	if (mTileProps.mouseRectX != mPrevTileProps.mouseRectX)
+	{
+		mPrevTileProps.mouseRectX = mTileProps.mouseRectX;
+		mWidth = mTileProps.mouseRectX;
+		statusChanged = true;
+	}
+
+	if (mTileProps.mouseRectY != mPrevTileProps.mouseRectY)
+	{
+		mPrevTileProps.mouseRectY = mTileProps.mouseRectY;
+		mHeight = mTileProps.mouseRectY;
+		statusChanged = true;
+	}
+
+	return statusChanged;
+
+}
+
+bool ImGuiFuncs::CheckAnimationStatus()
+{
+	bool statusChanged = false;
+
+	if (mTileProps.numFrames != mPrevTileProps.numFrames)
+	{
+		mPrevTileProps.numFrames = mTileProps.numFrames;
+		statusChanged = true;
+	}
+	
+	if (mTileProps.frameSpeed != mPrevTileProps.frameSpeed)
+	{
+		mPrevTileProps.frameSpeed = mTileProps.frameSpeed;
+		statusChanged = true;
+	}
+
+	if (mTileProps.vertical != mPrevTileProps.vertical)
+	{
+		mPrevTileProps.vertical = mTileProps.vertical;
+		statusChanged = true;
+	}
+
+	if (mTileProps.looped != mPrevTileProps.looped)
+	{
+		mPrevTileProps.looped = mTileProps.looped;
+		statusChanged = true;
+	}
+
+	return statusChanged;
+}
 void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl, const AssetManager_Ptr& assetManager, bool collider)
 {
 	std::string boxName = "Tile Properties";
@@ -430,38 +519,39 @@ void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl,
 		}
 
 		ImGui::Text("Transform Component");
-		ImGui::SliderInt("X Scale", &mScaleX, 1, 10);
-		ImGui::SliderInt("Y Scale", &mScaleY, 1, 10);
+		ImGui::SliderInt("X Scale", &mTileProps.scaleX, 1, 10);
+		ImGui::SliderInt("Y Scale", &mTileProps.scaleY, 1, 10);
 		
 		// If not creating colliders
 		if (!collider)
 		{
 			ImGui::Text("Sprite Component");
-			if (ImGui::InputInt("Layer", &mLayer, 1, 10))
+			if (ImGui::InputInt("Layer", &mTileProps.layer, 1, 10))
 			{
 				// Clamp the layer [0 <= mLayer <= 10]
-				if (mLayer <= 0)
-					mLayer = 0;
-				if (mLayer >= 10)
-					mLayer = 10;
+				if (mTileProps.layer <= 0)
+					mTileProps.layer = 0;
+				if (mTileProps.layer >= 10)
+					mTileProps.layer = 10;
 			}
 		}
 
-		if (ImGui::InputInt("Mouse Rect Y", &mMouseRectY, 8, 8))
+		if (ImGui::InputInt("Mouse Rect X", &mTileProps.mouseRectX, 8, 8))
 		{
-			mMouseRectY = (mMouseRectY / 8) * 8;
+			mTileProps.mouseRectX = (mTileProps.mouseRectX / 8) * 8;
 			// Clamp mouse Rect Y at zero
-			if (mMouseRectY <= 0)
-				mMouseRectY = 0;
+			if (mTileProps.mouseRectX <= 0)
+				mTileProps.mouseRectX = 0;
 		}
 
-		if (ImGui::InputInt("Mouse Rect X", &mMouseRectX, 8, 8))
+		if (ImGui::InputInt("Mouse Rect Y", &mTileProps.mouseRectY, 8, 8))
 		{
-			mMouseRectX = (mMouseRectX / 8) * 8;
+			mTileProps.mouseRectY = (mTileProps.mouseRectY / 8) * 8;
 			// Clamp mouse Rect Y at zero
-			if (mMouseRectX <= 0)
-				mMouseRectX = 0;
+			if (mTileProps.mouseRectY <= 0)
+				mTileProps.mouseRectY = 0;
 		}
+
 
 		// If we are making box colliders, mColliders is always true
 		if (collider)
@@ -474,73 +564,70 @@ void ImGuiFuncs::ShowTileProperties(std::shared_ptr<MouseControl>& mouseControl,
 
 		if (mCollider)
 		{
-			if (ImGui::InputInt("Box Width", &mBoxWidth, 8, 8))
+			if (ImGui::InputInt("Box Width", &mTileProps.boxWidth, 8, 8))
 			{
 				// Clamp Box Width at zero
-				if (mBoxWidth <= 0)
-					mBoxWidth = 0;
+				if (mTileProps.boxWidth <= 0)
+					mTileProps.boxWidth = 0;
 			}
 
-			if (ImGui::InputInt("Box Height", &mBoxHeight, 8, 8))
+			if (ImGui::InputInt("Box Height", &mTileProps.boxHeight, 8, 8))
 			{
 				// Clamp Box Height at zero
-				if (mBoxHeight <= 0)
-					mBoxHeight = 0;
+				if (mTileProps.boxHeight <= 0)
+					mTileProps.boxHeight = 0;
 			}
 
-			ImGui::InputInt("Box Offset X", &mBoxOffsetX, 8, 8);
-			ImGui::InputInt("Box Offset Y", &mBoxOffsetY, 8, 8);
+			ImGui::InputInt("Box Offset X", &mTileProps.boxOffsetX, 8, 8);
+			ImGui::InputInt("Box Offset Y", &mTileProps.boxOffsetY, 8, 8);
 		}
 
-		ImGui::Checkbox("Animation", &mAnimated);
+		if (ImGui::Checkbox("Animation", &mAnimated))
+		{
+			mouseControl->SetAnimated(mAnimated);
+		}
 
 		if (mAnimated)
 		{
-			if (ImGui::InputInt("Num Frames", &mNumFrames, 1, 1))
+			if (ImGui::InputInt("Num Frames", &mTileProps.numFrames, 1, 1))
 			{
-				if (mNumFrames <= 0)
-					mNumFrames = 0;
+				if (mTileProps.numFrames <= 0)
+					mTileProps.numFrames = 0;
 			}
 
-			if (ImGui::InputInt("Frame Speed", &mFrameSpeed, 1, 1))
+			if (ImGui::InputInt("Frame Speed", &mTileProps.frameSpeed, 1, 1))
 			{
-				if (mFrameSpeed <= 0)
-					mFrameSpeed = 0;
+				if (mTileProps.frameSpeed <= 0)
+					mTileProps.frameSpeed = 0;
 			}
 
-			if (ImGui::InputInt("Frame Offset", &mFrameOffset, 1, 1))
+			if (ImGui::InputInt("Frame Offset", &mTileProps.frameOffset, 1, 1))
 			{
-				if (mFrameOffset <= 0)
-					mFrameOffset = 0;
+				if (mTileProps.frameOffset <= 0)
+					mTileProps.frameOffset = 0;
 			}
 
-			ImGui::Checkbox("Vertical", &mVertical);
-			ImGui::Checkbox("Looped", &mLooped);
+			ImGui::Checkbox("Vertical", &mTileProps.vertical);
+			ImGui::Checkbox("Looped", &mTileProps.looped);
 		}
 		
-		if (ImGui::Button("Set Tile Properties"))
-		{
-			mWidth = mMouseRectX;
-			mHeight = mMouseRectY;
 
-			mouseControl->SetTransformScale(mScaleX, mScaleY);
-			mouseControl->SetMouseRect(mMouseRectX, mMouseRectY);
-
-			if (mAnimated)
-			{
-				mouseControl->SetAnimated(true);
-				mouseControl->SetAnimationProperties(mNumFrames, mFrameSpeed, mVertical, mLooped, mSrcRectX);
-			}
-			else
-				mouseControl->SetAnimated(false);
-				
-			if (mCollider)
-				mouseControl->SetBoxColliderProperties(mBoxWidth, mBoxHeight, mBoxOffsetX, mBoxOffsetY);
-		}
 		// The box collider does not have a sprite
 		if (!collider)
-			mouseControl->SetSpriteProperties(mAssetID, mWidth, mHeight, mLayer, mSrcRectX, mSrcRectY);
+			mouseControl->SetSpriteProperties(mAssetID, mWidth, mHeight, mTileProps.layer, mTileProps.srcRectX, mTileProps.srcRectY);
+		
+		if (CheckTransformStatus())
+		{
+			mouseControl->SetTransformScale(mTileProps.scaleX, mTileProps.scaleY);
+			mouseControl->SetMouseRect(mTileProps.mouseRectX, mTileProps.mouseRectY);
+		}
 
+		if (mCollider && CheckCollidersStatus())
+			mouseControl->SetBoxColliderProperties(mTileProps.boxWidth, mTileProps.boxHeight, mTileProps.boxOffsetX, mTileProps.boxOffsetY);
+
+		if (mAnimated && CheckAnimationStatus())
+			mouseControl->SetAnimationProperties(mTileProps.numFrames, mTileProps.frameSpeed, mTileProps.vertical, mTileProps.looped, mTileProps.srcRectX);
+		
 		ImGui::End();
 	}
 }
