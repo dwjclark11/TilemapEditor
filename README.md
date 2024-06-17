@@ -5,13 +5,45 @@ The Editor uses the **ECS** system from the course https://pikuma.com/courses/cp
 When saving and loading, the editor uses a [.lua] file that loads the the location of the 
 [.map] files and the tilesets that are used.
 
-Just Added Save to Lua Table Functionality. It creates a formatted lua table currently set up for another project that I am working on. 
-
 This application was created to quickly make tile maps for small games created with the **Pikuma Game Engine**. I re-made the tilemap editor that I created in my 
 **ZeldaClone** https://github.com/dwjclark11/ZeldaClone_NES. I added more functionality and made the code more clean and concise as my abilities continue to grow.
 
-## Read the Docs
+# Build
+----
+Requires [CMake 3.26](https://cmake.org/) and [vcpkg](https://github.com/microsoft/vcpkg)
+#### Get VCPKG:
+
+```ps
+git clone https://github.com/microsoft/vcpkg
+./vcpkg/bootstrap-vcpkg.bat
+```
+#### Make sure the following environment variables are set:
+```ps
+VCPKG_ROOT=[path_to_vcpkg]
+VCPKG_DEFAULT_TRIPLET=x64-windows
+```
+#### Install dependencies 
+```ps
+./vcpkg install glm spdlog sdl2 sdl2-ttf sdl2-image lua sol2
+```
+  * Linux Also needs GTK-+3.0 for NFD build
+```sudo apt-get install build-essential libgtk-3-dev```
+
+#### Clone the repository 
+```ps
+git clone https://github.com/dwjclark11/TilemapEditor.git
+
+cmake -S . -B build 
+cd build 
+cmake --build . --config Release 
+
+cd bin 
+./TilemapEditor
+```
+
+# Read the Docs
 * Just created a quick documation site created with MD Book. Check it out here (Work in progress):  https://dwjclark11.github.io/TilemapEditor_Document_Site/
+
 
 ## Video 
 
@@ -33,15 +65,12 @@ https://user-images.githubusercontent.com/63356975/169720893-22976487-dec7-431e-
 
 # Dependencies
 * SDL2
+* SDL2_ttf
+* SDL2_image
 * ImGui
 * SPDLOG
 * Sol/Lua
-
-# Build
-* Added Premake5.lua build script. Just run the **GenerateSln.bat** file and it should create the Visual Studio 2022 solution for you. 
-* You may need to edit the GenerateSln.bat to run your version of VS if not using 2022. 
-* Ex: change call *premake\bin\premake5 vs2022* to *call premake\bin\premake5 vs2019*
-* I have not added any other platforms to the build for I use VS and windows; however, you should be able to add your OS to the build script
+* NFD 
 
 ## Functionality
 * Load/Add multiple tilemaps
