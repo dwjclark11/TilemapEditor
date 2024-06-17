@@ -3,51 +3,49 @@
 
 AssetManager::AssetManager()
 {
-
 }
 
 AssetManager::~AssetManager()
 {
 }
 
-void AssetManager::AddTexture(Renderer& renderer, const std::string& assetId, const std::string& filePath)
+void AssetManager::AddTexture( Renderer& renderer, const std::string& assetId, const std::string& filePath )
 {
-	if (!HasTexture(assetId))
+	if ( !HasTexture( assetId ) )
 	{
-		SDL_Surface* surface = IMG_Load(filePath.c_str());
-		if (!surface)
-			LOG_ERROR("Unable to make Surface!");
+		SDL_Surface* surface = IMG_Load( filePath.c_str() );
+		if ( !surface )
+			LOG_ERROR( "Unable to make Surface!" );
 
-		Texture texture = Texture(SDL_CreateTextureFromSurface(renderer.get(), surface));
+		Texture texture = Texture( SDL_CreateTextureFromSurface( renderer.get(), surface ) );
 
-		if (!texture)
+		if ( !texture )
 		{
-			LOG_ERROR("Unable to Create Texture[{0}] at filepath [{1}]", assetId, filePath);
+			LOG_ERROR( "Unable to Create Texture[{0}] at filepath [{1}]", assetId, filePath );
 		}
 
 		// Fre the surface once the texture is created
-		SDL_FreeSurface(surface);
+		SDL_FreeSurface( surface );
 
 		// Add the Textures to the map
-		mTextures.emplace(assetId, std::move(texture));
+		mTextures.emplace( assetId, std::move( texture ) );
 	}
 	else
 	{
-		LOG_ERROR("ASSETMANAGER.CPP__LINE__36: Texture [{0}] already exists!");
+		LOG_ERROR( "ASSETMANAGER.CPP__LINE__36: Texture [{0}] already exists!" );
 	}
 }
 
-const Texture& AssetManager::GetTexture(const std::string& assetId)
+const Texture& AssetManager::GetTexture( const std::string& assetId )
 {
-	return mTextures[assetId];
+	return mTextures[ assetId ];
 }
 
-bool AssetManager::HasTexture(const std::string& assetId)
+bool AssetManager::HasTexture( const std::string& assetId )
 {
-	return mTextures.find(assetId) != mTextures.end();
+	return mTextures.find( assetId ) != mTextures.end();
 }
 
-void AssetManager::RemoveTexture(const std::string& assetId)
+void AssetManager::RemoveTexture( const std::string& assetId )
 {
-
 }

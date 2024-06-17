@@ -15,7 +15,8 @@ struct SpriteComponent
 	SDL_Rect mSrcRect;
 	glm::vec2 mOffset;
 
-	SpriteComponent(std::string assetId = "", int width = 0, int height = 0, int layer = 0, bool isfixed = 0, int srcRectX = 0, int srcRectY = 0, glm::vec2 offset = glm::vec2(0))
+	SpriteComponent( std::string assetId = "", int width = 0, int height = 0, int layer = 0, bool isfixed = 0,
+					 int srcRectX = 0, int srcRectY = 0, glm::vec2 offset = glm::vec2( 0 ) )
 	{
 		mAssetId = assetId;
 		mWidth = width;

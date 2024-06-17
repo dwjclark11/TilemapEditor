@@ -1,3 +1,0 @@
-[submodule "TilemapEditor/libs/spdlog"]
-	path = TilemapEditor/libs/spdlog
-	url = https://github.com/gabime/spdlog

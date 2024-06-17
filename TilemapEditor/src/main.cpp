@@ -1,12 +1,12 @@
-#define SDL_MAIN_HANDLED
-#define main SDL_main
-
+#define SDL_MAIN_HANDLED 1
 #include "Application.h"
+#include <nfd.hpp>
 
-int main(int argc, char* argv[])
+int main( int argc, char* argv[] )
 {
-	Application app;
+	NFD_Init();
 
+	Application app;
 	app.Run();
 	app.ShutDown();
 

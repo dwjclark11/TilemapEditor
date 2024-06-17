@@ -3,7 +3,7 @@
 
 class AnimationComponent
 {
-public:
+  public:
 	int mNumFrames;
 	int mCurrentFrame;
 	int mFrameSpeedRate;
@@ -13,7 +13,8 @@ public:
 	int mFrameOffset;
 	int mLastFrame;
 
-	AnimationComponent(int numFrames = 1, int frameSpeedRate = 1, bool vertical = true, bool isLooped = true, int frameOffset = 0)
+	AnimationComponent( int numFrames = 1, int frameSpeedRate = 1, bool vertical = true, bool isLooped = true,
+						int frameOffset = 0 )
 	{
 		this->mNumFrames = numFrames;
 		this->mCurrentFrame = 1;

@@ -1,7 +1,8 @@
-#include "AnimationSystem.h"
-#include "../Components/SpriteComponent.h"
-#include "../Components/AnimationComponent.h"
-#include "../Components/TransformComponent.h"
+#include "Rendering/AnimationSystem.h"
+#include "Components/SpriteComponent.h"
+#include "Components/AnimationComponent.h"
+#include "Components/TransformComponent.h"
+
 #include <SDL.h>
 
 AnimationSystem::AnimationSystem()
@@ -13,7 +14,7 @@ AnimationSystem::AnimationSystem()
 
 void AnimationSystem::Update()
 {
-	for (const auto& entity : GetSystemEntities())
+	for ( const auto& entity : GetSystemEntities() )
 	{
 		const auto& transform = entity.GetComponent<TransformComponent>();
 
@@ -21,16 +22,17 @@ void AnimationSystem::Update()
 		auto& sprite = entity.GetComponent<SpriteComponent>();
 
 		// Set the cuurent frame
-		animation.mCurrentFrame = ((SDL_GetTicks() - animation.mStartTime) * animation.mFrameSpeedRate / 1000) % animation.mNumFrames;
+		animation.mCurrentFrame =
+			( ( SDL_GetTicks() - animation.mStartTime ) * animation.mFrameSpeedRate / 1000 ) % animation.mNumFrames;
 
 		// If the animation is a vertical scroll use this
-		if (animation.mVertical)
+		if ( animation.mVertical )
 		{
 			sprite.mSrcRect.y = animation.mCurrentFrame * sprite.mHeight;
 		}
 		else
 		{
-			sprite.mSrcRect.x = (animation.mCurrentFrame * sprite.mWidth) + animation.mFrameOffset;
+			sprite.mSrcRect.x = ( animation.mCurrentFrame * sprite.mWidth ) + animation.mFrameOffset;
 		}
 	}
 }

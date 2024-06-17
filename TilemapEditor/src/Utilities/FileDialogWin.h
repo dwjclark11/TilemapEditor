@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <string>
+
 /*
 *	Windows platform implementation of the FileDialogs needed for loading and saving files on a windows machine
 */

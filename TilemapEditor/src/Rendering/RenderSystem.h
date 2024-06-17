@@ -1,11 +1,11 @@
 #pragma once
-#include "../ECS/ECS.h"
+#include "ECS/ECS.h"
 
 class RenderSystem : public System
 {
-public:
+  public:
 	RenderSystem();
 
-	void Update(struct SDL_Renderer* renderer, std::unique_ptr<class AssetManager>& assetManager,
-		struct SDL_Rect& camera, const float& zoom);
+	void Update( struct SDL_Renderer* renderer, std::unique_ptr<class AssetManager>& assetManager,
+				 struct SDL_Rect& camera, const float& zoom );
 };
